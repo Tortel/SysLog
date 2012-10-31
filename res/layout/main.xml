@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_height="fill_parent"
+    android:layout_width="fill_parent"
+    android:orientation="vertical">
+	
+    <TextView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/desc"
+        android:padding="5dip" />
+    
+    <TextView
+        android:layout_height="wrap_content"
+        android:layout_width="fill_parent"
+        android:text="@string/log_select"
+        android:paddingTop="20dip"
+        android:padding="5dip" />
+    
+    <CheckBox 
+        android:id="@+id/kernel_log"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:text="@string/kernel_log"
+        android:onClick="logChange"/>
+    
+    <CheckBox 
+        android:id="@+id/main_log"
+        android:layout_height="wrap_content"
+        android:layout_width="fill_parent"
+        android:text="@string/main_log"
+        android:onClick="logChange"/>
+    
+    <CheckBox 
+        android:id="@+id/modem_log"
+        android:layout_height="wrap_content"
+        android:layout_width="fill_parent"
+        android:text="@string/modem_log"
+        android:onClick="logChange"/>
+    
+    <Button
+        android:layout_height="wrap_content"
+        android:layout_width="fill_parent"
+        android:padding="5dip"
+        android:text="@string/take_log"
+        android:onClick="startLog" />
+    
+</LinearLayout>

@@ -1,0 +1,18 @@
+<resources>
+    <string name="app_name">System Logger</string>
+    
+    
+    <string name="desc">This application will save the logs, compress them, and let you upload them easily.</string>
+    
+    <string name="log_select">Select log types:</string>
+    <string name="main_log">Main Log</string>
+    <string name="kernel_log">Kernel Log</string>
+    <string name="modem_log">Modem Log</string>
+    
+    <string name="take_log">Take Log</string>
+    
+    <string name="working">Working&#8230;</string>
+    
+    <string name="done">Done!</string>
+    <string name="storage_err">External storage error!</string>
+</resources>
