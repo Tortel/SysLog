@@ -7,8 +7,10 @@ import java.util.Locale;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
@@ -36,12 +38,8 @@ public class MainActivity extends Activity {
 		modemLog = prefs.getBoolean("modem", true);
 		
 		//Set the checkboxes
-		CheckBox box = (CheckBox) findViewById(R.id.kernel_log);
-		box.setChecked(kernelLog);
-		box = (CheckBox) findViewById(R.id.main_log);
-		box.setChecked(mainLog);
-		box = (CheckBox) findViewById(R.id.modem_log);
-		box.setChecked(modemLog);
+		setCheckBoxes();
+		
 		shell = new Shell();
 		
 		//Check for root access
@@ -50,15 +48,37 @@ public class MainActivity extends Activity {
 		}
 	}
 	
+	public void onDestroy(){
+		super.onDestroy();
+		
+		if(shell != null){
+			shell.exit();
+		}
+	}
+	
 	
 	public void onResume(){
 		super.onResume();
+		
+		if(shell == null){
+			shell = new Shell();
+		}
 		
 		//Load the logging options
 		SharedPreferences prefs = getPreferences(Activity.MODE_PRIVATE);
 		kernelLog = prefs.getBoolean("kerel", true);
 		mainLog = prefs.getBoolean("main", true);
 		modemLog = prefs.getBoolean("modem", true);
+		setCheckBoxes();
+	}
+	
+	private void setCheckBoxes(){
+		CheckBox box = (CheckBox) findViewById(R.id.kernel_log);
+		box.setChecked(kernelLog);
+		box = (CheckBox) findViewById(R.id.main_log);
+		box.setChecked(mainLog);
+		box = (CheckBox) findViewById(R.id.modem_log);
+		box.setChecked(modemLog);
 	}
 	
 	/**
@@ -104,7 +124,7 @@ public class MainActivity extends Activity {
 	}
 	
 	private class LogTask extends AsyncTask<Void, Void, Boolean> {
-		
+		private String toShare;
 		
 		protected void onPreExecute(){
 			dialog = ProgressDialog.show(MainActivity.this, "", getResources().getString(R.string.working));
@@ -115,6 +135,11 @@ public class MainActivity extends Activity {
 		 */
 		protected Boolean doInBackground(Void... params) {
 			if (Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState())) {
+				//Check the shell
+				if(shell == null){
+					shell = new Shell();
+				}
+				
 				//Create the directories
 			    String path = Environment.getExternalStorageDirectory().getPath();
 			    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd_HH.mm", Locale.US);
@@ -141,9 +166,10 @@ public class MainActivity extends Activity {
 			    shell.exec("cd "+path);
 			    
 			    //Compress them
-			    shell.exec("tar -cf "+path+"logs.tar *");
+			    shell.exec("tar -cf "+path+"logs-"+sdf.format(date)+".tar *");
 			    
-			    //TODO: Figure out how to create a share dialog
+			    //Save the path to share
+			    toShare = path+"logs.tar";
 			    
 				return true;
 			}
@@ -154,6 +180,13 @@ public class MainActivity extends Activity {
 			dialog.dismiss();
 			if(result){
 				Toast.makeText(getBaseContext(), R.string.done, Toast.LENGTH_SHORT).show();
+				
+				//Display a share intent
+				Intent share = new Intent(android.content.Intent.ACTION_SEND);
+				share.setType("application/x-tar");
+				share.putExtra(Intent.EXTRA_STREAM, "file://"+toShare);
+				
+				startActivity(share);
 			} else {
 				Toast.makeText(getBaseContext(), R.string.error, Toast.LENGTH_LONG).show();
 			}
