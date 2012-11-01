@@ -33,7 +33,7 @@ public class MainActivity extends Activity {
 		
 		//Load the logging options
 		SharedPreferences prefs = getPreferences(Activity.MODE_PRIVATE);
-		kernelLog = prefs.getBoolean("kerel", true);
+		kernelLog = prefs.getBoolean("kernel", true);
 		mainLog = prefs.getBoolean("main", true);
 		modemLog = prefs.getBoolean("modem", true);
 		
@@ -66,7 +66,7 @@ public class MainActivity extends Activity {
 		
 		//Load the logging options
 		SharedPreferences prefs = getPreferences(Activity.MODE_PRIVATE);
-		kernelLog = prefs.getBoolean("kerel", true);
+		kernelLog = prefs.getBoolean("kernel", true);
 		mainLog = prefs.getBoolean("main", true);
 		modemLog = prefs.getBoolean("modem", true);
 		setCheckBoxes();
