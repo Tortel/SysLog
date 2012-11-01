@@ -128,7 +128,7 @@ public class MainActivity extends Activity {
 			    
 			    //Dump the logs
 			    if(kernelLog){
-			    	shell.exec("dmesg > "+path+"dmesg.log");
+			    	shell.exec("dmesg > "+path+"dmesg.log && echo ''");
 			    }
 			    if(mainLog){
 			    	shell.exec("logcat -v time -d -f "+path+"logcat.log");
