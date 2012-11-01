@@ -124,7 +124,7 @@ public class MainActivity extends Activity {
 	}
 	
 	private class LogTask extends AsyncTask<Void, Void, Boolean> {
-		private String toShare;
+		private String tarPath;
 		
 		protected void onPreExecute(){
 			dialog = ProgressDialog.show(MainActivity.this, "", getResources().getString(R.string.working));
@@ -148,7 +148,8 @@ public class MainActivity extends Activity {
 			    File outPath = new File(path);
 			    Log.v(Shell.TAG, "Path: "+path);
 			    if(!outPath.mkdirs()){
-			    	return false;
+			    	//If Java wont do it, just run the command
+			    	shell.exec("mkdir -p "+path);
 			    }
 			    
 			    //Dump the logs
@@ -166,10 +167,10 @@ public class MainActivity extends Activity {
 			    shell.exec("cd "+path);
 			    
 			    //Compress them
-			    shell.exec("tar -cf "+path+"logs-"+sdf.format(date)+".tar *");
+			    tarPath = path+"logs-"+sdf.format(date)+".tar";
 			    
-			    //Save the path to share
-			    toShare = path+"logs.tar";
+			    shell.exec("tar -cf "+tarPath+" *.log");
+			    
 			    
 				return true;
 			}
@@ -184,7 +185,7 @@ public class MainActivity extends Activity {
 				//Display a share intent
 				Intent share = new Intent(android.content.Intent.ACTION_SEND);
 				share.setType("application/x-tar");
-				share.putExtra(Intent.EXTRA_STREAM, "file://"+toShare);
+				share.putExtra(Intent.EXTRA_STREAM, Uri.parse("file://"+tarPath));
 				
 				startActivity(share);
 			} else {
