@@ -7,3 +7,6 @@ Some plans for improvement:
 * Options for tar/zip - Need to do the zip implementation in Java
 * Include a Readme/About activity in the app
 
+
+### Note about Root Access:
+It may not be possible to get the logs without root access. To be investigated later.
