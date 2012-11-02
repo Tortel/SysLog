@@ -16,6 +16,6 @@
     <string name="done">Done!</string>
     <string name="storage_err">External storage error!</string>
     
-    <string name="noroot">Warning: No root access. Logs may be incomplete.</string>
+    <string name="noroot">Warning: No root access. Logs may be incomplete, and kernel logs are not possible.</string>
     <string name="error">Error saving logs. Check your SD card.</string>
 </resources>

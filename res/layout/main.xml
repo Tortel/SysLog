@@ -39,6 +39,16 @@
         android:text="@string/modem_log"
         android:onClick="logChange"/>
     
+    <TextView
+        android:id="@+id/warn_root"
+        android:layout_height="wrap_content"
+        android:layout_width="fill_parent"
+        android:gravity="center"
+        android:padding="5dip"
+        android:text="@string/noroot"
+        android:visibility="gone"
+        android:textStyle="bold|italic" />
+    
     <Button
         android:layout_height="wrap_content"
         android:layout_width="fill_parent"

@@ -17,6 +17,7 @@ import android.os.Environment;
 import android.util.Log;
 import android.view.View;
 import android.widget.CheckBox;
+import android.widget.TextView;
 import android.widget.Toast;
 
 
@@ -37,23 +38,16 @@ public class MainActivity extends Activity {
 		mainLog = prefs.getBoolean("main", true);
 		modemLog = prefs.getBoolean("modem", true);
 		
-		//Set the checkboxes
-		setCheckBoxes();
-		
 		shell = new Shell();
 		
-		//Check for root access
-		if(!shell.root()){
-			Toast.makeText(this, R.string.noroot, Toast.LENGTH_LONG).show();
-		}
+		//Set the checkboxes
+		setCheckBoxes();
 	}
 	
 	public void onDestroy(){
 		super.onDestroy();
 		
-		if(shell != null){
-			shell.exit();
-		}
+		shell = null;
 	}
 	
 	
@@ -73,12 +67,23 @@ public class MainActivity extends Activity {
 	}
 	
 	private void setCheckBoxes(){
-		CheckBox box = (CheckBox) findViewById(R.id.kernel_log);
-		box.setChecked(kernelLog);
-		box = (CheckBox) findViewById(R.id.main_log);
+		CheckBox box = (CheckBox) findViewById(R.id.main_log);
 		box.setChecked(mainLog);
 		box = (CheckBox) findViewById(R.id.modem_log);
 		box.setChecked(modemLog);
+		box = (CheckBox) findViewById(R.id.kernel_log);
+		
+		//Check for root access
+		if(!shell.root()){
+			//Warn and disable kernel logs
+			TextView noRoot = (TextView) findViewById(R.id.warn_root);
+			noRoot.setVisibility(View.VISIBLE);
+			kernelLog = false;
+			
+			box.setEnabled(false);
+		}
+		
+		box.setChecked(kernelLog);
 	}
 	
 	/**
