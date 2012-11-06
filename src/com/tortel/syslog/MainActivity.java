@@ -158,7 +158,7 @@ public class MainActivity extends Activity {
 	}
 	
 	private class LogTask extends AsyncTask<Void, Void, Boolean> {
-		private String tarPath;
+		private String archivePath;
 		
 		protected void onPreExecute(){
 			dialog = ProgressDialog.show(MainActivity.this, "", getResources().getString(R.string.working));
@@ -201,10 +201,22 @@ public class MainActivity extends Activity {
 			    shell.exec("cd "+path);
 			    
 			    //Compress them
-			    tarPath = path+"logs-"+sdf.format(date)+".tar";
+			    //archivePath = path+"logs-"+sdf.format(date)+".tar";
+			    //shell.exec("tar -cf "+tarPath+" *.log");
 			    
-			    shell.exec("tar -cf "+tarPath+" *.log");
+			    //Wait for the files to be written
+			    //TODO: Determine when the files are done being written, then zip
+			    try{
+			    	Thread.sleep(4000);
+			    } catch(Exception e){
+			    	//Ignore it
+			    }
 			    
+			    archivePath = sdf.format(date)+".zip";
+			    ZipWriter writer = new ZipWriter(path, archivePath);
+			    writer.createZip();
+
+			    archivePath = path+archivePath;
 			    
 				return true;
 			}
@@ -218,8 +230,9 @@ public class MainActivity extends Activity {
 				
 				//Display a share intent
 				Intent share = new Intent(android.content.Intent.ACTION_SEND);
-				share.setType("application/x-tar");
-				share.putExtra(Intent.EXTRA_STREAM, Uri.parse("file://"+tarPath));
+				//share.setType("application/x-tar");
+				share.setType("application/zip");
+				share.putExtra(Intent.EXTRA_STREAM, Uri.parse("file://"+archivePath));
 				
 				startActivity(share);
 			} else {
