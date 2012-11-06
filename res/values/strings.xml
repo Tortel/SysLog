@@ -18,4 +18,10 @@
     
     <string name="noroot">Warning: No root access. Logs may be incomplete, and kernel logs are not possible.</string>
     <string name="error">Error saving logs. Check your SD card.</string>
+    
+    <string name="about">About</string>
+    <string name="information">This is a simple application that takes the system logs via dmesg and logcat,
+and saves them to the primary external storage under SysLog/&lt;Date-Time&gt;, compresses them, and lets you upload/email them.
+Root access is required for 4.1+ to access the full logs, and for kernel logs.</string>
+	<string name="close">Close</string>
 </resources>

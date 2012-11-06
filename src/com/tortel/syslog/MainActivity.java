@@ -6,6 +6,7 @@ import java.util.Date;
 import java.util.Locale;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -15,6 +16,9 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.TextView;
@@ -50,7 +54,6 @@ public class MainActivity extends Activity {
 		shell = null;
 	}
 	
-	
 	public void onResume(){
 		super.onResume();
 		
@@ -64,6 +67,32 @@ public class MainActivity extends Activity {
 		mainLog = prefs.getBoolean("main", true);
 		modemLog = prefs.getBoolean("modem", true);
 		setCheckBoxes();
+	}
+	
+	public boolean onCreateOptionsMenu(Menu menu){
+		MenuInflater inflater = getMenuInflater();
+		inflater.inflate(R.menu.main_menu, menu);
+		return true;
+	}
+	
+	public boolean onOptionsItemSelected(MenuItem item){
+		switch(item.getItemId()){
+		case R.id.about:
+			showAboutDialog();
+			return true;
+		default:
+			return super.onOptionsItemSelected(item);
+		}
+	}
+	
+	private void showAboutDialog(){
+		AlertDialog.Builder builder = new AlertDialog.Builder(this);
+		builder.setMessage(R.string.information).setTitle(R.string.app_name);
+		
+		builder.setPositiveButton(R.string.close, null);
+		
+		AlertDialog dialog = builder.create();
+		dialog.show();
 	}
 	
 	private void setCheckBoxes(){
