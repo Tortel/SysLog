@@ -6,7 +6,7 @@ The logs are saved under the primary external storage folders named by the date 
 Some plans for improvement:
 * Options for tar/zip - Need to do the zip implementation in Java. May stop using tar completely
 
-DoneL
+Done:
 * Readme/About dialog
 
 
