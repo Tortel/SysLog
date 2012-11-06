@@ -4,10 +4,11 @@ This is a simple application that records various log types, and compresses them
 The logs are saved under the primary external storage folders named by the date and time.  
 
 Some plans for improvement:
-* Options for tar/zip - Need to do the zip implementation in Java. May stop using tar completely
+* Figure out when log files are done being written.
 
 Done:
 * Readme/About dialog
+* Switch to Zip compression
 
 
 ### Note about Root Access:
