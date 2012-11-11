@@ -197,20 +197,11 @@ public class MainActivity extends Activity {
 			    	shell.exec("logcat -v time -b radio -d -f "+path+"modem.log");
 			    }
 			    
-			    //Change directory
-			    shell.exec("cd "+path);
-			    
-			    //Compress them
-			    //archivePath = path+"logs-"+sdf.format(date)+".tar";
-			    //shell.exec("tar -cf "+tarPath+" *.log");
-			    
 			    //Wait for the files to be written
-			    //TODO: Determine when the files are done being written, then zip
-			    try{
-			    	Thread.sleep(4000);
-			    } catch(Exception e){
-			    	//Ignore it
-			    }
+			    shell.exit();
+			    
+			    //Re-initialize the shell
+			    shell = new Shell();
 			    
 			    archivePath = sdf.format(date)+".zip";
 			    ZipWriter writer = new ZipWriter(path, archivePath);
