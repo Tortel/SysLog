@@ -205,11 +205,9 @@ public class MainActivity extends Activity {
 			    
 			    archivePath = sdf.format(date)+".zip";
 			    ZipWriter writer = new ZipWriter(path, archivePath);
-			    writer.createZip();
-
 			    archivePath = path+archivePath;
-			    
-				return true;
+
+			    return writer.createZip();
 			}
 			return false;
 		}

@@ -17,6 +17,10 @@ public class ZipWriter {
 		//Get the folder
 		File outFolder = new File(outPath);
 		files = outFolder.listFiles();
+		if(files.length == 0){
+			Log.e("SysLog", "Error - no files to zip.");
+			return;
+		}
 		for(File cur: files){
 			Log.v("SysLog", "File to be zipped: "+cur.getPath());
 		}
@@ -27,7 +31,7 @@ public class ZipWriter {
 		}
 	}
 	
-	public void createZip(){
+	public boolean createZip(){
 		for(int i=0; i < files.length; i++){
 			File cur = files[i];
 
@@ -53,14 +57,19 @@ public class ZipWriter {
 				reader.close();
 			} catch(IOException e){
 				e.printStackTrace();
-				}
+			}
 		}
 		
-		try {
-			zWriter.close();
-		} catch (IOException e) {
-			e.printStackTrace();
+		if(zWriter != null){
+			try {
+				zWriter.close();
+				return true;
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		}
+
+		return false;
 	}
 	
 }
