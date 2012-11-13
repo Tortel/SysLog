@@ -64,17 +64,23 @@ public class Shell {
 	 */
 	public void exec(String cmd){
 		if(D) Log.d(TAG,"Running:  "+cmd);
-		try {
-			if(D){
-				os.writeBytes(cmd+" &> /sdcard/SysLog.log\n\n");
-			} else {
+		if(root){
+			try {
 				os.writeBytes(cmd+" \n");
+				os.flush();
+			} catch (IOException e) {
+				Log.e(TAG,"Error: "+e.toString(), e);
 			}
-			os.flush();
-			
-			
-		} catch (IOException e) {
-			Log.e(TAG,"Error: "+e.toString(), e);
+		} else {
+			//No root, just try and run it
+			try {
+				p = Runtime.getRuntime().exec(cmd);
+				p.waitFor();
+			} catch (IOException e) {
+				e.printStackTrace();
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
 		}
 	}
 	
@@ -82,19 +88,21 @@ public class Shell {
 	 * Closes the shell object
 	 */
 	public void exit(){
-		try {
-			os.writeBytes("exit\n");
-			os.flush();
-			p.waitFor();
-			if(D && p.exitValue() != 255){
-				Log.d(TAG,"Sucess");
+		//Without root access, no shell is kept open
+		if(root){
+			try {
+				os.writeBytes("exit\n");
+				os.flush();
+				p.waitFor();
+				if(D && p.exitValue() != 255){
+					Log.d(TAG,"Sucess");
+				}
+			} catch (IOException e) {
+				Log.e(TAG,"Error: "+e.toString(),e);
+			} catch (InterruptedException e) {
+				Log.e(TAG,"Error: "+e.toString(),e);
 			}
-		} catch (IOException e) {
-			Log.e(TAG,"Error: "+e.toString(),e);
-		} catch (InterruptedException e) {
-			Log.e(TAG,"Error: "+e.toString(),e);
 		}
-		
 	}
 
 	public boolean root() {
