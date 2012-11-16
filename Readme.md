@@ -5,7 +5,8 @@ The logs are saved under the primary external storage folders named by the date 
 
 Some plans for improvement:
 * Improve root-less operation. (Useless on 4.1+ without root, but I may start lowering the min API level and checking it down to 2.3)
-* dmesg without root should work with pre-3.0 kernels, need to check it or always allow it
+* dmsg without root should work with pre-3.0 kernels, need to check it or always allow it
+* Add last_kmsg support
 
 Done:
 * Readme/About dialog
