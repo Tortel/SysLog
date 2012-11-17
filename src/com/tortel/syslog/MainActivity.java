@@ -101,18 +101,14 @@ public class MainActivity extends Activity {
 		box = (CheckBox) findViewById(R.id.modem_log);
 		box.setChecked(modemLog);
 		box = (CheckBox) findViewById(R.id.kernel_log);
+		box.setChecked(kernelLog);
 		
 		//Check for root access
 		if(!shell.root()){
-			//Warn and disable kernel logs
+			//Warn the user for < 4.1
 			TextView noRoot = (TextView) findViewById(R.id.warn_root);
 			noRoot.setVisibility(View.VISIBLE);
-			kernelLog = false;
-			
-			box.setEnabled(false);
 		}
-		
-		box.setChecked(kernelLog);
 	}
 	
 	/**

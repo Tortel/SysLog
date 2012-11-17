@@ -16,12 +16,14 @@
     <string name="done">Done!</string>
     <string name="storage_err">External storage error!</string>
     
-    <string name="noroot">Warning: No root access. Logs may be incomplete, and kernel logs are not possible.</string>
+    <string name="noroot">Warning: No root access. Logs may be incomplete or missing.</string>
+    <string name="noroot_jb">Warning: No root access. Without root, it is not possible to get system or modem logs, 
+and also may not be possible to get kernel logs.</string>
     <string name="error">Error saving logs. Check your SD card.</string>
     
     <string name="about">About</string>
     <string name="information">This is a simple application that takes the system logs via dmesg and logcat,
 and saves them to the primary external storage under SysLog/&lt;Date-Time&gt;, compresses them, and lets you upload/email them.
-Root access is required for 4.1+ to access the full logs, and for kernel logs.</string>
+\nRoot access is required for 4.1+ to access the full logs, and in some cases for kernel logs.</string>
 	<string name="close">Close</string>
 </resources>
