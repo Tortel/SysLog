@@ -27,6 +27,7 @@ import android.widget.Toast;
 
 public class MainActivity extends Activity {
 	private boolean kernelLog;
+	private boolean lastKmsg;
 	private boolean mainLog;
 	private boolean modemLog;
 	private ProgressDialog dialog;
@@ -41,6 +42,7 @@ public class MainActivity extends Activity {
 		kernelLog = prefs.getBoolean("kernel", true);
 		mainLog = prefs.getBoolean("main", true);
 		modemLog = prefs.getBoolean("modem", true);
+		lastKmsg = prefs.getBoolean("lastKmsg", true);
 		
 		shell = new Shell();
 		
@@ -66,6 +68,7 @@ public class MainActivity extends Activity {
 		kernelLog = prefs.getBoolean("kernel", true);
 		mainLog = prefs.getBoolean("main", true);
 		modemLog = prefs.getBoolean("modem", true);
+		lastKmsg = prefs.getBoolean("lastKmsg", true);
 		setCheckBoxes();
 	}
 	
@@ -102,12 +105,18 @@ public class MainActivity extends Activity {
 		box.setChecked(modemLog);
 		box = (CheckBox) findViewById(R.id.kernel_log);
 		box.setChecked(kernelLog);
+		box = (CheckBox) findViewById(R.id.last_kmsg);
+		box.setChecked(lastKmsg);
 		
 		//Check for root access
 		if(!shell.root()){
-			//Warn the user for < 4.1
+			//Warn the user
 			TextView noRoot = (TextView) findViewById(R.id.warn_root);
 			noRoot.setVisibility(View.VISIBLE);
+			if(android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.JELLY_BEAN){
+				//JB and higher needs a different warning
+				noRoot.setText(R.string.noroot_jb);
+			}
 		}
 	}
 	
@@ -124,6 +133,10 @@ public class MainActivity extends Activity {
 		case R.id.kernel_log:
 			kernelLog = box.isChecked();
 			prefs.putBoolean("kernel", kernelLog);
+			break;
+		case R.id.last_kmsg:
+			lastKmsg = box.isChecked();
+			prefs.putBoolean("lastKmsg", lastKmsg);
 			break;
 		case R.id.main_log:
 			mainLog = box.isChecked();
@@ -183,6 +196,10 @@ public class MainActivity extends Activity {
 			    }
 			    
 			    //Dump the logs
+			    if(lastKmsg){
+			    	//Try coping the last_kmsg over
+			    	shell.exec("cp /proc/last_kmsg "+path+"last_kmsg.log");
+			    }
 			    if(kernelLog){
 			    	shell.exec("dmesg > "+path+"dmesg.log && echo ''");
 			    }

@@ -7,6 +7,7 @@
     <string name="log_select">Select log types:</string>
     <string name="main_log">Main Log</string>
     <string name="kernel_log">Kernel Log</string>
+    <string name="last_kmsg">Last Kernel Log</string>
     <string name="modem_log">Modem Log</string>
     
     <string name="take_log">Take Log</string>
@@ -18,7 +19,7 @@
     
     <string name="noroot">Warning: No root access. Logs may be incomplete or missing.</string>
     <string name="noroot_jb">Warning: No root access. Without root, it is not possible to get system or modem logs, 
-and also may not be possible to get kernel logs.</string>
+and with some 3.x kernels it also may not be able to get kernel logs.</string>
     <string name="error">Error saving logs. Check your SD card.</string>
     
     <string name="about">About</string>
