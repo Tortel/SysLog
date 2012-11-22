@@ -20,6 +20,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -44,7 +45,8 @@ public class MainActivity extends Activity {
 		modemLog = prefs.getBoolean("modem", true);
 		lastKmsg = prefs.getBoolean("lastKmsg", true);
 		
-		shell = new Shell();
+		//Create a new shell object
+		new ShellTask().execute();
 		
 		//Set the checkboxes
 		setCheckBoxes();
@@ -58,10 +60,6 @@ public class MainActivity extends Activity {
 	
 	public void onResume(){
 		super.onResume();
-		
-		if(shell == null){
-			shell = new Shell();
-		}
 		
 		//Load the logging options
 		SharedPreferences prefs = getPreferences(Activity.MODE_PRIVATE);
@@ -107,17 +105,6 @@ public class MainActivity extends Activity {
 		box.setChecked(kernelLog);
 		box = (CheckBox) findViewById(R.id.last_kmsg);
 		box.setChecked(lastKmsg);
-		
-		//Check for root access
-		if(!shell.root()){
-			//Warn the user
-			TextView noRoot = (TextView) findViewById(R.id.warn_root);
-			noRoot.setVisibility(View.VISIBLE);
-			if(android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.JELLY_BEAN){
-				//JB and higher needs a different warning
-				noRoot.setText(R.string.noroot_jb);
-			}
-		}
 	}
 	
 	/**
@@ -162,6 +149,31 @@ public class MainActivity extends Activity {
 			new LogTask().execute();
 		} else {
 			Toast.makeText(this, R.string.storage_err, Toast.LENGTH_LONG).show();
+		}
+		
+	}
+	
+	private class ShellTask extends AsyncTask<Void, Void, Boolean>{
+
+		protected Boolean doInBackground(Void... params) {
+			shell = new Shell();
+			return shell.root();
+		}
+		
+		protected void onPostExecute(Boolean root){
+			//Check for root access
+			if(!root){
+				//Warn the user
+				TextView noRoot = (TextView) findViewById(R.id.warn_root);
+				noRoot.setVisibility(View.VISIBLE);
+				if(android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.JELLY_BEAN){
+					//JB and higher needs a different warning
+					noRoot.setText(R.string.noroot_jb);
+				}
+			}
+			
+			Button button = (Button) findViewById(R.id.take_log);
+			button.setEnabled(true);
 		}
 		
 	}
