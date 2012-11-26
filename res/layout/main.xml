@@ -57,10 +57,12 @@
         android:textStyle="bold|italic" />
     
     <Button
+        android:id="@+id/take_log"
         android:layout_height="wrap_content"
         android:layout_width="fill_parent"
         android:padding="5dip"
         android:text="@string/take_log"
-        android:onClick="startLog" />
+        android:onClick="startLog"
+        android:enabled="false" />
     
 </LinearLayout>
