@@ -2,6 +2,7 @@ package com.tortel.syslog;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
 
@@ -25,14 +26,16 @@ import android.widget.CheckBox;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import eu.chainfire.libsuperuser.Shell;
 
 public class MainActivity extends Activity {
+	private static final String TAG = "SysLog";
+
 	private boolean kernelLog;
 	private boolean lastKmsg;
 	private boolean mainLog;
 	private boolean modemLog;
 	private ProgressDialog dialog;
-	private Shell shell;
 	
 	public void onCreate(Bundle savedInstanceState){
 		super.onCreate(savedInstanceState);
@@ -46,16 +49,10 @@ public class MainActivity extends Activity {
 		lastKmsg = prefs.getBoolean("lastKmsg", true);
 		
 		//Create a new shell object
-		new ShellTask().execute();
+		new CheckRootTask().execute();
 		
 		//Set the checkboxes
 		setCheckBoxes();
-	}
-	
-	public void onDestroy(){
-		super.onDestroy();
-		
-		shell = null;
 	}
 	
 	public void onResume(){
@@ -153,11 +150,10 @@ public class MainActivity extends Activity {
 		
 	}
 	
-	private class ShellTask extends AsyncTask<Void, Void, Boolean>{
+	private class CheckRootTask extends AsyncTask<Void, Void, Boolean>{
 
 		protected Boolean doInBackground(Void... params) {
-			shell = new Shell();
-			return shell.root();
+			return Shell.SU.available();
 		}
 		
 		protected void onPostExecute(Boolean root){
@@ -190,10 +186,8 @@ public class MainActivity extends Activity {
 		 */
 		protected Boolean doInBackground(Void... params) {
 			if (Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState())) {
-				//Check the shell
-				if(shell == null){
-					shell = new Shell();
-				}
+				//Commands to execute
+				ArrayList<String> commands = new ArrayList<String>(5);
 				
 				//Create the directories
 			    String path = Environment.getExternalStorageDirectory().getPath();
@@ -201,32 +195,29 @@ public class MainActivity extends Activity {
 			    Date date = new Date();
 				path += "/SysLog/"+sdf.format(date)+"/";
 			    File outPath = new File(path);
-			    Log.v(Shell.TAG, "Path: "+path);
+			    Log.v(TAG, "Path: "+path);
 			    if(!outPath.mkdirs()){
 			    	//If Java wont do it, just run the command
-			    	shell.exec("mkdir -p "+path);
+			    	commands.add("mkdir -p "+path);
 			    }
 			    
 			    //Dump the logs
 			    if(lastKmsg){
 			    	//Try coping the last_kmsg over
-			    	shell.exec("cp /proc/last_kmsg "+path+"last_kmsg.log");
+			    	commands.add("cp /proc/last_kmsg "+path+"last_kmsg.log");
 			    }
 			    if(kernelLog){
-			    	shell.exec("dmesg > "+path+"dmesg.log && echo ''");
+			    	commands.add("dmesg > "+path+"dmesg.log && echo ''");
 			    }
 			    if(mainLog){
-			    	shell.exec("logcat -v time -d -f "+path+"logcat.log");
+			    	commands.add("logcat -v time -d -f "+path+"logcat.log");
 			    }
 			    if(modemLog){
-			    	shell.exec("logcat -v time -b radio -d -f "+path+"modem.log");
+			    	commands.add("logcat -v time -b radio -d -f "+path+"modem.log");
 			    }
 			    
-			    //Wait for the files to be written
-			    shell.exit();
-			    
-			    //Re-initialize the shell
-			    shell = new Shell();
+			    //Run the commands
+			    Shell.SU.run(commands);
 			    
 			    archivePath = sdf.format(date)+".zip";
 			    ZipWriter writer = new ZipWriter(path, archivePath);
