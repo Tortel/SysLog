@@ -17,6 +17,7 @@
     <string name="done">Done!</string>
     <string name="storage_err">External storage error!</string>
     
+    <string name="checking_root">Checking root access&#8230;</string>
     <string name="noroot">Warning: No root access. Logs may be incomplete or missing.</string>
     <string name="noroot_jb">Warning: No root access. Without root, it is not possible to get system or modem logs, 
 and with some 3.x kernels it also may not be able to get kernel logs.</string>
@@ -27,4 +28,8 @@ and with some 3.x kernels it also may not be able to get kernel logs.</string>
 and saves them to the primary external storage under SysLog/&lt;Date-Time&gt;, compresses them, and lets you upload/email them.
 \nRoot access is required for 4.1+ to access the full logs, and in some cases for kernel logs.</string>
 	<string name="close">Close</string>
+	
+	<string name="optional_info">Optional Information:</string>
+	<string name="file_name">Text to append to file name</string>
+	<string name="notes">Notes to include in the zip file</string>
 </resources>

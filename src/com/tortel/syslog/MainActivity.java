@@ -1,6 +1,7 @@
 package com.tortel.syslog;
 
 import java.io.File;
+import java.io.FileWriter;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -23,6 +24,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -36,6 +38,8 @@ public class MainActivity extends Activity {
 	private boolean mainLog;
 	private boolean modemLog;
 	private ProgressDialog dialog;
+	private EditText fileEditText;
+	private EditText notesEditText;
 	
 	public void onCreate(Bundle savedInstanceState){
 		super.onCreate(savedInstanceState);
@@ -47,6 +51,9 @@ public class MainActivity extends Activity {
 		mainLog = prefs.getBoolean("main", true);
 		modemLog = prefs.getBoolean("modem", true);
 		lastKmsg = prefs.getBoolean("lastKmsg", true);
+		
+		fileEditText = (EditText) findViewById(R.id.file_name);
+		notesEditText = (EditText) findViewById(R.id.notes);
 		
 		//Create a new shell object
 		new CheckRootTask().execute();
@@ -64,6 +71,9 @@ public class MainActivity extends Activity {
 		mainLog = prefs.getBoolean("main", true);
 		modemLog = prefs.getBoolean("modem", true);
 		lastKmsg = prefs.getBoolean("lastKmsg", true);
+		fileEditText = (EditText) findViewById(R.id.file_name);
+		notesEditText = (EditText) findViewById(R.id.notes);
+		
 		setCheckBoxes();
 	}
 	
@@ -170,6 +180,7 @@ public class MainActivity extends Activity {
 			
 			Button button = (Button) findViewById(R.id.take_log);
 			button.setEnabled(true);
+			button.setText(R.string.take_log);
 		}
 		
 	}
@@ -189,6 +200,10 @@ public class MainActivity extends Activity {
 				//Commands to execute
 				ArrayList<String> commands = new ArrayList<String>(5);
 				
+				//Get the notes and string to append to file name
+				String fileAppend = fileEditText.getText().toString().trim();
+				String notes = notesEditText.getText().toString();
+				
 				//Create the directories
 			    String path = Environment.getExternalStorageDirectory().getPath();
 			    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd_HH.mm", Locale.US);
@@ -201,9 +216,9 @@ public class MainActivity extends Activity {
 			    	commands.add("mkdir -p "+path);
 			    }
 			    
-			    //Dump the logs
+			    //Commands to dump the logs
 			    if(lastKmsg){
-			    	//Try coping the last_kmsg over
+			    	//Try copying the last_kmsg over
 			    	commands.add("cp /proc/last_kmsg "+path+"last_kmsg.log");
 			    }
 			    if(kernelLog){
@@ -219,7 +234,24 @@ public class MainActivity extends Activity {
 			    //Run the commands
 			    Shell.SU.run(commands);
 			    
-			    archivePath = sdf.format(date)+".zip";
+			    //If there are notes, write them to a notes file
+			    if(notes.length() > 0){
+			    	File noteFile = new File(path+"/notes.txt");
+			    	try{
+			    		FileWriter writer = new FileWriter(noteFile);
+			    		writer.write(notes);
+			    		writer.close();
+			    	} catch(Exception e){
+			    		Log.e(TAG, "Exception writing notes", e);
+			    	}
+			    }
+			    
+			    //Append the users input into the zip
+			    if(fileAppend.length() > 0){
+			    	archivePath = sdf.format(date)+"-"+fileAppend+".zip";
+			    } else {
+			    	archivePath = sdf.format(date)+".zip";
+			    }
 			    ZipWriter writer = new ZipWriter(path, archivePath);
 			    archivePath = path+archivePath;
 
@@ -243,6 +275,9 @@ public class MainActivity extends Activity {
 			} else {
 				Toast.makeText(getBaseContext(), R.string.error, Toast.LENGTH_LONG).show();
 			}
+			
+			fileEditText.setText("");
+			notesEditText.setText("");
 		}
 		
 	}

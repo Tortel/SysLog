@@ -61,8 +61,30 @@
         android:layout_height="wrap_content"
         android:layout_width="fill_parent"
         android:padding="5dip"
-        android:text="@string/take_log"
+        android:text="@string/checking_root"
         android:onClick="startLog"
         android:enabled="false" />
+    
+    <TextView
+        android:layout_height="wrap_content"
+        android:layout_width="fill_parent"
+        android:padding="5dip"
+        android:text="@string/optional_info" />
+    
+    <EditText
+        android:id="@+id/file_name"
+        android:layout_height="wrap_content"
+        android:layout_width="fill_parent"
+        android:padding="5dip"
+        android:maxLength="10"
+        android:hint="@string/file_name" />
+
+    <EditText
+        android:id="@+id/notes"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:padding="5dip"
+        android:inputType="textCapSentences|textAutoCorrect|textMultiLine"
+        android:hint="@string/notes" />
     
 </LinearLayout>
