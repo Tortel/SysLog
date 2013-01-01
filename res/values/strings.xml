@@ -1,35 +1,39 @@
 <resources>
     <string name="app_name">System Logger</string>
     
-    
+    <!-- Strings in the activity -->
     <string name="desc">This application will save the logs, compress them, and let you upload them easily.</string>
-    
     <string name="log_select">Select log types:</string>
     <string name="main_log">Main Log</string>
     <string name="kernel_log">Kernel Log</string>
     <string name="last_kmsg">Last Kernel Log</string>
     <string name="modem_log">Modem Log</string>
-    
     <string name="take_log">Take Log</string>
     
+    <string name="optional_info">Optional Information:</string>
+	<string name="file_name">Text to append to file name</string>
+	<string name="notes">Notes to include in the zip file</string>
+    
+    <!-- Status messages -->
     <string name="working">Working&#8230;</string>
-    
     <string name="done">Done!</string>
-    <string name="storage_err">External storage error!</string>
-    
     <string name="checking_root">Checking root access&#8230;</string>
+    <string name="close">Close</string>
+    
+    <!-- Warnings/Errors -->
     <string name="noroot">Warning: No root access. Logs may be incomplete or missing.</string>
     <string name="noroot_jb">Warning: No root access. Without root, it is not possible to get system or modem logs, 
 and with some 3.x kernels it also may not be able to get kernel logs.</string>
     <string name="error">Error saving logs. Check your SD card.</string>
+    <string name="storage_err">External storage error!</string>
     
-    <string name="about">About</string>
+    <!-- Information/About strings -->
     <string name="information">This is a simple application that takes the system logs via dmesg and logcat,
 and saves them to the primary external storage under SysLog/&lt;Date-Time&gt;, compresses them, and lets you upload/email them.
 \nRoot access is required for 4.1+ to access the full logs, and in some cases for kernel logs.</string>
-	<string name="close">Close</string>
 	
-	<string name="optional_info">Optional Information:</string>
-	<string name="file_name">Text to append to file name</string>
-	<string name="notes">Notes to include in the zip file</string>
+	<!-- Menu Strings -->
+	<string name="about">About</string>
+	<string name="clean_uncompressed">Clean Uncompressed Logs</string>
+	<string name="clean_all">Clean All Logs</string>
 </resources>

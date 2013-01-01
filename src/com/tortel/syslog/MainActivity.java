@@ -85,6 +85,12 @@ public class MainActivity extends Activity {
 	
 	public boolean onOptionsItemSelected(MenuItem item){
 		switch(item.getItemId()){
+		case R.id.clean_uncompressed:
+			new CleanUncompressedTask().execute();
+			return true;
+		case R.id.clean_all:
+			new CleanAllTask().execute();
+			return true;
 		case R.id.about:
 			showAboutDialog();
 			return true;
@@ -157,7 +163,36 @@ public class MainActivity extends Activity {
 		} else {
 			Toast.makeText(this, R.string.storage_err, Toast.LENGTH_LONG).show();
 		}
+	}
+	
+	private class CleanAllTask extends AsyncTask<Void, Void, Void>{
+		protected Void doInBackground(Void... params) {
+			String path = Environment.getExternalStorageDirectory().getPath();
+			path += "/SysLog/*";
+			Shell.SH.run("rm -rf "+path);
+			return null;
+		}
 		
+		protected void onPostExecute(Void param){
+			Toast.makeText(getBaseContext(), R.string.done, Toast.LENGTH_SHORT).show();
+		}
+	}
+	
+	private class CleanUncompressedTask extends AsyncTask<Void, Void, Void>{
+		protected Void doInBackground(Void... params) {
+			String path = Environment.getExternalStorageDirectory().getPath();
+			path += "/SysLog/*/";
+			//All the log files end in .log, and there are also notes.txt files
+			String commands[] = new String[2];
+			commands[0] = "rm "+path+"*.log";
+			commands[1] = "rm "+path+"*.txt";
+			Shell.SH.run(commands);
+			return null;
+		}
+		
+		protected void onPostExecute(Void param){
+			Toast.makeText(getBaseContext(), R.string.done, Toast.LENGTH_SHORT).show();
+		}
 	}
 	
 	private class CheckRootTask extends AsyncTask<Void, Void, Boolean>{

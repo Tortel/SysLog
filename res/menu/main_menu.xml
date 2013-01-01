@@ -1,5 +1,15 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
+    <item 
+        android:id="@+id/clean_uncompressed"
+        android:title="@string/clean_uncompressed"
+        android:showAsAction="never" />
+
+    <item
+        android:id="@+id/clean_all"
+        android:title="@string/clean_all"
+    	android:showAsAction="never" />
+
     <item android:id="@+id/about"
         android:title="@string/about"
         android:showAsAction="never" />
