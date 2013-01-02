@@ -54,6 +54,7 @@ public class MainActivity extends Activity {
 	private boolean lastKmsg;
 	private boolean mainLog;
 	private boolean modemLog;
+	private boolean root;
 	private ProgressDialog dialog;
 	private EditText fileEditText;
 	private EditText notesEditText;
@@ -215,7 +216,8 @@ public class MainActivity extends Activity {
 	private class CheckRootTask extends AsyncTask<Void, Void, Boolean>{
 
 		protected Boolean doInBackground(Void... params) {
-			return Shell.SU.available();
+			root = Shell.SU.available();
+			return root;
 		}
 		
 		protected void onPostExecute(Boolean root){
@@ -284,7 +286,11 @@ public class MainActivity extends Activity {
 			    }
 			    
 			    //Run the commands
-			    Shell.SU.run(commands);
+			    if(root){
+			    	Shell.SU.run(commands);
+			    } else {
+			    	Shell.SH.run(commands);
+			    }
 			    
 			    //If there are notes, write them to a notes file
 			    if(notes.length() > 0){
