@@ -27,6 +27,7 @@ import java.util.Locale;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
@@ -34,6 +35,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
+import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -49,6 +51,7 @@ import eu.chainfire.libsuperuser.Shell;
 
 public class MainActivity extends Activity {
 	private static final String TAG = "SysLog";
+	private static final String LAST_KMSG = "/proc/last_kmsg";
 
 	private boolean kernelLog;
 	private boolean lastKmsg;
@@ -75,6 +78,8 @@ public class MainActivity extends Activity {
 		
 		//Create a new shell object
 		new CheckRootTask().execute();
+		//Check for last_kmsg and modem
+		new CheckOptionsTask().execute();
 		
 		//Set the checkboxes
 		setCheckBoxes();
@@ -183,6 +188,39 @@ public class MainActivity extends Activity {
 		}
 	}
 	
+	/**
+	 * Checks if options are available, such as last_kmsg or a radio.
+	 * If they are not available, disable the check boxes.
+	 */
+	private class CheckOptionsTask extends AsyncTask<Void, Void, Void>{
+		private boolean hasLastKmsg = false;
+		private boolean hasRadio = false;
+		
+		protected Void doInBackground(Void... params) {
+			File lastKmsg = new File(LAST_KMSG);
+			hasLastKmsg = lastKmsg.exists();
+			TelephonyManager manager = (TelephonyManager)getBaseContext().getSystemService(Context.TELEPHONY_SERVICE);
+			hasRadio = manager.getPhoneType() != TelephonyManager.PHONE_TYPE_NONE;
+			return null;
+		}
+		
+		protected void onPostExecute(Void param){
+			if(!hasLastKmsg){
+				CheckBox lastKmsgBox = (CheckBox) findViewById(R.id.last_kmsg);
+				lastKmsgBox.setChecked(false);
+				lastKmsgBox.setEnabled(false);
+				logChange(lastKmsgBox);
+			}
+			if(!hasRadio){
+				CheckBox modemCheckBox = (CheckBox) findViewById(R.id.modem_log);
+				modemCheckBox.setChecked(false);
+				modemCheckBox.setEnabled(false);
+				logChange(modemCheckBox);
+			}
+		}
+		
+	}
+	
 	private class CleanAllTask extends AsyncTask<Void, Void, Void>{
 		protected Void doInBackground(Void... params) {
 			String path = Environment.getExternalStorageDirectory().getPath();
@@ -273,7 +311,7 @@ public class MainActivity extends Activity {
 			    //Commands to dump the logs
 			    if(lastKmsg){
 			    	//Try copying the last_kmsg over
-			    	commands.add("cp /proc/last_kmsg "+path+"last_kmsg.log");
+			    	commands.add("cp "+LAST_KMSG+" "+path+"last_kmsg.log");
 			    }
 			    if(kernelLog){
 			    	commands.add("dmesg > "+path+"dmesg.log && echo ''");
