@@ -279,6 +279,7 @@ public class MainActivity extends Activity {
 	
 	private class LogTask extends AsyncTask<Void, Void, Boolean> {
 		private String archivePath;
+		private String shortPath;
 		
 		protected void onPreExecute(){
 			dialog = ProgressDialog.show(MainActivity.this, "", getResources().getString(R.string.working));
@@ -350,6 +351,9 @@ public class MainActivity extends Activity {
 			    }
 			    ZipWriter writer = new ZipWriter(path, archivePath);
 			    archivePath = path+archivePath;
+			    //Trim the path for the message
+			    shortPath = path.substring(
+			    		Environment.getExternalStorageDirectory().getPath().length()+1);
 
 			    return writer.createZip();
 			}
@@ -359,7 +363,8 @@ public class MainActivity extends Activity {
 		protected void onPostExecute(Boolean result){
 			dialog.dismiss();
 			if(result){
-				Toast.makeText(getBaseContext(), R.string.done, Toast.LENGTH_SHORT).show();
+				String msg = getResources().getString(R.string.save_path)+shortPath;
+				Toast.makeText(getBaseContext(), msg, Toast.LENGTH_LONG).show();
 				
 				//Display a share intent
 				Intent share = new Intent(android.content.Intent.ACTION_SEND);

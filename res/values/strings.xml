@@ -38,6 +38,7 @@
     <string name="done">Done!</string>
     <string name="checking_root">Checking root access&#8230;</string>
     <string name="close">Close</string>
+    <string name="save_path">Logs saved to sdcard/</string>
     
     <!-- Warnings/Errors -->
     <string name="noroot">Warning: No root access. Logs may be incomplete or missing.</string>
