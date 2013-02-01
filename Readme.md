@@ -4,6 +4,8 @@ This is a simple application that records various log types, and compresses them
 The logs are saved under the primary external storage folders named by the date and time.  
 
 Some plans for improvement:
+* Use compatibility library or ABS to make app consistent for all devices/versions (Just because I have the action overflow forced on doesn't mean that the menu is 
+always there)
 * Add an option to grep logs for a certain string
 * Landscape, damnit. And handle rotation/keyboard
 * Why doesn't it scroll with the virtual keyboard open?
