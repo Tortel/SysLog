@@ -1,3 +1,6 @@
 [submodule "ActionBarSherlock"]
 	path = ActionBarSherlock
 	url = git://github.com/JakeWharton/ActionBarSherlock.git
+[submodule "libsuperuser"]
+	path = libsuperuser
+	url = git://github.com/Chainfire/libsuperuser.git
