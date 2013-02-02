@@ -18,15 +18,24 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 -->
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
-    <item 
-        android:id="@+id/clean_uncompressed"
-        android:title="@string/clean_uncompressed"
-        android:showAsAction="never" />
-    <item
-        android:id="@+id/clean_all"
-        android:title="@string/clean_all"
-    	android:showAsAction="never" />
-    <item android:id="@+id/about"
-        android:title="@string/about"
-        android:showAsAction="never" />
+    <item android:id="@+id/full_menu_settings"
+        android:title="@string/menu_settings"
+        android:showAsAction="always"
+        android:icon="@drawable/abs__ic_menu_moreoverflow_holo_dark">
+        <menu xmlns:android="http://schemas.android.com/apk/res/android" >
+	        <group android:id="@+id/group_popupmenu">
+			    <item 
+			        android:id="@+id/clean_uncompressed"
+			        android:title="@string/clean_uncompressed"
+			        android:showAsAction="never" />
+			    <item
+			        android:id="@+id/clean_all"
+			        android:title="@string/clean_all"
+			    	android:showAsAction="never" />
+			    <item android:id="@+id/about"
+			        android:title="@string/about"
+			        android:showAsAction="never" />
+		    </group>
+	    </menu>
+    </item>
 </menu>

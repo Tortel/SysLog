@@ -24,6 +24,11 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
 
+import com.actionbarsherlock.app.SherlockActivity;
+import com.actionbarsherlock.view.Menu;
+import com.actionbarsherlock.view.MenuInflater;
+import com.actionbarsherlock.view.MenuItem;
+
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
@@ -37,9 +42,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.telephony.TelephonyManager;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -49,7 +52,7 @@ import android.widget.Toast;
 
 import eu.chainfire.libsuperuser.Shell;
 
-public class MainActivity extends Activity {
+public class MainActivity extends SherlockActivity {
 	private static final String TAG = "SysLog";
 	private static final String LAST_KMSG = "/proc/last_kmsg";
 
@@ -61,6 +64,7 @@ public class MainActivity extends Activity {
 	private ProgressDialog dialog;
 	private EditText fileEditText;
 	private EditText notesEditText;
+	private Menu settingsMenu;
 	
 	public void onCreate(Bundle savedInstanceState){
 		super.onCreate(savedInstanceState);
@@ -101,10 +105,20 @@ public class MainActivity extends Activity {
 	}
 	
 	public boolean onCreateOptionsMenu(Menu menu){
-		MenuInflater inflater = getMenuInflater();
+		MenuInflater inflater = getSupportMenuInflater();
 		inflater.inflate(R.menu.main_menu, menu);
+		settingsMenu = menu;
 		return true;
 	}
+	
+    public boolean onKeyUp(int keycode, KeyEvent e) {
+        switch (keycode) {
+        case KeyEvent.KEYCODE_MENU:
+            settingsMenu.performIdentifierAction(R.id.full_menu_settings, 0);
+            return true;
+        }
+        return super.onKeyUp(keycode, e);
+    }
 	
 	public boolean onOptionsItemSelected(MenuItem item){
 		switch(item.getItemId()){

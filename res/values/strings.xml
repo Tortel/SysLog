@@ -60,4 +60,5 @@ This app uses libsuperuser, by Jorrit \'Chainfire\' Jongma, licensed under the A
 	<string name="about">About</string>
 	<string name="clean_uncompressed">Clean Uncompressed Logs</string>
 	<string name="clean_all">Clean All Logs</string>
+	<string name="menu_settings">Settings</string>
 </resources>
