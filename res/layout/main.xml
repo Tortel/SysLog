@@ -17,7 +17,11 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 -->
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    >
+<LinearLayout
     android:layout_height="wrap_content"
     android:layout_width="wrap_content"
     android:orientation="vertical">
@@ -105,3 +109,4 @@
         android:hint="@string/notes" />
     
 </LinearLayout>
+</ScrollView>
