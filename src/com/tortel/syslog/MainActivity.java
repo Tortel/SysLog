@@ -19,6 +19,7 @@ package com.tortel.syslog;
 
 import java.io.File;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -334,12 +335,21 @@ public class MainActivity extends SherlockActivity {
 			    String path = Environment.getExternalStorageDirectory().getPath();
 			    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd_HH.mm", Locale.US);
 			    Date date = new Date();
+			    File nomedia = new File(path+"/SysLog/.nomedia");
 				path += "/SysLog/"+sdf.format(date)+"/";
 			    File outPath = new File(path);
 			    Log.v(TAG, "Path: "+path);
 			    if(!outPath.mkdirs()){
 			    	//If Java wont do it, just run the command
 			    	commands.add("mkdir -p "+path);
+			    }
+			    //Put a .nomedia file in the directory
+			    if(!nomedia.exists()){
+			    	try {
+						nomedia.createNewFile();
+					} catch (IOException e) {
+						Log.e(TAG, "Failed to create .nomedia file", e);
+					}
 			    }
 			    
 			    //Commands to dump the logs
