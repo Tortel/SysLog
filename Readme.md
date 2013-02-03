@@ -5,12 +5,12 @@ The logs are saved under the primary external storage folders named by the date 
 
 Some plans for improvement:
 * Add an option to grep logs for a certain string
-* Landscape, damnit. And handle rotation/keyboard
-* Make sure the SysLog/ dir has a .nomedia file
+* Better landscape layout
 * Improve root-less operation. (Useless on 4.1+ without root, but I may start lowering the min API level and checking it down to 2.3)
-* dmsg without root should work with pre-3.0 kernels, need to check it or always allow it
 
 Done:
+* Make sure the SysLog/ dir has a .nomedia file
+* Handle rotation/keyboard
 * Use compatibility library or ABS to make app consistent for all devices/versions (Just because I have the action overflow forced on doesn't mean that the menu is always there)
 * Clean up the uncompressed log files (Option or pref)
 * Option to clear the past log files
