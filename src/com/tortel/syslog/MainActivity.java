@@ -56,6 +56,9 @@ import eu.chainfire.libsuperuser.Shell;
 public class MainActivity extends SherlockActivity {
 	private static final String TAG = "SysLog";
 	private static final String LAST_KMSG = "/proc/last_kmsg";
+	
+	//Flags for running threads
+	private static boolean running;
 
 	private boolean kernelLog;
 	private boolean lastKmsg;
@@ -91,6 +94,10 @@ public class MainActivity extends SherlockActivity {
 		
 		//Hide the keyboard on open
 		getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
+		
+		if(running){
+			showRunningDialog();
+		}
 	}
 	
 	public void onResume(){
@@ -207,6 +214,13 @@ public class MainActivity extends SherlockActivity {
 	}
 	
 	/**
+	 * Show the running dialog box
+	 */
+	private void showRunningDialog(){
+		dialog = ProgressDialog.show(MainActivity.this, "", getResources().getString(R.string.working));
+	}
+	
+	/**
 	 * Checks if options are available, such as last_kmsg or a radio.
 	 * If they are not available, disable the check boxes.
 	 */
@@ -300,7 +314,8 @@ public class MainActivity extends SherlockActivity {
 		private String shortPath;
 		
 		protected void onPreExecute(){
-			dialog = ProgressDialog.show(MainActivity.this, "", getResources().getString(R.string.working));
+			showRunningDialog();
+			running = true;
 		}
 		
 		/**
@@ -379,7 +394,12 @@ public class MainActivity extends SherlockActivity {
 		}
 		
 		protected void onPostExecute(Boolean result){
-			dialog.dismiss();
+			running = false;
+			try{
+				dialog.dismiss();
+			} catch (Exception e){
+				// Should cover null pointer/leaked view exceptions
+			}
 			if(result){
 				String msg = getResources().getString(R.string.save_path)+shortPath;
 				Toast.makeText(getBaseContext(), msg, Toast.LENGTH_LONG).show();
