@@ -151,6 +151,9 @@ public class MainActivity extends SherlockActivity {
 		}
 	}
 	
+	/**
+	 * Shows the About dialog box
+	 */
 	private void showAboutDialog(){
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
 		builder.setTitle(R.string.app_name);
@@ -158,18 +161,20 @@ public class MainActivity extends SherlockActivity {
 	    View layout = inflater.inflate(R.layout.about, null);
 		
 	    TextView text = (TextView) layout.findViewById(R.id.text);
-	    
+	    //HTML format the about text
 	    text.setText(Html.fromHtml(getResources().getString(R.string.information)));
+	    //This enables clicking the links
 	    text.setMovementMethod(LinkMovementMethod.getInstance());
 	    
 	    builder.setView(layout);
-	    
 		builder.setPositiveButton(R.string.close, null);
-		
 		AlertDialog dialog = builder.create();
 		dialog.show();
 	}
 	
+	/**
+	 * Sets the checkboxes according to what the user selected. 
+	 */
 	private void setCheckBoxes(){
 		CheckBox box = (CheckBox) findViewById(R.id.main_log);
 		box.setChecked(mainLog);
@@ -266,6 +271,9 @@ public class MainActivity extends SherlockActivity {
 		
 	}
 	
+	/**
+	 * Clean all the saved log files
+	 */
 	private class CleanAllTask extends AsyncTask<Void, Void, Void>{
 		protected Void doInBackground(Void... params) {
 			String path = Environment.getExternalStorageDirectory().getPath();
@@ -279,6 +287,9 @@ public class MainActivity extends SherlockActivity {
 		}
 	}
 	
+	/**
+	 * Clean only the uncompressed logs
+	 */
 	private class CleanUncompressedTask extends AsyncTask<Void, Void, Void>{
 		protected Void doInBackground(Void... params) {
 			String path = Environment.getExternalStorageDirectory().getPath();

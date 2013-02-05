@@ -32,6 +32,17 @@
     <string name="optional_info">Optional Information:</string>
 	<string name="file_name">Text to append to file name</string>
 	<string name="notes">Notes to include in the zip file</string>
+	<string name="grep_prompt">Grep the folling log:</string>
+	<string name="grep_hint">Grep String</string>
+	
+	<!-- Array for the grep spinner -->
+	<string-array name="grep_options">
+	    <item>Main Log</item>
+	    <item>Kernel Log</item>
+	    <item>Last Kernel Log</item>
+	    <item>Modem Log</item>
+	    <item>All Logs</item>
+	</string-array>
     
     <!-- Status messages -->
     <string name="working">Working&#8230;</string>
