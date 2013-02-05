@@ -49,12 +49,16 @@ and with some 3.x kernels it also may not be able to get kernel logs.</string>
     
     <!-- Information/About strings -->
     <string name="information">This is a simple application that takes the system logs via dmesg and logcat,
-and saves them to the primary external storage under SysLog/&lt;Date-Time&gt;, compresses them, and lets you upload/email them.
-\nRoot access is required for 4.1+ to access the full logs, and in some cases for kernel logs.
-\n\n\n\n
-This app is open source, and licensed under the GPL, version 2. You can view the source at http://github.com/Tortel/Syslog
-\n\n
-This app uses libsuperuser, by Jorrit \'Chainfire\' Jongma, licensed under the Apache License, Version 2, available at http://github.com/Chainfire/libsuperuser</string>
+and saves them to the primary external storage under SysLog/{Date-Time}, compresses them, and lets you upload/email them.
+&lt;br /&gt;&lt;br /&gt;
+Root access is &lt;b&gt;required&lt;/b&gt; for 4.1+ to access the full logs, and in some cases for kernel logs.
+&lt;br /&gt;&lt;br /&gt;
+This app is open source, and licensed under the GPL, version 2. You can view the source on &lt;a href="http://github.com/Tortel/Syslog"&gt;GitHub&lt;/a&gt;
+&lt;br /&gt;&lt;br /&gt;
+This app uses available on &lt;a href="http://github.com/Chainfire/libsuperuser"&gt;libsuperuser&lt;/a&gt;, by Jorrit \'Chainfire\' Jongma, licensed under the Apache License, Version 2
+&lt;br /&gt;&lt;br /&gt;
+This app uses the &lt;a href="http://actionbarsherlock.com/"&gt;ActionBarSherlock&lt;/a&gt; compatibility library by Jake Wharton, licensed under the Apache License, Version 2
+</string>
 	
 	<!-- Menu Strings -->
 	<string name="about">About</string>

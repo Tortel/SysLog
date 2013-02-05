@@ -42,8 +42,11 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.telephony.TelephonyManager;
+import android.text.Html;
+import android.text.method.LinkMovementMethod;
 import android.util.Log;
 import android.view.KeyEvent;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
@@ -150,8 +153,17 @@ public class MainActivity extends SherlockActivity {
 	
 	private void showAboutDialog(){
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
-		builder.setMessage(R.string.information).setTitle(R.string.app_name);
+		builder.setTitle(R.string.app_name);
+		LayoutInflater inflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
+	    View layout = inflater.inflate(R.layout.about, null);
 		
+	    TextView text = (TextView) layout.findViewById(R.id.text);
+	    
+	    text.setText(Html.fromHtml(getResources().getString(R.string.information)));
+	    text.setMovementMethod(LinkMovementMethod.getInstance());
+	    
+	    builder.setView(layout);
+	    
 		builder.setPositiveButton(R.string.close, null);
 		
 		AlertDialog dialog = builder.create();
