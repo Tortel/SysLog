@@ -4,10 +4,10 @@ This is a simple application that records various log types, and compresses them
 The logs are saved under the primary external storage folders named by the date and time.  
 
 Some plans for improvement:
-* Add an option to grep logs for a certain string
 * Improve root-less operation. (Useless on 4.1+ without root, but I may start lowering the min API level and checking it down to 2.3)
 
 Done:
+* Add an option to grep logs for a certain string
 * Better landscape layout
 * Make sure the SysLog/ dir has a .nomedia file
 * Handle rotation/keyboard
