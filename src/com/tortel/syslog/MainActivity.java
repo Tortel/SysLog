@@ -52,6 +52,7 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -72,6 +73,8 @@ public class MainActivity extends SherlockActivity {
 	private ProgressDialog dialog;
 	private EditText fileEditText;
 	private EditText notesEditText;
+	private EditText grepEditText;
+	private Spinner grepSpinner;
 	private Menu settingsMenu;
 	
 	public void onCreate(Bundle savedInstanceState){
@@ -87,6 +90,8 @@ public class MainActivity extends SherlockActivity {
 		
 		fileEditText = (EditText) findViewById(R.id.file_name);
 		notesEditText = (EditText) findViewById(R.id.notes);
+		grepEditText = (EditText) findViewById(R.id.grep_string);
+		grepSpinner = (Spinner) findViewById(R.id.grep_log);
 		
 		//Create a new shell object
 		new CheckRootTask().execute();
@@ -353,6 +358,21 @@ public class MainActivity extends SherlockActivity {
 				//Get the notes and string to append to file name
 				String fileAppend = fileEditText.getText().toString().trim();
 				String notes = notesEditText.getText().toString();
+				//Get the grep string and log name
+				String grepString = grepEditText.getText().toString().trim();
+				//Need to make sure all quotes are escaped
+				grepString = grepString.replace("\"", "\\\"");
+				Log.v(TAG,"Grep string: "+grepString);
+				
+				String grepLog = grepSpinner.getSelectedItem().toString();
+				boolean grep = true;
+				boolean allLogs = false;
+				if("".equals(grepString)){
+					grep = false;
+				} else {
+					allLogs = "All Logs".equals(grepLog);
+					notes += "\n"+grepLog+" grepped for "+grepString;
+				}
 				
 				//Create the directories
 			    String path = Environment.getExternalStorageDirectory().getPath();
@@ -377,17 +397,34 @@ public class MainActivity extends SherlockActivity {
 			    
 			    //Commands to dump the logs
 			    if(lastKmsg){
-			    	//Try copying the last_kmsg over
-			    	commands.add("cp "+LAST_KMSG+" "+path+"last_kmsg.log");
+			    	if(grep && (allLogs || "Last Kernel Log".equals(grepLog))){
+			    		//Log should be run through grep
+			    		commands.add("cat "+LAST_KMSG+" | grep \""+grepString+"\" > "+path+"last_kmsg.log");
+			    	} else {
+			    		//Try copying the last_kmsg over
+				    	commands.add("cp "+LAST_KMSG+" "+path+"last_kmsg.log");
+			    	}
 			    }
 			    if(kernelLog){
-			    	commands.add("dmesg > "+path+"dmesg.log && echo ''");
+			    	if(grep && (allLogs || "Kernel Log".equals(grepLog))){
+			    		commands.add("dmesg | grep \""+grepString+"\" > "+path+"dmesg.log");
+			    	} else {
+			    		commands.add("dmesg > "+path+"dmesg.log");
+			    	}
 			    }
 			    if(mainLog){
-			    	commands.add("logcat -v time -d -f "+path+"logcat.log");
+			    	if(grep && (allLogs || "Main Log".equals(grepLog))){
+			    		commands.add("logcat -v time -d | grep \""+grepString+"\" > "+path+"logcat.log");
+			    	} else {
+			    		commands.add("logcat -v time -d -f "+path+"logcat.log");
+			    	}
 			    }
 			    if(modemLog){
-			    	commands.add("logcat -v time -b radio -d -f "+path+"modem.log");
+			    	if(grep && (allLogs || "Modem Log".equals(grepLog))){
+			    		commands.add("logcat -v time -b radio -d | grep \""+grepString+"\" > "+path+"modem.log");
+			    	} else {
+			    		commands.add("logcat -v time -b radio -d -f "+path+"modem.log");
+			    	}
 			    }
 			    
 			    //Run the commands
@@ -450,6 +487,7 @@ public class MainActivity extends SherlockActivity {
 			
 			fileEditText.setText("");
 			notesEditText.setText("");
+			grepEditText.setText("");
 		}
 		
 	}
