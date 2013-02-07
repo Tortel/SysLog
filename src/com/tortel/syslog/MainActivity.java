@@ -69,7 +69,7 @@ public class MainActivity extends SherlockActivity {
 	private boolean lastKmsg;
 	private boolean mainLog;
 	private boolean modemLog;
-	private boolean root;
+	private static boolean root;
 	private ProgressDialog dialog;
 	private EditText fileEditText;
 	private EditText notesEditText;
@@ -94,7 +94,11 @@ public class MainActivity extends SherlockActivity {
 		grepSpinner = (Spinner) findViewById(R.id.grep_log);
 		
 		//Create a new shell object
-		new CheckRootTask().execute();
+		if(!root){
+			new CheckRootTask().execute();
+		} else {
+			enableLogButton();
+		}
 		//Check for last_kmsg and modem
 		new CheckOptionsTask().execute();
 		
@@ -223,6 +227,12 @@ public class MainActivity extends SherlockActivity {
 		prefs.apply();
 	}
 	
+	private void enableLogButton(){
+		Button button = (Button) findViewById(R.id.take_log);
+		button.setEnabled(true);
+		button.setText(R.string.take_log);
+	}
+	
 	/**
 	 * Start the logging process
 	 * @param v
@@ -331,9 +341,7 @@ public class MainActivity extends SherlockActivity {
 				}
 			}
 			
-			Button button = (Button) findViewById(R.id.take_log);
-			button.setEnabled(true);
-			button.setText(R.string.take_log);
+			enableLogButton();
 		}
 		
 	}
