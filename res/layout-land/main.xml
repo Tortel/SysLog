@@ -120,5 +120,35 @@
         android:inputType="textCapSentences|textAutoCorrect|textMultiLine"
         android:hint="@string/notes" />
     
+        <!-- Option to grep logs -->
+    <LinearLayout
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:orientation="horizontal" >
+        
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="5dip"
+            android:text="@string/grep_prompt"
+            android:layout_gravity="left"
+            />
+        
+        <Spinner 
+            android:id="@+id/grep_log"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="5dip"
+            android:entries="@array/grep_options"
+            android:layout_gravity="right"/>
+    </LinearLayout>
+    
+    <EditText
+        android:id="@+id/grep_string"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:padding="5dip"
+        android:hint="@string/grep_hint" />
+    
 </LinearLayout>
 </ScrollView>
