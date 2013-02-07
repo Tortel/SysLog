@@ -32,7 +32,7 @@
     <string name="optional_info">Optional Information:</string>
 	<string name="file_name">Text to append to file name</string>
 	<string name="notes">Notes to include in the zip file</string>
-	<string name="grep_prompt">Grep the folling log:</string>
+	<string name="grep_prompt">Grep the following log:</string>
 	<string name="grep_hint">Grep String</string>
 	
 	<!-- Array for the grep spinner -->

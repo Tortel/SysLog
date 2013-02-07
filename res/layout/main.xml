@@ -115,8 +115,9 @@
         android:orientation="horizontal" >
         
         <TextView
-            android:layout_width="wrap_content"
+            android:layout_width="0dip"
             android:layout_height="wrap_content"
+            android:layout_weight=".5"
             android:padding="5dip"
             android:text="@string/grep_prompt"
             android:layout_gravity="left"
@@ -124,10 +125,12 @@
         
         <Spinner 
             android:id="@+id/grep_log"
-            android:layout_width="wrap_content"
+            android:layout_width="0dip"
             android:layout_height="wrap_content"
+            android:layout_weight=".5"
             android:padding="5dip"
             android:entries="@array/grep_options"
+            android:prompt="@string/grep_prompt"
             android:layout_gravity="right"/>
     </LinearLayout>
     
