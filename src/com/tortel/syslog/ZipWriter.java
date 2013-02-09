@@ -51,7 +51,12 @@ public class ZipWriter {
 	public boolean createZip(){
 		for(int i=0; i < files.length; i++){
 			File cur = files[i];
-
+			
+			//Make sure we aren't adding the zip into its self
+			if(cur.getName().endsWith(".zip")){
+				continue;
+			}
+			
 			try{
 				Log.v("SysLog", "Adding "+cur.getName()+" to zip");
 				//Zip it
