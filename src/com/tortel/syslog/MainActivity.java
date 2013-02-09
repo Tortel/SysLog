@@ -22,6 +22,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
@@ -389,6 +390,14 @@ public class MainActivity extends SherlockActivity {
 			    File nomedia = new File(path+"/SysLog/.nomedia");
 				path += "/SysLog/"+sdf.format(date)+"/";
 			    File outPath = new File(path);
+			    //Check if this path already exists (Happens if you run this multiple times a minute
+			    if(outPath.exists()){
+			    	//Append the seconds
+			    	path =  path.substring(0, path.length()-1) +"."+Calendar.getInstance().get(Calendar.SECOND)+"/";
+			    	outPath = new File(path);
+			    	Log.v(TAG, "Path already exists, added seconds");
+			    }
+			    
 			    Log.v(TAG, "Path: "+path);
 			    if(!outPath.mkdirs()){
 			    	//If Java wont do it, just run the command
