@@ -34,7 +34,7 @@ public class ZipWriter {
 		//Get the folder
 		File outFolder = new File(outPath);
 		files = outFolder.listFiles();
-		if(files.length == 0){
+		if(files == null || files.length == 0){
 			Log.e("SysLog", "Error - no files to zip.");
 			return;
 		}
