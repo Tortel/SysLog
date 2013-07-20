@@ -63,6 +63,11 @@ public class MainActivity extends SherlockActivity {
 	private static final String TAG = "SysLog";
 	private static final String LAST_KMSG = "/proc/last_kmsg";
 	
+	private static final String KEY_KERNEL = "kernel";
+	private static final String KEY_MAIN = "main";
+	private static final String KEY_MODEM = "modem";
+	private static final String KEY_LASTKMSG = "lastKmsg";
+	
 	//Flags for running threads
 	private static boolean running;
 
@@ -84,10 +89,10 @@ public class MainActivity extends SherlockActivity {
 		
 		//Load the logging options
 		SharedPreferences prefs = getPreferences(Activity.MODE_PRIVATE);
-		kernelLog = prefs.getBoolean("kernel", true);
-		mainLog = prefs.getBoolean("main", true);
-		modemLog = prefs.getBoolean("modem", true);
-		lastKmsg = prefs.getBoolean("lastKmsg", true);
+		kernelLog = prefs.getBoolean(KEY_KERNEL, true);
+		mainLog = prefs.getBoolean(KEY_MAIN, true);
+		modemLog = prefs.getBoolean(KEY_MODEM, true);
+		lastKmsg = prefs.getBoolean(KEY_LASTKMSG, true);
 		
 		fileEditText = (EditText) findViewById(R.id.file_name);
 		notesEditText = (EditText) findViewById(R.id.notes);
@@ -208,19 +213,19 @@ public class MainActivity extends SherlockActivity {
 		switch(box.getId()){
 		case R.id.kernel_log:
 			kernelLog = box.isChecked();
-			prefs.putBoolean("kernel", kernelLog);
+			prefs.putBoolean(KEY_KERNEL, kernelLog);
 			break;
 		case R.id.last_kmsg:
 			lastKmsg = box.isChecked();
-			prefs.putBoolean("lastKmsg", lastKmsg);
+			prefs.putBoolean(KEY_LASTKMSG, lastKmsg);
 			break;
 		case R.id.main_log:
 			mainLog = box.isChecked();
-			prefs.putBoolean("main", mainLog);
+			prefs.putBoolean(KEY_MAIN, mainLog);
 			break;
 		case R.id.modem_log:
 			modemLog = box.isChecked();
-			prefs.putBoolean("modem", modemLog);
+			prefs.putBoolean(KEY_MODEM, modemLog);
 			break;
 		}
 		
@@ -373,13 +378,17 @@ public class MainActivity extends SherlockActivity {
 				grepString = grepString.replace("\"", "\\\"");
 				Log.v(TAG,"Grep string: "+grepString);
 				
+				String grepOptions[] = getResources().getStringArray(R.array.grep_options);
+				
 				String grepLog = grepSpinner.getSelectedItem().toString();
 				boolean grep = true;
 				boolean allLogs = false;
 				if("".equals(grepString)){
 					grep = false;
 				} else {
-					allLogs = "All Logs".equals(grepLog);
+					// All logs is the last option
+					allLogs = grepOptions[grepOptions.length -1].equals(grepLog);
+					
 					notes += "\n"+grepLog+" grepped for "+grepString;
 				}
 				
@@ -413,34 +422,34 @@ public class MainActivity extends SherlockActivity {
 			    }
 			    
 			    //Commands to dump the logs
-			    if(lastKmsg){
-			    	if(grep && (allLogs || "Last Kernel Log".equals(grepLog))){
-			    		//Log should be run through grep
-			    		commands.add("cat "+LAST_KMSG+" | grep \""+grepString+"\" > "+path+"last_kmsg.log");
-			    	} else {
-			    		//Try copying the last_kmsg over
-				    	commands.add("cp "+LAST_KMSG+" "+path+"last_kmsg.log");
-			    	}
-			    }
-			    if(kernelLog){
-			    	if(grep && (allLogs || "Kernel Log".equals(grepLog))){
-			    		commands.add("dmesg | grep \""+grepString+"\" > "+path+"dmesg.log");
-			    	} else {
-			    		commands.add("dmesg > "+path+"dmesg.log");
-			    	}
-			    }
 			    if(mainLog){
-			    	if(grep && (allLogs || "Main Log".equals(grepLog))){
+			    	if(grep && (allLogs || grepOptions[0].equals(grepLog))){
 			    		commands.add("logcat -v time -d | grep \""+grepString+"\" > "+path+"logcat.log");
 			    	} else {
 			    		commands.add("logcat -v time -d -f "+path+"logcat.log");
 			    	}
 			    }
+			    if(kernelLog){
+			    	if(grep && (allLogs || grepOptions[1].equals(grepLog))){
+			    		commands.add("dmesg | grep \""+grepString+"\" > "+path+"dmesg.log");
+			    	} else {
+			    		commands.add("dmesg > "+path+"dmesg.log");
+			    	}
+			    }
 			    if(modemLog){
-			    	if(grep && (allLogs || "Modem Log".equals(grepLog))){
+			    	if(grep && (allLogs || grepOptions[2].equals(grepLog))){
 			    		commands.add("logcat -v time -b radio -d | grep \""+grepString+"\" > "+path+"modem.log");
 			    	} else {
 			    		commands.add("logcat -v time -b radio -d -f "+path+"modem.log");
+			    	}
+			    }
+			    if(lastKmsg){
+			    	if(grep && (allLogs || grepOptions[3].equals(grepLog))){
+			    		//Log should be run through grep
+			    		commands.add("cat "+LAST_KMSG+" | grep \""+grepString+"\" > "+path+"last_kmsg.log");
+			    	} else {
+			    		//Try copying the last_kmsg over
+				    	commands.add("cp "+LAST_KMSG+" "+path+"last_kmsg.log");
 			    	}
 			    }
 			    
