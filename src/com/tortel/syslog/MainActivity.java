@@ -40,6 +40,7 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.telephony.TelephonyManager;
@@ -394,6 +395,7 @@ public class MainActivity extends SherlockActivity {
 				
 				//Create the directories
 			    String path = Environment.getExternalStorageDirectory().getPath();
+			    
 			    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd_HH.mm", Locale.US);
 			    Date date = new Date();
 			    File nomedia = new File(path+"/SysLog/.nomedia");
@@ -408,10 +410,9 @@ public class MainActivity extends SherlockActivity {
 			    }
 			    
 			    Log.v(TAG, "Path: "+path);
-			    if(!outPath.mkdirs()){
-			    	//If Java wont do it, just run the command
-			    	commands.add("mkdir -p "+path);
-			    }
+			    //Make the directory
+			    outPath.mkdirs();
+			    
 			    //Put a .nomedia file in the directory
 			    if(!nomedia.exists()){
 			    	try {
@@ -421,36 +422,54 @@ public class MainActivity extends SherlockActivity {
 					}
 			    }
 			    
+                /*
+                 *  If the system is 4.3, some superuser setups (CM10.2) have issues accessing
+                 *  the normal external storage path. Replace the first portion of the path
+                 *  with /data/media/{UID}
+                 */
+			    String rootPath = path;
+                if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2){
+                    rootPath = path.replaceAll("/storage/emulated/", "/data/media/");
+                    Log.v(TAG, "Using path "+path+" for root commands");
+                }
+			    
 			    //Commands to dump the logs
 			    if(mainLog){
 			    	if(grep && (allLogs || grepOptions[0].equals(grepLog))){
-			    		commands.add("logcat -v time -d | grep \""+grepString+"\" > "+path+"logcat.log");
+			    		commands.add("logcat -v time -d | grep \""+grepString+"\" > "+rootPath+"logcat.log");
 			    	} else {
-			    		commands.add("logcat -v time -d -f "+path+"logcat.log");
+			    		commands.add("logcat -v time -d -f "+rootPath+"logcat.log");
 			    	}
 			    }
 			    if(kernelLog){
 			    	if(grep && (allLogs || grepOptions[1].equals(grepLog))){
-			    		commands.add("dmesg | grep \""+grepString+"\" > "+path+"dmesg.log");
+			    		commands.add("dmesg | grep \""+grepString+"\" > "+rootPath+"dmesg.log");
 			    	} else {
-			    		commands.add("dmesg > "+path+"dmesg.log");
+			    		commands.add("dmesg > "+rootPath+"dmesg.log");
 			    	}
 			    }
 			    if(modemLog){
 			    	if(grep && (allLogs || grepOptions[2].equals(grepLog))){
-			    		commands.add("logcat -v time -b radio -d | grep \""+grepString+"\" > "+path+"modem.log");
+			    		commands.add("logcat -v time -b radio -d | grep \""+grepString+"\" > "+rootPath+"modem.log");
 			    	} else {
-			    		commands.add("logcat -v time -b radio -d -f "+path+"modem.log");
+			    		commands.add("logcat -v time -b radio -d -f "+rootPath+"modem.log");
 			    	}
 			    }
 			    if(lastKmsg){
 			    	if(grep && (allLogs || grepOptions[3].equals(grepLog))){
 			    		//Log should be run through grep
-			    		commands.add("cat "+LAST_KMSG+" | grep \""+grepString+"\" > "+path+"last_kmsg.log");
+			    		commands.add("cat "+LAST_KMSG+" | grep \""+grepString+"\" > "+rootPath+"last_kmsg.log");
 			    	} else {
 			    		//Try copying the last_kmsg over
-				    	commands.add("cp "+LAST_KMSG+" "+path+"last_kmsg.log");
+				    	commands.add("cp "+LAST_KMSG+" "+rootPath+"last_kmsg.log");
 			    	}
+			    }
+			    
+			    /*
+			     * More 4.3+ SU issues - need to chown to media_rw
+			     */
+			    if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2){
+			        commands.add("chown media_rw:media_rw "+rootPath+"/*");
 			    }
 			    
 			    //Run the commands
