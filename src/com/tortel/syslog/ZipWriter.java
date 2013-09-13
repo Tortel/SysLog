@@ -48,7 +48,7 @@ public class ZipWriter {
 		}
 	}
 	
-	public boolean createZip(){
+	public Result createZip(){
 		for(int i=0; i < files.length; i++){
 			File cur = files[i];
 			
@@ -85,13 +85,13 @@ public class ZipWriter {
 		if(zWriter != null){
 			try {
 				zWriter.close();
-				return true;
+				return new Result(true);
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
 		}
 
-		return false;
+		return new Result(false);
 	}
 	
 }

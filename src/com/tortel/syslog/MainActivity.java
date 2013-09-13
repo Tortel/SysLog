@@ -24,9 +24,10 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 
-import com.actionbarsherlock.app.SherlockActivity;
+import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
@@ -38,6 +39,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
+import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -60,7 +63,7 @@ import android.widget.Toast;
 
 import eu.chainfire.libsuperuser.Shell;
 
-public class MainActivity extends SherlockActivity {
+public class MainActivity extends SherlockFragmentActivity {
 	private static final String TAG = "SysLog";
 	private static final String LAST_KMSG = "/proc/last_kmsg";
 	
@@ -353,7 +356,7 @@ public class MainActivity extends SherlockActivity {
 		
 	}
 	
-	private class LogTask extends AsyncTask<Void, Void, Boolean> {
+	private class LogTask extends AsyncTask<Void, Void, Result> {
 		private String archivePath;
 		private String shortPath;
 		
@@ -365,7 +368,8 @@ public class MainActivity extends SherlockActivity {
 		/**
 		 * Process the logs
 		 */
-		protected Boolean doInBackground(Void... params) {
+		protected Result doInBackground(Void... params) {
+			Result result = new Result(false);
 			if (Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState())) {
 				//Commands to execute
 				ArrayList<String> commands = new ArrayList<String>(5);
@@ -504,18 +508,22 @@ public class MainActivity extends SherlockActivity {
 			    		Environment.getExternalStorageDirectory().getPath().length()+1);
 
 			    return writer.createZip();
+			} else {
+				//Default storage not accessible
+				result.setSuccess(false);
+				result.setMessage(R.string.storage_err);
 			}
-			return false;
+			return result;
 		}
 		
-		protected void onPostExecute(Boolean result){
+		protected void onPostExecute(Result result){
 			running = false;
 			try{
 				dialog.dismiss();
 			} catch (Exception e){
 				// Should cover null pointer/leaked view exceptions
 			}
-			if(result){
+			if(result.success()){
 				String msg = getResources().getString(R.string.save_path)+shortPath;
 				Toast.makeText(getBaseContext(), msg, Toast.LENGTH_LONG).show();
 				
@@ -525,9 +533,14 @@ public class MainActivity extends SherlockActivity {
 				share.setType("application/zip");
 				share.putExtra(Intent.EXTRA_STREAM, Uri.parse("file://"+archivePath));
 				
-				startActivity(share);
+				if(isAvailable(getApplicationContext(), share)){
+					startActivity(share);
+				} else {
+					//TODO: Show dialog that share is unavailable
+				}
+				
 			} else {
-				Toast.makeText(getBaseContext(), R.string.error, Toast.LENGTH_LONG).show();
+				//TODO: Show a dialog with the details why it failed
 			}
 			
 			fileEditText.setText("");
@@ -537,4 +550,10 @@ public class MainActivity extends SherlockActivity {
 		
 	}
 
+	public static boolean isAvailable(Context ctx, Intent intent) {
+		   final PackageManager mgr = ctx.getPackageManager();
+		   List<ResolveInfo> list = mgr.queryIntentActivities(intent, 
+		         PackageManager.MATCH_DEFAULT_ONLY);
+		   return list.size() > 0;
+		}
 }

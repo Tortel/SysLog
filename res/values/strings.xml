@@ -56,7 +56,7 @@
     <string name="noroot_jb">Warning: No root access. Without root, it is not possible to get system or modem logs, 
 and with some 3.x kernels it also may not be able to get kernel logs.</string>
     <string name="error">Error saving logs. Check your SD card.</string>
-    <string name="storage_err">External storage error!</string>
+    <string name="storage_err">The external storage is not writable, unable to save logs.</string>
     
     <!-- Information/About strings -->
     <string name="information">This is a simple application that takes the system logs via dmesg and logcat,
