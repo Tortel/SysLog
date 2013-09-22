@@ -21,6 +21,8 @@ import java.io.*;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
+import com.tortel.syslog.exception.NoFilesException;
+
 import android.util.Log;
 
 public class ZipWriter {
@@ -28,7 +30,7 @@ public class ZipWriter {
 	private ZipOutputStream zWriter;
 	private File[] files;
 	
-	public ZipWriter(String path, String zName){
+	public ZipWriter(String path, String zName) throws FileNotFoundException, NoFilesException{
 		outPath = path;
 		
 		//Get the folder
@@ -36,19 +38,16 @@ public class ZipWriter {
 		files = outFolder.listFiles();
 		if(files == null || files.length == 0){
 			Log.e("SysLog", "Error - no files to zip.");
-			return;
+			throw new NoFilesException();
 		}
 		for(File cur: files){
 			Log.v("SysLog", "File to be zipped: "+cur.getPath());
 		}
-		try {
-			zWriter = new ZipOutputStream(new FileOutputStream(outPath+zName));
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		}
+		
+		zWriter = new ZipOutputStream(new FileOutputStream(outPath+zName));
 	}
 	
-	public Result createZip(){
+	public void createZip() throws IOException{
 		for(int i=0; i < files.length; i++){
 			File cur = files[i];
 			
@@ -57,41 +56,33 @@ public class ZipWriter {
 				continue;
 			}
 			
-			try{
-				Log.v("SysLog", "Adding "+cur.getName()+" to zip");
-				//Zip it
-				BufferedInputStream reader = new BufferedInputStream(new FileInputStream(cur));
-				ZipEntry entry = new ZipEntry(cur.getName());
-				entry.setSize(cur.length());
-				
-				zWriter.putNextEntry(entry);
-				
-				int length;
-				byte[] buffer = new byte[10240];
-				
-				while( (length = reader.read(buffer)) != -1 ){
-					zWriter.write(buffer, 0, length);
-				}
-				
-				//Clean up
-				zWriter.closeEntry();
-				
-				reader.close();
-			} catch(IOException e){
-				e.printStackTrace();
+			Log.v("SysLog", "Adding "+cur.getName()+" to zip");
+			//Zip it
+			BufferedInputStream reader = new BufferedInputStream(new FileInputStream(cur));
+			ZipEntry entry = new ZipEntry(cur.getName());
+			entry.setSize(cur.length());
+			
+			zWriter.putNextEntry(entry);
+			
+			int length;
+			byte[] buffer = new byte[10240];
+			
+			while( (length = reader.read(buffer)) != -1 ){
+				zWriter.write(buffer, 0, length);
 			}
+			
+			//Clean up
+			zWriter.closeEntry();
+			
+			reader.close();
 		}
 		
-		if(zWriter != null){
-			try {
-				zWriter.close();
-				return new Result(true);
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
+		try {
+			zWriter.close();
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
 
-		return new Result(false);
 	}
 	
 }

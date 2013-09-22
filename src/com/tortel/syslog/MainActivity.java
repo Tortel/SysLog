@@ -18,6 +18,7 @@
 package com.tortel.syslog;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -31,6 +32,7 @@ import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
+import com.tortel.syslog.exception.*;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -370,149 +372,188 @@ public class MainActivity extends SherlockFragmentActivity {
 		 */
 		protected Result doInBackground(Void... params) {
 			Result result = new Result(false);
-			if (Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState())) {
-				//Commands to execute
-				ArrayList<String> commands = new ArrayList<String>(5);
-				
-				//Get the notes and string to append to file name
-				String fileAppend = fileEditText.getText().toString().trim();
-				String notes = notesEditText.getText().toString();
-				//Get the grep string and log name
-				String grepString = grepEditText.getText().toString().trim();
-				//Need to make sure all quotes are escaped
-				grepString = grepString.replace("\"", "\\\"");
-				Log.v(TAG,"Grep string: "+grepString);
-				
-				String grepOptions[] = getResources().getStringArray(R.array.grep_options);
-				
-				String grepLog = grepSpinner.getSelectedItem().toString();
-				boolean grep = true;
-				boolean allLogs = false;
-				if("".equals(grepString)){
-					grep = false;
-				} else {
-					// All logs is the last option
-					allLogs = grepOptions[grepOptions.length -1].equals(grepLog);
-					
-					notes += "\n"+grepLog+" grepped for "+grepString;
-				}
-				
-				//Create the directories
-			    String path = Environment.getExternalStorageDirectory().getPath();
-			    
-			    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd_HH.mm", Locale.US);
-			    Date date = new Date();
-			    File nomedia = new File(path+"/SysLog/.nomedia");
-				path += "/SysLog/"+sdf.format(date)+"/";
-			    File outPath = new File(path);
-			    //Check if this path already exists (Happens if you run this multiple times a minute
-			    if(outPath.exists()){
-			    	//Append the seconds
-			    	path =  path.substring(0, path.length()-1) +"."+Calendar.getInstance().get(Calendar.SECOND)+"/";
-			    	outPath = new File(path);
-			    	Log.v(TAG, "Path already exists, added seconds");
-			    }
-			    
-			    Log.v(TAG, "Path: "+path);
-			    //Make the directory
-			    outPath.mkdirs();
-			    
-			    //Put a .nomedia file in the directory
-			    if(!nomedia.exists()){
-			    	try {
-						nomedia.createNewFile();
-					} catch (IOException e) {
-						Log.e(TAG, "Failed to create .nomedia file", e);
-					}
-			    }
-			    
-                /*
-                 *  If the system is 4.3, some superuser setups (CM10.2) have issues accessing
-                 *  the normal external storage path. Replace the first portion of the path
-                 *  with /data/media/{UID}
-                 */
-			    String rootPath = path;
-                if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2){
-                    rootPath = path.replaceAll("/storage/emulated/", "/data/media/");
-                    Log.v(TAG, "Using path "+path+" for root commands");
-                }
-			    
-			    //Commands to dump the logs
-			    if(mainLog){
-			    	if(grep && (allLogs || grepOptions[0].equals(grepLog))){
-			    		commands.add("logcat -v time -d | grep \""+grepString+"\" > "+rootPath+"logcat.log");
-			    	} else {
-			    		commands.add("logcat -v time -d -f "+rootPath+"logcat.log");
-			    	}
-			    }
-			    if(kernelLog){
-			    	if(grep && (allLogs || grepOptions[1].equals(grepLog))){
-			    		commands.add("dmesg | grep \""+grepString+"\" > "+rootPath+"dmesg.log");
-			    	} else {
-			    		commands.add("dmesg > "+rootPath+"dmesg.log");
-			    	}
-			    }
-			    if(modemLog){
-			    	if(grep && (allLogs || grepOptions[2].equals(grepLog))){
-			    		commands.add("logcat -v time -b radio -d | grep \""+grepString+"\" > "+rootPath+"modem.log");
-			    	} else {
-			    		commands.add("logcat -v time -b radio -d -f "+rootPath+"modem.log");
-			    	}
-			    }
-			    if(lastKmsg){
-			    	if(grep && (allLogs || grepOptions[3].equals(grepLog))){
-			    		//Log should be run through grep
-			    		commands.add("cat "+LAST_KMSG+" | grep \""+grepString+"\" > "+rootPath+"last_kmsg.log");
-			    	} else {
-			    		//Try copying the last_kmsg over
-				    	commands.add("cp "+LAST_KMSG+" "+rootPath+"last_kmsg.log");
-			    	}
-			    }
-			    
-			    /*
-			     * More 4.3+ SU issues - need to chown to media_rw
-			     */
-			    if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2){
-			        commands.add("chown media_rw:media_rw "+rootPath+"/*");
-			    }
-			    
-			    //Run the commands
-			    if(root){
-			    	Shell.SU.run(commands);
-			    } else {
-			    	Shell.SH.run(commands);
-			    }
-			    
-			    //If there are notes, write them to a notes file
-			    if(notes.length() > 0){
-			    	File noteFile = new File(path+"/notes.txt");
-			    	try{
-			    		FileWriter writer = new FileWriter(noteFile);
-			    		writer.write(notes);
-			    		writer.close();
-			    	} catch(Exception e){
-			    		Log.e(TAG, "Exception writing notes", e);
-			    	}
-			    }
-			    
-			    //Append the users input into the zip
-			    if(fileAppend.length() > 0){
-			    	archivePath = sdf.format(date)+"-"+fileAppend+".zip";
-			    } else {
-			    	archivePath = sdf.format(date)+".zip";
-			    }
-			    ZipWriter writer = new ZipWriter(path, archivePath);
-			    archivePath = path+archivePath;
-			    //Trim the path for the message
-			    shortPath = path.substring(
-			    		Environment.getExternalStorageDirectory().getPath().length()+1);
 
-			    return writer.createZip();
-			} else {
-				//Default storage not accessible
-				result.setSuccess(false);
-				result.setMessage(R.string.storage_err);
-			}
+			try{
+			    if (Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState())) {
+			        //Commands to execute
+			        ArrayList<String> commands = new ArrayList<String>(5);
+
+			        //Get the notes and string to append to file name
+			        String fileAppend = fileEditText.getText().toString().trim();
+			        String notes = notesEditText.getText().toString();
+			        //Get the grep string and log name
+			        String grepString = grepEditText.getText().toString().trim();
+			        //Need to make sure all quotes are escaped
+			        grepString = grepString.replace("\"", "\\\"");
+			        Log.v(TAG,"Grep string: "+grepString);
+
+			        String grepOptions[] = getResources().getStringArray(R.array.grep_options);
+
+			        String grepLog = grepSpinner.getSelectedItem().toString();
+			        boolean grep = true;
+			        boolean allLogs = false;
+			        if("".equals(grepString)){
+			            grep = false;
+			        } else {
+			            // All logs is the last option
+			            allLogs = grepOptions[grepOptions.length -1].equals(grepLog);
+
+			            notes += "\n"+grepLog+" grepped for "+grepString;
+			        }
+
+			        //Create the directories
+			        String path = Environment.getExternalStorageDirectory().getPath();
+
+			        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd_HH.mm", Locale.US);
+			        Date date = new Date();
+			        File nomedia = new File(path+"/SysLog/.nomedia");
+			        path += "/SysLog/"+sdf.format(date)+"/";
+			        File outPath = new File(path);
+			        //Check if this path already exists (Happens if you run this multiple times a minute
+			        if(outPath.exists()){
+			            //Append the seconds
+			            path =  path.substring(0, path.length()-1) +"."+Calendar.getInstance().get(Calendar.SECOND)+"/";
+			            outPath = new File(path);
+			            Log.v(TAG, "Path already exists, added seconds");
+			        }
+
+			        Log.v(TAG, "Path: "+path);
+			        //Make the directory
+			        if(!outPath.mkdirs() && !outPath.isDirectory()){
+			            throw new CreateFolderException();
+			        }
+
+			        //Put a .nomedia file in the directory
+			        if(!nomedia.exists()){
+			            try {
+			                nomedia.createNewFile();
+			            } catch (IOException e) {
+			                Log.e(TAG, "Failed to create .nomedia file", e);
+			            }
+			        }
+
+			        /*
+			         *  If the system is 4.3, some superuser setups (CM10.2) have issues accessing
+			         *  the normal external storage path. Replace the first portion of the path
+			         *  with /data/media/{UID}
+			         */
+			        String rootPath = path;
+			        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2){
+			            rootPath = path.replaceAll("/storage/emulated/", "/data/media/");
+			            Log.v(TAG, "Using path "+path+" for root commands");
+			        }
+
+			        //Commands to dump the logs
+			        if(mainLog){
+			            if(grep && (allLogs || grepOptions[0].equals(grepLog))){
+			                commands.add("logcat -v time -d | grep \""+grepString+"\" > "+rootPath+"logcat.log");
+			            } else {
+			                commands.add("logcat -v time -d -f "+rootPath+"logcat.log");
+			            }
+			        }
+			        if(kernelLog){
+			            if(grep && (allLogs || grepOptions[1].equals(grepLog))){
+			                commands.add("dmesg | grep \""+grepString+"\" > "+rootPath+"dmesg.log");
+			            } else {
+			                commands.add("dmesg > "+rootPath+"dmesg.log");
+			            }
+			        }
+			        if(modemLog){
+			            if(grep && (allLogs || grepOptions[2].equals(grepLog))){
+			                commands.add("logcat -v time -b radio -d | grep \""+grepString+"\" > "+rootPath+"modem.log");
+			            } else {
+			                commands.add("logcat -v time -b radio -d -f "+rootPath+"modem.log");
+			            }
+			        }
+			        if(lastKmsg){
+			            if(grep && (allLogs || grepOptions[3].equals(grepLog))){
+			                //Log should be run through grep
+			                commands.add("cat "+LAST_KMSG+" | grep \""+grepString+"\" > "+rootPath+"last_kmsg.log");
+			            } else {
+			                //Try copying the last_kmsg over
+			                commands.add("cp "+LAST_KMSG+" "+rootPath+"last_kmsg.log");
+			            }
+			        }
+
+			        /*
+			         * More 4.3+ SU issues - need to chown to media_rw
+			         */
+			        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2){
+			            commands.add("chown media_rw:media_rw "+rootPath+"/*");
+			        }
+
+			        //Run the commands
+			        if(root){
+			            if(Shell.SU.run(commands) == null){
+			                throw new RunCommandException();
+			            }
+			        } else {
+			            if(Shell.SH.run(commands) == null){
+			                throw new RunCommandException();
+			            }
+			        }
+
+			        //If there are notes, write them to a notes file
+			        if(notes.length() > 0){
+			            File noteFile = new File(path+"/notes.txt");
+			            try{
+			                FileWriter writer = new FileWriter(noteFile);
+			                writer.write(notes);
+			                writer.close();
+			            } catch(Exception e){
+			                Log.e(TAG, "Exception writing notes", e);
+			            }
+			        }
+
+			        //Append the users input into the zip
+			        if(fileAppend.length() > 0){
+			            archivePath = sdf.format(date)+"-"+fileAppend+".zip";
+			        } else {
+			            archivePath = sdf.format(date)+".zip";
+			        }
+			        ZipWriter writer = new ZipWriter(path, archivePath);
+			        archivePath = path+archivePath;
+			        //Trim the path for the message
+			        shortPath = path.substring(
+			                Environment.getExternalStorageDirectory().getPath().length()+1);
+
+			        writer.createZip();
+			        result.setSuccess(true);
+			    } else {
+			        //Default storage not accessible
+			        result.setSuccess(false);
+			        result.addMessage(R.string.storage_err);
+			    }
+			} catch(CreateFolderException e){
+			    //Error creating the folder
+			    e.printStackTrace();
+			    result.addException(e);
+			    result.addMessage(R.string.exception_folder);
+			} catch (FileNotFoundException e) {
+			    //Exception creating zip
+			    e.printStackTrace();
+			    result.addException(e);
+			    result.addMessage(R.string.exception_zip);
+			} catch (RunCommandException e) {
+			    //Exception running commands
+			    e.printStackTrace();
+			    result.addException(e);
+			    result.addMessage(R.string.exception_commands);
+			} catch (NoFilesException e) {
+			    //No files to zip
+			    e.printStackTrace();
+			    result.addException(e);
+			    result.addMessage(R.string.exception_zip_nofiles);
+			} catch (IOException e) {
+			    //Exception writing zip
+                e.printStackTrace();
+                result.addException(e);
+                result.addMessage(R.string.exception_zip);
+            } catch(Exception e){
+                //Unknown exception
+                e.printStackTrace();
+            }
+			
 			return result;
 		}
 		
@@ -521,8 +562,9 @@ public class MainActivity extends SherlockFragmentActivity {
 			try{
 				dialog.dismiss();
 			} catch (Exception e){
-				// Should cover null pointer/leaked view exceptions
+				// Should cover null pointer/leaked view exceptions from rotation/ect
 			}
+
 			if(result.success()){
 				String msg = getResources().getString(R.string.save_path)+shortPath;
 				Toast.makeText(getBaseContext(), msg, Toast.LENGTH_LONG).show();

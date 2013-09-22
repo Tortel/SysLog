@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+ * SysLog - A simple logging tool
+ * Copyright (C) 2013  Scott Warner <Tortel1210@gmail.com>
+ * 
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+-->
+<resources>
+    <!-- Exception writing the zip file -->
+	<string name="exception_zip">An exception occurred while compressing the log files.
+	    This could be caused by a lack of space, an error reading the log files, or even permission errors.
+	    Please double-check your storage and try again.</string>
+
+    <!-- No files to zip -->
+    <string name="exception_zip_nofiles">There were no log files to zip. Make sure that there you selected at least one
+        log type. This could also be caused by not having root access, or the commands to get the logs failed. If you
+        had at least one log type selected, please submit a bug report.</string>
+
+    <!-- Error creating folder -->
+    <string name="exception_folder">There was an exception while trying to create the folder to save all the logs.
+        Please double check that your storage has space, and is properly mounted.</string>
+
+    <!-- Error running the commands -->
+    <string name="exception_commands">There was an error while running the commands to get the logs. If you did not use root,
+        please restart the application and approve root access. Otherwise, please submit a bug report and include the SU implementation you use.</string>
+
+    <!-- Unknown exception (Oh shit!) -->
+    <string name="exception_unknown">There was an unknown exception while running. Please submit a bug report, and include the SU implementation you use.</string>
+</resources>
