@@ -17,9 +17,6 @@
  */
 package com.tortel.syslog;
 
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  * A class to contain various information about the
  * status of running
@@ -27,16 +24,10 @@ import java.util.List;
  */
 public class Result {
 	private boolean success;
-	private List<Throwable> exceptions;
-	private List<Integer> messages;
-	
-	public Result(){
-	    exceptions = new ArrayList<Throwable>();
-	    messages = new ArrayList<Integer>();
-	}
+	private Throwable exceptions;
+	private int message;
 	
 	public Result(boolean success){
-	    this();
 		this.success = success;
 	}
 	
@@ -50,18 +41,18 @@ public class Result {
 	
 	public void addException(Throwable exception){
 	    this.success = false;
-		exceptions.add(exception);
+		this.exceptions = exception;
 	}
 	
-	public List<Throwable> getExceptions(){
+	public Throwable getException(){
 		return exceptions;
 	}
 	
 	public void addMessage(int message){
-		messages.add(message);
+		this.message= message; 
 	}
 
-	public List<Integer> getMessages(){
-		return messages;
+	public int getMessage(){
+		return message;
 	}
 }

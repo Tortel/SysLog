@@ -496,12 +496,12 @@ public class MainActivity extends SherlockFragmentActivity {
 			        //If there are notes, write them to a notes file
 			        if(notes.length() > 0){
 			            File noteFile = new File(path+"/notes.txt");
+                        FileWriter writer = new FileWriter(noteFile);
+                        writer.write(notes);
 			            try{
-			                FileWriter writer = new FileWriter(noteFile);
-			                writer.write(notes);
 			                writer.close();
 			            } catch(Exception e){
-			                Log.e(TAG, "Exception writing notes", e);
+			                //Ignore
 			            }
 			        }
 
@@ -582,7 +582,9 @@ public class MainActivity extends SherlockFragmentActivity {
 				}
 				
 			} else {
-				//TODO: Show a dialog with the details why it failed
+				ExceptionDialogFragment dialog = new ExceptionDialogFragment();
+				dialog.setResult(result);
+				dialog.show(getSupportFragmentManager(), "exceptionDialog");
 			}
 			
 			fileEditText.setText("");

@@ -76,4 +76,11 @@ This app uses the &lt;a href="http://actionbarsherlock.com/"&gt;ActionBarSherloc
 	<string name="clean_uncompressed">Clean Uncompressed Logs</string>
 	<string name="clean_all">Clean All Logs</string>
 	<string name="menu_settings">Settings</string>
+	
+	<!-- Exception dialog strings -->
+	<string name="show_stacktrace">Show Stacktrace</string>
+	<string name="error_dialog_title">Uh-oh!</string>
+	<string name="send_bugreport">Send Bug Report</string>
+	<string name="dismiss">Dismiss</string>
+	
 </resources>
