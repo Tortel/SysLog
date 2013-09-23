@@ -28,6 +28,15 @@
         android:layout_height="wrap_content"
         android:padding="5dip" />
 
+    <TextView
+        android:id="@+id/bugreport_notice"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/bugreport_notice"
+        android:padding="5dip"
+        android:textStyle="italic"
+        android:textSize="12sp" />
+
     <View
         android:layout_width="match_parent"
         android:layout_height="2dip"

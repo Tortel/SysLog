@@ -22,7 +22,10 @@ import java.io.StringWriter;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.pm.PackageInfo;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -52,6 +55,7 @@ public class ExceptionDialogFragment extends SherlockDialogFragment implements a
         stackTraceButton.setOnClickListener(this);
         if(result.getException() == null){
             stackTraceButton.setVisibility(View.GONE);
+            view.findViewById(R.id.bugreport_notice).setVisibility(View.GONE);
         }
 
         stackTraceView = (TextView) view.findViewById(R.id.exception_stacktrace);
@@ -59,9 +63,13 @@ public class ExceptionDialogFragment extends SherlockDialogFragment implements a
 
         TextView messageText = (TextView) view.findViewById(R.id.exception_message);
         messageText.setText(result.getMessage());
-        builder.setView(view)
-            .setPositiveButton(R.string.send_bugreport, this)
-            .setNegativeButton(R.string.dismiss, this);
+        builder.setView(view);
+        //Skip the bugreport button if there is no stack trace
+        if(result.getException() != null){
+            builder.setPositiveButton(R.string.send_bugreport, this);
+        }
+        
+        builder.setNegativeButton(R.string.dismiss, this);
         builder.setTitle(R.string.error_dialog_title);
         
         return builder.create();
@@ -78,11 +86,41 @@ public class ExceptionDialogFragment extends SherlockDialogFragment implements a
     public void onClick(DialogInterface dialog, int which) {
         switch(which){
         case DialogInterface.BUTTON_POSITIVE:
-            //TODO: Trigger intent for email
-            
+            getActivity().startActivity(getEmailIntent());
         case DialogInterface.BUTTON_NEGATIVE:
-            //TODO: Close
+            //Clear the static variable
+            result = null;
         }
+    }
+    
+    private Intent getEmailIntent(){
+        Intent intent = new Intent(Intent.ACTION_SEND);
+        intent.putExtra(Intent.EXTRA_EMAIL, new String[]{"Swarner.dev@gmail.com"});
+        intent.putExtra(Intent.EXTRA_SUBJECT, "SysLog bug report");
+        intent.setType("plain/text");
+        intent.putExtra(Intent.EXTRA_TEXT, getEmailReportBody());
+        return intent;
+    }
+    
+    private String getEmailReportBody(){
+        Context context = getActivity();
+        StringBuilder body = new StringBuilder();
+        
+        body.append("Device model: "+android.os.Build.MODEL+"\n");
+        try{
+            PackageInfo manager = context.getPackageManager()
+                    .getPackageInfo(context.getPackageName(), 0);
+            body.append("SysLog version: "+manager.versionCode+"\n");
+        } catch(Exception e){
+            //Should not happen
+        }
+        body.append("Android version: "+android.os.Build.VERSION.SDK_INT+"\n");
+        body.append("Using root: "+result.hasRoot()+"\n");
+        body.append("Stacktrace:\n");
+        body.append(getStackTrace(result.getException()));
+        body.append("\n -- Please leave all the information above --\n");
+        body.append("Please add any additional details:\n");
+        return body.toString();
     }
     
     private String getStackTrace(Throwable t){

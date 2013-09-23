@@ -38,4 +38,8 @@
 
     <!-- Unknown exception (Oh shit!) -->
     <string name="exception_unknown">There was an unknown exception while running. Please submit a bug report, and include the SU implementation you use.</string>
+
+    <!-- No send intent available -->
+    <string name="exception_send">There was no application available to send a zip file. The logs have been saved, but please install or enable
+        an email application or cloud storage application to easily send the file.</string>
 </resources>

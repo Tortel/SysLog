@@ -26,6 +26,7 @@ public class Result {
 	private boolean success;
 	private Throwable exceptions;
 	private int message;
+	private boolean root;
 	
 	public Result(boolean success){
 		this.success = success;
@@ -39,7 +40,7 @@ public class Result {
 		this.success = success;
 	}
 	
-	public void addException(Throwable exception){
+	public void setException(Throwable exception){
 	    this.success = false;
 		this.exceptions = exception;
 	}
@@ -48,11 +49,19 @@ public class Result {
 		return exceptions;
 	}
 	
-	public void addMessage(int message){
+	public void setMessage(int message){
 		this.message= message; 
 	}
 
 	public int getMessage(){
 		return message;
 	}
+
+    public boolean hasRoot() {
+        return root;
+    }
+
+    public void setRoot(boolean root) {
+        this.root = root;
+    }
 }

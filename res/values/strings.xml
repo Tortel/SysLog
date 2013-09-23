@@ -82,5 +82,5 @@ This app uses the &lt;a href="http://actionbarsherlock.com/"&gt;ActionBarSherloc
 	<string name="error_dialog_title">Uh-oh!</string>
 	<string name="send_bugreport">Send Bug Report</string>
 	<string name="dismiss">Dismiss</string>
-	
+	<string name="bugreport_notice">Note: Sending a bug report opens an email application so you can email the developer</string>
 </resources>

@@ -372,6 +372,7 @@ public class MainActivity extends SherlockFragmentActivity {
 		 */
 		protected Result doInBackground(Void... params) {
 			Result result = new Result(false);
+			result.setRoot(root);
 
 			try{
 			    if (Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState())) {
@@ -522,33 +523,33 @@ public class MainActivity extends SherlockFragmentActivity {
 			    } else {
 			        //Default storage not accessible
 			        result.setSuccess(false);
-			        result.addMessage(R.string.storage_err);
+			        result.setMessage(R.string.storage_err);
 			    }
 			} catch(CreateFolderException e){
 			    //Error creating the folder
 			    e.printStackTrace();
-			    result.addException(e);
-			    result.addMessage(R.string.exception_folder);
+			    result.setException(e);
+			    result.setMessage(R.string.exception_folder);
 			} catch (FileNotFoundException e) {
 			    //Exception creating zip
 			    e.printStackTrace();
-			    result.addException(e);
-			    result.addMessage(R.string.exception_zip);
+			    result.setException(e);
+			    result.setMessage(R.string.exception_zip);
 			} catch (RunCommandException e) {
 			    //Exception running commands
 			    e.printStackTrace();
-			    result.addException(e);
-			    result.addMessage(R.string.exception_commands);
+			    result.setException(e);
+			    result.setMessage(R.string.exception_commands);
 			} catch (NoFilesException e) {
 			    //No files to zip
 			    e.printStackTrace();
-			    result.addException(e);
-			    result.addMessage(R.string.exception_zip_nofiles);
+			    result.setException(e);
+			    result.setMessage(R.string.exception_zip_nofiles);
 			} catch (IOException e) {
 			    //Exception writing zip
                 e.printStackTrace();
-                result.addException(e);
-                result.addMessage(R.string.exception_zip);
+                result.setException(e);
+                result.setMessage(R.string.exception_zip);
             } catch(Exception e){
                 //Unknown exception
                 e.printStackTrace();
@@ -571,17 +572,22 @@ public class MainActivity extends SherlockFragmentActivity {
 				
 				//Display a share intent
 				Intent share = new Intent(android.content.Intent.ACTION_SEND);
-				//share.setType("application/x-tar");
 				share.setType("application/zip");
 				share.putExtra(Intent.EXTRA_STREAM, Uri.parse("file://"+archivePath));
 				
 				if(isAvailable(getApplicationContext(), share)){
 					startActivity(share);
 				} else {
-					//TODO: Show dialog that share is unavailable
+				    result.setMessage(R.string.exception_send);
+				    result.setException(null);
+
+				    //Show the error dialog. It will have stacktrace/bugreport disabled
+				    ExceptionDialogFragment dialog = new ExceptionDialogFragment();
+	                dialog.setResult(result);
+	                dialog.show(getSupportFragmentManager(), "exceptionDialog");
 				}
-				
 			} else {
+			    //Show the error dialog
 				ExceptionDialogFragment dialog = new ExceptionDialogFragment();
 				dialog.setResult(result);
 				dialog.show(getSupportFragmentManager(), "exceptionDialog");
