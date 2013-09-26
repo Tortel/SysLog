@@ -35,7 +35,6 @@ import com.actionbarsherlock.view.MenuItem;
 import com.tortel.syslog.exception.*;
 
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -49,11 +48,8 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.telephony.TelephonyManager;
-import android.text.Html;
-import android.text.method.LinkMovementMethod;
 import android.util.Log;
 import android.view.KeyEvent;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
@@ -167,6 +163,9 @@ public class MainActivity extends SherlockFragmentActivity {
 		case R.id.about:
 			showAboutDialog();
 			return true;
+		case R.id.faq:
+		    showFaqDialog();
+		    return true;
 		default:
 			return super.onOptionsItemSelected(item);
 		}
@@ -176,22 +175,17 @@ public class MainActivity extends SherlockFragmentActivity {
 	 * Shows the About dialog box
 	 */
 	private void showAboutDialog(){
-		AlertDialog.Builder builder = new AlertDialog.Builder(this);
-		builder.setTitle(R.string.app_name);
-		LayoutInflater inflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
-	    View layout = inflater.inflate(R.layout.about, null);
-		
-	    TextView text = (TextView) layout.findViewById(R.id.text);
-	    //HTML format the about text
-	    text.setText(Html.fromHtml(getResources().getString(R.string.information)));
-	    //This enables clicking the links
-	    text.setMovementMethod(LinkMovementMethod.getInstance());
-	    
-	    builder.setView(layout);
-		builder.setPositiveButton(R.string.close, null);
-		AlertDialog dialog = builder.create();
-		dialog.show();
+		AboutDialog dialog = new AboutDialog();
+		dialog.show(getSupportFragmentManager(), "about");
 	}
+	
+    /**
+     * Shows the FAQ dialog box
+     */
+    private void showFaqDialog(){
+        FaqDialog dialog = new FaqDialog();
+        dialog.show(getSupportFragmentManager(), "faq");
+    }
 	
 	/**
 	 * Sets the checkboxes according to what the user selected. 

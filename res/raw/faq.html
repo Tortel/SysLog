@@ -1,0 +1,27 @@
+<html>
+<body>
+
+<h4>Why does SysLog need root access?</h4>
+<p>
+Starting with Android 4.1, the system logs were restricted to system applications only. Don't fret, thats a good thing!
+That means that without root access, your logs are secure.<br />
+I take root access seriously. SysLog is licensed under the GPL, and you can review the commands run within  
+<a href="https://github.com/Tortel/SysLog/blob/master/src/com/tortel/syslog/MainActivity.java">this file</a>.
+</p>
+
+<h4>Why is the last kernel log grayed out?</h4>
+<p>
+Your device's kernel needs to support the last log feature, and SysLog checks for the '/proc/last_kmsg' file at start. 
+Even if your kernel supports the feature, it may only save the log during a kernel crash. Check for more details with 
+the maintainer of the kernel/ROM you use.
+</p>
+
+<h4>What is Grep?</h4>
+<p>
+Grep is a Unix utility to match lines based on regular expressions. If you are not familiar with it, I would not 
+recommend using it. For more details, check the 
+<a href="http://www.gnu.org/software/grep/manual/grep.html">help page</a>. 
+</p>
+
+</body>
+</html>
