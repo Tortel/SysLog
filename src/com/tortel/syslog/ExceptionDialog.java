@@ -86,7 +86,10 @@ public class ExceptionDialog extends SherlockDialogFragment implements android.v
     public void onClick(DialogInterface dialog, int which) {
         switch(which){
         case DialogInterface.BUTTON_POSITIVE:
-            getActivity().startActivity(getEmailIntent());
+            Intent intent = getEmailIntent();
+            if(intent != null){
+                getActivity().startActivity(intent);
+            }
         case DialogInterface.BUTTON_NEGATIVE:
             //Clear the static variable
             result = null;
@@ -99,6 +102,15 @@ public class ExceptionDialog extends SherlockDialogFragment implements android.v
         intent.putExtra(Intent.EXTRA_SUBJECT, "SysLog bug report");
         intent.setType("plain/text");
         intent.putExtra(Intent.EXTRA_TEXT, getEmailReportBody());
+        if(MainActivity.isAvailable(getActivity(), intent)){
+            startActivity(intent);
+        } else {
+            OhShitDialog dialog = new OhShitDialog();
+            dialog.setException(result.getException());
+            dialog.show(getActivity().getSupportFragmentManager(), "ohshit");
+            this.dismiss();
+            return null;
+        }
         return intent;
     }
     
