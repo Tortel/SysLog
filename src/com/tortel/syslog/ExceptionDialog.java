@@ -34,7 +34,7 @@ import android.widget.TextView;
 
 import com.actionbarsherlock.app.SherlockDialogFragment;
 
-public class ExceptionDialogFragment extends SherlockDialogFragment implements android.view.View.OnClickListener,
+public class ExceptionDialog extends SherlockDialogFragment implements android.view.View.OnClickListener,
         DialogInterface.OnClickListener {
     private static Result result;
     
@@ -42,7 +42,7 @@ public class ExceptionDialogFragment extends SherlockDialogFragment implements a
     private TextView stackTraceView;
     
     public void setResult(Result result){
-        ExceptionDialogFragment.result = result;
+        ExceptionDialog.result = result;
     }
     
     @Override

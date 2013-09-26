@@ -582,13 +582,13 @@ public class MainActivity extends SherlockFragmentActivity {
 				    result.setException(null);
 
 				    //Show the error dialog. It will have stacktrace/bugreport disabled
-				    ExceptionDialogFragment dialog = new ExceptionDialogFragment();
+				    ExceptionDialog dialog = new ExceptionDialog();
 	                dialog.setResult(result);
 	                dialog.show(getSupportFragmentManager(), "exceptionDialog");
 				}
 			} else {
 			    //Show the error dialog
-				ExceptionDialogFragment dialog = new ExceptionDialogFragment();
+				ExceptionDialog dialog = new ExceptionDialog();
 				dialog.setResult(result);
 				dialog.show(getSupportFragmentManager(), "exceptionDialog");
 			}
