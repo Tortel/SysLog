@@ -24,9 +24,9 @@
 	    Please double-check your storage and try again.</string>
 
     <!-- No files to zip -->
-    <string name="exception_zip_nofiles">There were no log files to zip. Make sure that there you selected at least one
-        log type. This could also be caused by not having root access, or the commands to get the logs failed. If you
-        had at least one log type selected, please submit a bug report.</string>
+    <string name="exception_zip_nofiles">There were no log files to zip. This could also be caused by not having 
+        root access, or the commands to get the logs failed. If you ran SysLog with root access, please 
+        submit a bug report.</string>
 
     <!-- Error creating folder -->
     <string name="exception_folder">There was an exception while trying to create the folder to save all the logs.

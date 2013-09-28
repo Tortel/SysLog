@@ -105,7 +105,7 @@ public class MainActivity extends SherlockFragmentActivity {
 		if(!root){
 			new CheckRootTask().execute();
 		} else {
-			enableLogButton();
+			enableLogButton(true);
 		}
 		//Check for last_kmsg and modem
 		new CheckOptionsTask().execute();
@@ -229,13 +229,17 @@ public class MainActivity extends SherlockFragmentActivity {
 			break;
 		}
 		
+		//Make sure that at least one type is selected
+		enableLogButton(mainLog || lastKmsg
+		        || modemLog || kernelLog);
+		
 		//Save the settings
 		prefs.apply();
 	}
 	
-	private void enableLogButton(){
+	private void enableLogButton(boolean flag){
 		Button button = (Button) findViewById(R.id.take_log);
-		button.setEnabled(true);
+		button.setEnabled(flag);
 		button.setText(R.string.take_log);
 	}
 	
@@ -347,7 +351,7 @@ public class MainActivity extends SherlockFragmentActivity {
 				}
 			}
 			
-			enableLogButton();
+			enableLogButton(true);
 		}
 		
 	}
