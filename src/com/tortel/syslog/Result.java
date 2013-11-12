@@ -20,13 +20,13 @@ package com.tortel.syslog;
 /**
  * A class to contain various information about the
  * status of running
- *
  */
 public class Result {
 	private boolean success;
 	private Throwable exceptions;
 	private int message;
 	private boolean root;
+	private RunCommand command;
 	
 	public Result(boolean success){
 		this.success = success;
@@ -64,4 +64,12 @@ public class Result {
     public void setRoot(boolean root) {
         this.root = root;
     }
+
+	public RunCommand getCommand() {
+		return command;
+	}
+
+	public void setCommand(RunCommand command) {
+		this.command = command;
+	}
 }

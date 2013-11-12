@@ -250,7 +250,24 @@ public class MainActivity extends SherlockFragmentActivity {
 	public void startLog(View v){
 		//Check for external storage
 		if(Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState())){
-			new LogTask().execute();
+			//Build the command
+			RunCommand command = new RunCommand();
+			
+			//Log flags
+			command.setKernelLog(kernelLog);
+			command.setLastKernelLog(lastKmsg);
+			command.setMainLog(mainLog);
+			command.setModemLog(modemLog);
+			
+			//Grep options
+			command.setGrepOption(GrepOption.fromString(grepSpinner.getSelectedItem().toString()));
+			command.setGrep(grepEditText.getText().toString());
+			
+			//Notes/text
+			command.setAppendText(fileEditText.getText().toString());
+			command.setNotes(notesEditText.getText().toString());
+			
+			new LogTask().execute(command);
 		} else {
 			Toast.makeText(this, R.string.storage_err, Toast.LENGTH_LONG).show();
 		}
@@ -293,7 +310,6 @@ public class MainActivity extends SherlockFragmentActivity {
 				logChange(modemCheckBox);
 			}
 		}
-		
 	}
 	
 	/**
@@ -356,7 +372,7 @@ public class MainActivity extends SherlockFragmentActivity {
 		
 	}
 	
-	private class LogTask extends AsyncTask<Void, Void, Result> {
+	private class LogTask extends AsyncTask<RunCommand, Void, Result> {
 		private String archivePath;
 		private String shortPath;
 		
@@ -368,37 +384,16 @@ public class MainActivity extends SherlockFragmentActivity {
 		/**
 		 * Process the logs
 		 */
-		protected Result doInBackground(Void... params) {
+		protected Result doInBackground(RunCommand... params) {
+			RunCommand command = params[0];
 			Result result = new Result(false);
 			result.setRoot(root);
+			result.setCommand(command);
 
 			try{
 			    if (Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState())) {
 			        //Commands to execute
 			        ArrayList<String> commands = new ArrayList<String>(5);
-
-			        //Get the notes and string to append to file name
-			        String fileAppend = fileEditText.getText().toString().trim();
-			        String notes = notesEditText.getText().toString();
-			        //Get the grep string and log name
-			        String grepString = grepEditText.getText().toString().trim();
-			        //Need to make sure all quotes are escaped
-			        grepString = grepString.replace("\"", "\\\"");
-			        Log.v(TAG,"Grep string: "+grepString);
-
-			        String grepOptions[] = getResources().getStringArray(R.array.grep_options);
-
-			        String grepLog = grepSpinner.getSelectedItem().toString();
-			        boolean grep = true;
-			        boolean allLogs = false;
-			        if("".equals(grepString)){
-			            grep = false;
-			        } else {
-			            // All logs is the last option
-			            allLogs = grepOptions[grepOptions.length -1].equals(grepLog);
-
-			            notes += "\n"+grepLog+" grepped for "+grepString;
-			        }
 
 			        //Create the directories
 			        String path = Environment.getExternalStorageDirectory().getPath();
@@ -443,31 +438,35 @@ public class MainActivity extends SherlockFragmentActivity {
 			        }
 
 			        //Commands to dump the logs
-			        if(mainLog){
-			            if(grep && (allLogs || grepOptions[0].equals(grepLog))){
-			                commands.add("logcat -v time -d | grep \""+grepString+"\" > "+rootPath+"logcat.log");
+			        if(command.isMainLog()){
+			            if(command.grep() && command.getGrepOption() == GrepOption.MAIN
+			            		|| command.getGrepOption() == GrepOption.ALL){
+			                commands.add("logcat -v time -d | grep \""+command.getGrep()+"\" > "+rootPath+"logcat.log");
 			            } else {
 			                commands.add("logcat -v time -d -f "+rootPath+"logcat.log");
 			            }
 			        }
-			        if(kernelLog){
-			            if(grep && (allLogs || grepOptions[1].equals(grepLog))){
-			                commands.add("dmesg | grep \""+grepString+"\" > "+rootPath+"dmesg.log");
+			        if(command.isKernelLog()){
+			            if(command.grep() && command.getGrepOption() == GrepOption.KERNEL
+			            		|| command.getGrepOption() == GrepOption.ALL){
+			                commands.add("dmesg | grep \""+command.getGrep()+"\" > "+rootPath+"dmesg.log");
 			            } else {
 			                commands.add("dmesg > "+rootPath+"dmesg.log");
 			            }
 			        }
-			        if(modemLog){
-			            if(grep && (allLogs || grepOptions[2].equals(grepLog))){
-			                commands.add("logcat -v time -b radio -d | grep \""+grepString+"\" > "+rootPath+"modem.log");
+			        if(command.isModemLog()){
+			            if(command.grep() && command.getGrepOption() == GrepOption.MODEM
+			            		|| command.getGrepOption() == GrepOption.ALL){
+			                commands.add("logcat -v time -b radio -d | grep \""+command.getGrep()+"\" > "+rootPath+"modem.log");
 			            } else {
 			                commands.add("logcat -v time -b radio -d -f "+rootPath+"modem.log");
 			            }
 			        }
-			        if(lastKmsg){
-			            if(grep && (allLogs || grepOptions[3].equals(grepLog))){
+			        if(command.isLastKernelLog()){
+			            if(command.grep() && command.getGrepOption() == GrepOption.LAST_KERNEL
+			            		|| command.getGrepOption() == GrepOption.ALL){
 			                //Log should be run through grep
-			                commands.add("cat "+LAST_KMSG+" | grep \""+grepString+"\" > "+rootPath+"last_kmsg.log");
+			                commands.add("cat "+LAST_KMSG+" | grep \""+command.getGrep()+"\" > "+rootPath+"last_kmsg.log");
 			            } else {
 			                //Try copying the last_kmsg over
 			                commands.add("cp "+LAST_KMSG+" "+rootPath+"last_kmsg.log");
@@ -493,10 +492,10 @@ public class MainActivity extends SherlockFragmentActivity {
 			        }
 
 			        //If there are notes, write them to a notes file
-			        if(notes.length() > 0){
+			        if(command.getNotes().length() > 0){
 			            File noteFile = new File(path+"/notes.txt");
                         FileWriter writer = new FileWriter(noteFile);
-                        writer.write(notes);
+                        writer.write(command.getNotes());
 			            try{
 			                writer.close();
 			            } catch(Exception e){
@@ -505,8 +504,8 @@ public class MainActivity extends SherlockFragmentActivity {
 			        }
 
 			        //Append the users input into the zip
-			        if(fileAppend.length() > 0){
-			            archivePath = sdf.format(date)+"-"+fileAppend+".zip";
+			        if(command.getAppendText().length() > 0){
+			            archivePath = sdf.format(date)+"-"+command.getAppendText()+".zip";
 			        } else {
 			            archivePath = sdf.format(date)+".zip";
 			        }

@@ -34,15 +34,6 @@
 	<string name="notes">Notes to include in the zip file</string>
 	<string name="grep_prompt">Grep the following log:</string>
 	<string name="grep_hint">Grep String</string>
-	
-	<!-- Array for the grep spinner -->
-	<string-array name="grep_options">
-	    <item>Main Log</item>
-	    <item>Kernel Log</item>
-	    <item>Last Kernel Log</item>
-	    <item>Modem Log</item>
-	    <item>All Logs</item>
-	</string-array>
     
     <!-- Status messages -->
     <string name="working">Working&#8230;</string>

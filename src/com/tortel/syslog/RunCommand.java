@@ -1,0 +1,109 @@
+/* SysLog - A simple logging tool
+ * Copyright (C) 2013  Scott Warner <Tortel1210@gmail.com>
+ * 
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ */
+package com.tortel.syslog;
+
+/**
+ * A class that contains all the command details
+ */
+public class RunCommand {
+	private boolean kernelLog;
+	private boolean lastKernelLog;
+	private boolean mainLog;
+	private boolean modemLog;
+	
+	private String appendText;
+	private String notes;
+	
+	private GrepOption grepOption;
+	private String grep;
+	
+	public boolean grep(){
+		return grep != null && !"".equals(grep);
+	}
+	
+	public String getNotes() {
+		String toRet = notes == null ? "" : notes;
+		toRet += "\n"+grepOption.toString()+" grepped for "+grep;
+		return toRet;
+	}
+	
+	public void setGrep(String grep) {
+        //Need to make sure all quotes are escaped
+		grep = grep.trim();
+        grep = grep.replace("\"", "\\\"");
+		this.grep = grep;
+	}
+	
+	public String getDebugString(){
+		StringBuilder builder = new StringBuilder();
+		builder.append("Command information:");
+		builder.append("\nkernelLog: "+kernelLog);
+		builder.append("\nlastKernelLog: "+lastKernelLog);
+		builder.append("\nmainLog: "+mainLog);
+		builder.append("\nmodemLog: "+modemLog);
+		builder.append("\ngrepOption: "+grepOption.toString());
+		builder.append("\ngrep: "+grep);
+		builder.append("\nfileAppendText: "+appendText);
+		builder.append("\nnotes: "+notes);
+		
+		return builder.toString();
+	}
+	
+	public boolean isKernelLog() {
+		return kernelLog;
+	}
+	public void setKernelLog(boolean kernelLog) {
+		this.kernelLog = kernelLog;
+	}
+	public boolean isLastKernelLog() {
+		return lastKernelLog;
+	}
+	public void setLastKernelLog(boolean lastKernelLog) {
+		this.lastKernelLog = lastKernelLog;
+	}
+	public boolean isMainLog() {
+		return mainLog;
+	}
+	public void setMainLog(boolean mainLog) {
+		this.mainLog = mainLog;
+	}
+	public boolean isModemLog() {
+		return modemLog;
+	}
+	public void setModemLog(boolean radioLog) {
+		this.modemLog = radioLog;
+	}
+	public String getAppendText() {
+		return appendText;
+	}
+	public void setAppendText(String appendText) {
+		this.appendText = appendText.trim();
+	}
+	public void setNotes(String notes) {
+		this.notes = notes.trim();
+	}
+	public GrepOption getGrepOption() {
+		return grepOption;
+	}
+	public void setGrepOption(GrepOption grepOption) {
+		this.grepOption = grepOption;
+	}
+	public String getGrep() {
+		return grep;
+	}
+}

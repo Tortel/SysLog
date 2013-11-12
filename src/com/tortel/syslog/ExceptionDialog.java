@@ -134,6 +134,7 @@ public class ExceptionDialog extends SherlockDialogFragment implements android.v
         body.append("Free space: "+getStorageFreeSpace()+"mb \n");
         body.append("Storage path: "+Environment.getExternalStorageDirectory().getPath()+"\n");
         body.append("Using root: "+result.hasRoot()+"\n");
+        body.append(result.getCommand().getDebugString()+"\n");
         body.append("Stacktrace:\n");
         body.append(getStackTrace(result.getException()));
         body.append("\n -- Please leave all the information above --\n");
