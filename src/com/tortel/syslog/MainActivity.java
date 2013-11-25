@@ -22,9 +22,9 @@ import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 
@@ -58,7 +58,6 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import eu.chainfire.libsuperuser.Shell;
 
 public class MainActivity extends SherlockFragmentActivity {
@@ -393,7 +392,7 @@ public class MainActivity extends SherlockFragmentActivity {
 			try{
 			    if (Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState())) {
 			        //Commands to execute
-			        ArrayList<String> commands = new ArrayList<String>(5);
+			        List<String> commands = new LinkedList<String>();
 
 			        //Create the directories
 			        String path = Environment.getExternalStorageDirectory().getPath();
@@ -477,7 +476,12 @@ public class MainActivity extends SherlockFragmentActivity {
 			         * More 4.3+ SU issues - need to chown to media_rw
 			         */
 			        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2){
-			            commands.add("chown media_rw:media_rw "+rootPath+"/*");
+			        	// Some kernels/systems may not work properly with /*
+			        	// List the files explicitly
+			            commands.add("chown media_rw:media_rw "+rootPath+"/logcat.log");
+			            commands.add("chown media_rw:media_rw "+rootPath+"/dmesg.log");
+			            commands.add("chown media_rw:media_rw "+rootPath+"/modem.log");
+			            commands.add("chown media_rw:media_rw "+rootPath+"/last_kmsg.log");
 			        }
 
 			        //Run the commands
