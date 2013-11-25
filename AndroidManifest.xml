@@ -19,10 +19,10 @@
 -->
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.tortel.syslog"
-    android:versionCode="11"
-    android:versionName="1.5.1">
+    android:versionCode="12"
+    android:versionName="1.5.2">
 
-    <uses-sdk android:minSdkVersion="10" android:targetSdkVersion="18" />
+    <uses-sdk android:minSdkVersion="10" android:targetSdkVersion="19" />
 
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_LOGS" />
