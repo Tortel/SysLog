@@ -198,6 +198,15 @@ public class MainActivity extends SherlockFragmentActivity {
 		box.setChecked(kernelLog);
 		box = (CheckBox) findViewById(R.id.last_kmsg);
 		box.setChecked(lastKmsg);
+		
+		// Set the warning for modem logs
+		TextView view = (TextView) findViewById(R.id.warnings);
+		if(modemLog){
+		    view.setText(R.string.warn_modem);
+		    view.setVisibility(View.VISIBLE);
+		} else {
+		    view.setVisibility(View.GONE);
+		}
 	}
 	
 	/**
@@ -225,6 +234,14 @@ public class MainActivity extends SherlockFragmentActivity {
 		case R.id.modem_log:
 			modemLog = box.isChecked();
 			prefs.putBoolean(KEY_MODEM, modemLog);
+	        // Set the warning for modem logs
+	        TextView view = (TextView) findViewById(R.id.warnings);
+	        if(modemLog){
+	            view.setText(R.string.warn_modem);
+	            view.setVisibility(View.VISIBLE);
+	        } else {
+	            view.setVisibility(View.GONE);
+	        }
 			break;
 		}
 		

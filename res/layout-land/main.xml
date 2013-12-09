@@ -84,6 +84,15 @@
     </TableLayout>
     
     <TextView
+        android:id="@+id/warnings"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:gravity="center"
+        android:padding="5dip"
+        android:text=""
+        android:textStyle="bold|italic" />
+    
+    <TextView
         android:id="@+id/warn_root"
         android:layout_height="wrap_content"
         android:layout_width="wrap_content"

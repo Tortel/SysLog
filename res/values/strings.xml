@@ -48,6 +48,7 @@
 and with some 3.x kernels it also may not be able to get kernel logs.</string>
     <string name="error">Error saving logs. Check your SD card.</string>
     <string name="storage_err">The external storage is not writable, unable to save logs.</string>
+    <string name="warn_modem">Note: Modem logs may contain personal information such as phone number or IMEI.</string>
 	
 	<!-- Menu Strings -->
 	<string name="about">About</string>
