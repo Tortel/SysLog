@@ -482,6 +482,12 @@ public class MainActivity extends SherlockFragmentActivity {
 			            commands.add("chown media_rw:media_rw "+rootPath+"/dmesg.log");
 			            commands.add("chown media_rw:media_rw "+rootPath+"/modem.log");
 			            commands.add("chown media_rw:media_rw "+rootPath+"/last_kmsg.log");
+			            // Some Omni-based ROMs/kernels have issues even with the above
+			            // When in doubt, overkill it
+	                    commands.add("chmod 666 "+rootPath+"/logcat.log");
+	                    commands.add("chmod 666 "+rootPath+"/dmesg.log");
+	                    commands.add("chmod 666 "+rootPath+"/modem.log");
+	                    commands.add("chmod 666 "+rootPath+"/last_kmsg.log");
 			        }
 
 			        //Run the commands
