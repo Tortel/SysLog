@@ -64,6 +64,17 @@ public class RunCommand {
 		return builder.toString();
 	}
 	
+	/**
+	 * Strips all invalid characters from a string,
+	 * for use in filenames. It replaces invalid characters
+	 * with '_'
+	 * @param name the string to clean
+	 * @return the clean string
+	 */
+	private String cleanFileName(String name){
+		return name.replaceAll("[^a-zA-Z0-9.-]", "_");
+	}
+	
 	public boolean isKernelLog() {
 		return kernelLog;
 	}
@@ -92,7 +103,7 @@ public class RunCommand {
 		return appendText;
 	}
 	public void setAppendText(String appendText) {
-		this.appendText = appendText.trim();
+		this.appendText = cleanFileName(appendText.trim());
 	}
 	public void setNotes(String notes) {
 		this.notes = notes.trim();
