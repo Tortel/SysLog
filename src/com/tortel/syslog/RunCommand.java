@@ -37,8 +37,15 @@ public class RunCommand {
 	}
 	
 	public String getNotes() {
-		String toRet = notes == null ? "" : notes;
-		toRet += "\n"+grepOption.toString()+" grepped for "+grep;
+	    String toRet = null;
+	    if(notes != null && !"".equals(notes)){
+	        toRet = notes;
+	    }
+	    // Only add the grep notes if grep was actually used
+	    if(grep()){
+	        toRet = notes == null ? "" : notes;
+	        toRet += "\n"+grepOption.toString()+" grepped for "+grep;
+	    }
 		return toRet;
 	}
 	
