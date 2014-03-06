@@ -450,7 +450,7 @@ public class MainActivity extends SherlockFragmentActivity {
 			        String rootPath = path;
 			        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2){
 			            rootPath = path.replaceAll("/storage/emulated/", "/data/media/");
-			            Log.v(TAG, "Using path "+path+" for root commands");
+			            Log.v(TAG, "Using path "+rootPath+" for root commands");
 			        }
 
 			        //Commands to dump the logs
@@ -519,7 +519,7 @@ public class MainActivity extends SherlockFragmentActivity {
 			        }
 
 			        //If there are notes, write them to a notes file
-			        if(command.getNotes().length() > 0){
+			        if(command.getNotes() != null && command.getNotes().length() > 0){
 			            File noteFile = new File(path+"/notes.txt");
                         FileWriter writer = new FileWriter(noteFile);
                         writer.write(command.getNotes());
