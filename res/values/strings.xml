@@ -64,6 +64,8 @@ and with some 3.x kernels it also may not be able to get kernel logs.</string>
 	<string name="send_bugreport">Send Bug Report</string>
 	<string name="dismiss">Dismiss</string>
 	<string name="bugreport_notice">Note: Sending a bug report opens an email application so you can email the developer</string>
+	<string name="bugreport_disabled">Note: Bug reporting has been disabled because you are running Android 4.3 or higher and did not use root.
+Please enable root access and try again.</string>
 	
 	<string name="syslog_faq">SysLog FAQ</string>
 	

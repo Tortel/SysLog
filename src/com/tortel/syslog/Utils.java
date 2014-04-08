@@ -73,6 +73,14 @@ public class Utils {
     }
     
     /**
+     * Returns true if the build is SELinux protected, which is 4.3+
+     * @return
+     */
+    public static boolean isSeAndroid(){
+        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2;
+    }
+    
+    /**
      * Runs the {@link RunCommand} contained within the {@link Result} passed in.<br />
      * On an error
      * @param result
@@ -133,7 +141,7 @@ public class Utils {
              *  with /data/media/{UID}
              */
             String rootPath = path;
-            if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2){
+            if(isSeAndroid()){
                 rootPath = path.replaceAll("/storage/emulated/", "/data/media/");
                 Log.v(TAG, "Using path "+rootPath+" for root commands");
             }
