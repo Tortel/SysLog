@@ -272,6 +272,8 @@ public class MainActivity extends SherlockFragmentActivity {
 			command.setAppendText(fileEditText.getText().toString());
 			command.setNotes(notesEditText.getText().toString());
 			
+			command.setRoot(root);
+			
 			new LogTask().execute(command);
 		} else {
 			Toast.makeText(this, R.string.storage_err, Toast.LENGTH_LONG).show();
@@ -378,9 +380,6 @@ public class MainActivity extends SherlockFragmentActivity {
 	}
 	
 	private class LogTask extends AsyncTask<RunCommand, Void, Result> {
-		private String archivePath;
-		private String shortPath;
-		
 		protected void onPreExecute(){
 			showRunningDialog();
 			running = true;
@@ -438,13 +437,13 @@ public class MainActivity extends SherlockFragmentActivity {
 			}
 
 			if(result.success()){
-				String msg = getResources().getString(R.string.save_path)+shortPath;
+				String msg = getResources().getString(R.string.save_path)+result.getShortPath();
 				Toast.makeText(getBaseContext(), msg, Toast.LENGTH_LONG).show();
 				
 				//Display a share intent
 				Intent share = new Intent(android.content.Intent.ACTION_SEND);
 				share.setType("application/zip");
-				share.putExtra(Intent.EXTRA_STREAM, Uri.parse("file://"+archivePath));
+				share.putExtra(Intent.EXTRA_STREAM, Uri.parse("file://"+result.getArchivePath()));
 				
 				if(isAvailable(getApplicationContext(), share)){
 					startActivity(share);

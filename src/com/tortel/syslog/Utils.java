@@ -60,7 +60,7 @@ public class Utils {
         if (Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState())) {
             //Check how much space is on the primary storage
             double freeSpace = getStorageFreeSpace();
-            if(freeSpace < 10.0){
+            if(freeSpace < 7.0){
                 throw new LowSpaceException(freeSpace);
             }
             
