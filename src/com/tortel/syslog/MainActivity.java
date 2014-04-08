@@ -1,5 +1,5 @@
 /* SysLog - A simple logging tool
- * Copyright (C) 2013  Scott Warner <Tortel1210@gmail.com>
+ * Copyright (C) 2013-2014  Scott Warner <Tortel1210@gmail.com>
  * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -420,6 +420,8 @@ public class MainActivity extends SherlockFragmentActivity {
                 e.printStackTrace();
                 result.setException(e);
                 result.setMessage(R.string.exception_zip);
+			} catch(LowSpaceException e){
+			    
             } catch(Exception e){
                 //Unknown exception
                 e.printStackTrace();
