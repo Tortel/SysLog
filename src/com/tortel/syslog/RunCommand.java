@@ -25,6 +25,7 @@ public class RunCommand {
 	private boolean lastKernelLog;
 	private boolean mainLog;
 	private boolean modemLog;
+	private boolean root;
 	
 	private String appendText;
 	private String notes;
@@ -124,4 +125,10 @@ public class RunCommand {
 	public String getGrep() {
 		return grep;
 	}
+    public boolean hasRoot() {
+        return root;
+    }
+    public void setRoot(boolean root) {
+        this.root = root;
+    }
 }

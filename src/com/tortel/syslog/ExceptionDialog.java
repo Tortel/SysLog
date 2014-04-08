@@ -28,7 +28,6 @@ import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.os.Bundle;
 import android.os.Environment;
-import android.os.StatFs;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
@@ -38,7 +37,6 @@ import com.actionbarsherlock.app.SherlockDialogFragment;
 
 public class ExceptionDialog extends SherlockDialogFragment implements android.view.View.OnClickListener,
         DialogInterface.OnClickListener {
-    private static final int MB_TO_BYTE = 1048576;
     
     private static Result result;
     
@@ -131,27 +129,15 @@ public class ExceptionDialog extends SherlockDialogFragment implements android.v
         body.append("Android version: "+android.os.Build.VERSION.SDK_INT+"\n");
         body.append("Kernel version: "+System.getProperty("os.version")+"\n");
         body.append("Storage state: "+Environment.getExternalStorageState()+"\n");
-        body.append("Free space: "+getStorageFreeSpace()+"mb \n");
+        body.append("Free space: "+Utils.getStorageFreeSpace()+"mb \n");
         body.append("Storage path: "+Environment.getExternalStorageDirectory().getPath()+"\n");
-        body.append("Using root: "+result.hasRoot()+"\n");
+        body.append("Using root: "+result.getCommand().hasRoot()+"\n");
         body.append(result.getCommand().getDebugString()+"\n");
         body.append("Stacktrace:\n");
         body.append(getStackTrace(result.getException()));
         body.append("\n -- Please leave all the information above --\n");
         body.append("Please add any additional details:\n");
         return body.toString();
-    }
-    
-    /**
-     * Gets the free space of the primary storage, in MB
-     * @return
-     */
-    @SuppressWarnings("deprecation")
-    private double getStorageFreeSpace(){
-        StatFs stat = new StatFs(Environment.getExternalStorageDirectory().getPath());
-        double sdAvailSize = (double)stat.getAvailableBlocks()
-                           * (double)stat.getBlockSize();
-        return Math.floor(sdAvailSize / MB_TO_BYTE);
     }
     
     private String getStackTrace(Throwable t){

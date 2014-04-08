@@ -19,14 +19,8 @@ package com.tortel.syslog;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Locale;
 
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.Menu;
@@ -44,11 +38,9 @@ import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.net.Uri;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.telephony.TelephonyManager;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.WindowManager;
@@ -61,9 +53,6 @@ import android.widget.Toast;
 import eu.chainfire.libsuperuser.Shell;
 
 public class MainActivity extends SherlockFragmentActivity {
-	private static final String TAG = "SysLog";
-	private static final String LAST_KMSG = "/proc/last_kmsg";
-	
 	private static final String KEY_KERNEL = "kernel";
 	private static final String KEY_MAIN = "main";
 	private static final String KEY_MODEM = "modem";
@@ -305,7 +294,7 @@ public class MainActivity extends SherlockFragmentActivity {
 		private boolean hasRadio = false;
 		
 		protected Void doInBackground(Void... params) {
-			File lastKmsg = new File(LAST_KMSG);
+			File lastKmsg = new File(Utils.LAST_KMSG);
 			hasLastKmsg = lastKmsg.exists();
 			TelephonyManager manager = (TelephonyManager)getBaseContext().getSystemService(Context.TELEPHONY_SERVICE);
 			hasRadio = manager.getPhoneType() != TelephonyManager.PHONE_TYPE_NONE;
@@ -403,152 +392,10 @@ public class MainActivity extends SherlockFragmentActivity {
 		protected Result doInBackground(RunCommand... params) {
 			RunCommand command = params[0];
 			Result result = new Result(false);
-			result.setRoot(root);
 			result.setCommand(command);
 
 			try{
-			    if (Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState())) {
-			        //Commands to execute
-			        List<String> commands = new LinkedList<String>();
-
-			        //Create the directories
-			        String path = Environment.getExternalStorageDirectory().getPath();
-
-			        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd_HH.mm", Locale.US);
-			        Date date = new Date();
-			        File nomedia = new File(path+"/SysLog/.nomedia");
-			        path += "/SysLog/"+sdf.format(date)+"/";
-			        File outPath = new File(path);
-			        //Check if this path already exists (Happens if you run this multiple times a minute
-			        if(outPath.exists()){
-			            //Append the seconds
-			            path =  path.substring(0, path.length()-1) +"."+Calendar.getInstance().get(Calendar.SECOND)+"/";
-			            outPath = new File(path);
-			            Log.v(TAG, "Path already exists, added seconds");
-			        }
-
-			        Log.v(TAG, "Path: "+path);
-			        //Make the directory
-			        if(!outPath.mkdirs() && !outPath.isDirectory()){
-			            throw new CreateFolderException();
-			        }
-
-			        //Put a .nomedia file in the directory
-			        if(!nomedia.exists()){
-			            try {
-			                nomedia.createNewFile();
-			            } catch (IOException e) {
-			                Log.e(TAG, "Failed to create .nomedia file", e);
-			            }
-			        }
-
-			        /*
-			         *  If the system is 4.3, some superuser setups (CM10.2) have issues accessing
-			         *  the normal external storage path. Replace the first portion of the path
-			         *  with /data/media/{UID}
-			         */
-			        String rootPath = path;
-			        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2){
-			            rootPath = path.replaceAll("/storage/emulated/", "/data/media/");
-			            Log.v(TAG, "Using path "+rootPath+" for root commands");
-			        }
-
-			        //Commands to dump the logs
-			        if(command.isMainLog()){
-			            if(command.grep() && command.getGrepOption() == GrepOption.MAIN
-			            		|| command.getGrepOption() == GrepOption.ALL){
-			                commands.add("logcat -v time -d | grep \""+command.getGrep()+"\" > "+rootPath+"logcat.log");
-			            } else {
-			                commands.add("logcat -v time -d -f "+rootPath+"logcat.log");
-			            }
-			        }
-			        if(command.isKernelLog()){
-			            if(command.grep() && command.getGrepOption() == GrepOption.KERNEL
-			            		|| command.getGrepOption() == GrepOption.ALL){
-			                commands.add("dmesg | grep \""+command.getGrep()+"\" > "+rootPath+"dmesg.log");
-			            } else {
-			                commands.add("dmesg > "+rootPath+"dmesg.log");
-			            }
-			        }
-			        if(command.isModemLog()){
-			            if(command.grep() && command.getGrepOption() == GrepOption.MODEM
-			            		|| command.getGrepOption() == GrepOption.ALL){
-			                commands.add("logcat -v time -b radio -d | grep \""+command.getGrep()+"\" > "+rootPath+"modem.log");
-			            } else {
-			                commands.add("logcat -v time -b radio -d -f "+rootPath+"modem.log");
-			            }
-			        }
-			        if(command.isLastKernelLog()){
-			            if(command.grep() && command.getGrepOption() == GrepOption.LAST_KERNEL
-			            		|| command.getGrepOption() == GrepOption.ALL){
-			                //Log should be run through grep
-			                commands.add("cat "+LAST_KMSG+" | grep \""+command.getGrep()+"\" > "+rootPath+"last_kmsg.log");
-			            } else {
-			                //Try copying the last_kmsg over
-			                commands.add("cp "+LAST_KMSG+" "+rootPath+"last_kmsg.log");
-			            }
-			        }
-
-			        /*
-			         * More 4.3+ SU issues - need to chown to media_rw
-			         */
-			        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2){
-			        	// Some kernels/systems may not work properly with /*
-			        	// List the files explicitly
-			            commands.add("chown media_rw:media_rw "+rootPath+"/logcat.log");
-			            commands.add("chown media_rw:media_rw "+rootPath+"/dmesg.log");
-			            commands.add("chown media_rw:media_rw "+rootPath+"/modem.log");
-			            commands.add("chown media_rw:media_rw "+rootPath+"/last_kmsg.log");
-			            // Some Omni-based ROMs/kernels have issues even with the above
-			            // When in doubt, overkill it
-	                    commands.add("chmod 666 "+rootPath+"/logcat.log");
-	                    commands.add("chmod 666 "+rootPath+"/dmesg.log");
-	                    commands.add("chmod 666 "+rootPath+"/modem.log");
-	                    commands.add("chmod 666 "+rootPath+"/last_kmsg.log");
-			        }
-
-			        //Run the commands
-			        if(root){
-			            if(Shell.SU.run(commands) == null){
-			                throw new RunCommandException();
-			            }
-			        } else {
-			            if(Shell.SH.run(commands) == null){
-			                throw new RunCommandException();
-			            }
-			        }
-
-			        //If there are notes, write them to a notes file
-			        if(command.getNotes() != null && command.getNotes().length() > 0){
-			            File noteFile = new File(path+"/notes.txt");
-                        FileWriter writer = new FileWriter(noteFile);
-                        writer.write(command.getNotes());
-			            try{
-			                writer.close();
-			            } catch(Exception e){
-			                //Ignore
-			            }
-			        }
-
-			        //Append the users input into the zip
-			        if(command.getAppendText().length() > 0){
-			            archivePath = sdf.format(date)+"-"+command.getAppendText()+".zip";
-			        } else {
-			            archivePath = sdf.format(date)+".zip";
-			        }
-			        ZipWriter writer = new ZipWriter(path, archivePath);
-			        archivePath = path+archivePath;
-			        //Trim the path for the message
-			        shortPath = path.substring(
-			                Environment.getExternalStorageDirectory().getPath().length()+1);
-
-			        writer.createZip();
-			        result.setSuccess(true);
-			    } else {
-			        //Default storage not accessible
-			        result.setSuccess(false);
-			        result.setMessage(R.string.storage_err);
-			    }
+			    Utils.runCommand(result);
 			} catch(CreateFolderException e){
 			    //Error creating the folder
 			    e.printStackTrace();

@@ -17,6 +17,8 @@
  */
 package com.tortel.syslog;
 
+import android.os.Environment;
+
 /**
  * A class to contain various information about the
  * status of running
@@ -25,8 +27,8 @@ public class Result {
 	private boolean success;
 	private Throwable exceptions;
 	private int message;
-	private boolean root;
 	private RunCommand command;
+	private String archivePath;
 	
 	public Result(boolean success){
 		this.success = success;
@@ -57,14 +59,6 @@ public class Result {
 		return message;
 	}
 
-    public boolean hasRoot() {
-        return root;
-    }
-
-    public void setRoot(boolean root) {
-        this.root = root;
-    }
-
 	public RunCommand getCommand() {
 		return command;
 	}
@@ -72,4 +66,18 @@ public class Result {
 	public void setCommand(RunCommand command) {
 		this.command = command;
 	}
+
+    public String getArchivePath() {
+        return archivePath;
+    }
+
+    public void setArchivePath(String archivePath) {
+        this.archivePath = archivePath;
+    }
+    
+    public String getShortPath() {
+        return archivePath.substring(
+                Environment.getExternalStorageDirectory().getPath().length() + 1,
+                archivePath.lastIndexOf('/'));
+    }
 }
