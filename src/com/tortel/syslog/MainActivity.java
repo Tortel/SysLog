@@ -20,13 +20,14 @@ package com.tortel.syslog;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.List;
 
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
 import com.tortel.syslog.exception.*;
+import com.tortel.syslog.Utils.CleanAllTask;
+import com.tortel.syslog.Utils.CleanUncompressedTask;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
@@ -34,8 +35,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
-import android.content.pm.PackageManager;
-import android.content.pm.ResolveInfo;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -143,10 +142,10 @@ public class MainActivity extends SherlockFragmentActivity {
 	public boolean onOptionsItemSelected(MenuItem item){
 		switch(item.getItemId()){
 		case R.id.clean_uncompressed:
-			new CleanUncompressedTask().execute();
+			new CleanUncompressedTask(getBaseContext()).execute();
 			return true;
 		case R.id.clean_all:
-			new CleanAllTask().execute();
+			new CleanAllTask(getBaseContext()).execute();
 			return true;
 		case R.id.about:
 			showAboutDialog();
@@ -319,42 +318,6 @@ public class MainActivity extends SherlockFragmentActivity {
 		}
 	}
 	
-	/**
-	 * Clean all the saved log files
-	 */
-	private class CleanAllTask extends AsyncTask<Void, Void, Void>{
-		protected Void doInBackground(Void... params) {
-			String path = Environment.getExternalStorageDirectory().getPath();
-			path += "/SysLog/*";
-			Shell.SH.run("rm -rf "+path);
-			return null;
-		}
-		
-		protected void onPostExecute(Void param){
-			Toast.makeText(getBaseContext(), R.string.done, Toast.LENGTH_SHORT).show();
-		}
-	}
-	
-	/**
-	 * Clean only the uncompressed logs
-	 */
-	private class CleanUncompressedTask extends AsyncTask<Void, Void, Void>{
-		protected Void doInBackground(Void... params) {
-			String path = Environment.getExternalStorageDirectory().getPath();
-			path += "/SysLog/*/";
-			//All the log files end in .log, and there are also notes.txt files
-			String commands[] = new String[2];
-			commands[0] = "rm "+path+"*.log";
-			commands[1] = "rm "+path+"*.txt";
-			Shell.SH.run(commands);
-			return null;
-		}
-		
-		protected void onPostExecute(Void param){
-			Toast.makeText(getBaseContext(), R.string.done, Toast.LENGTH_SHORT).show();
-		}
-	}
-	
 	private class CheckRootTask extends AsyncTask<Void, Void, Boolean>{
 
 		protected Boolean doInBackground(Void... params) {
@@ -421,7 +384,9 @@ public class MainActivity extends SherlockFragmentActivity {
                 result.setException(e);
                 result.setMessage(R.string.exception_zip);
 			} catch(LowSpaceException e){
-			    
+			    e.printStackTrace();
+			    result.setException(e);
+			    result.setMessage(R.string.exception_space);
             } catch(Exception e){
                 //Unknown exception
                 e.printStackTrace();
@@ -447,7 +412,7 @@ public class MainActivity extends SherlockFragmentActivity {
 				share.setType("application/zip");
 				share.putExtra(Intent.EXTRA_STREAM, Uri.parse("file://"+result.getArchivePath()));
 				
-				if(isAvailable(getApplicationContext(), share)){
+				if(Utils.isHandlerAvailable(getApplicationContext(), share)){
 					startActivity(share);
 				} else {
 				    result.setMessage(R.string.exception_send);
@@ -459,10 +424,17 @@ public class MainActivity extends SherlockFragmentActivity {
 	                dialog.show(getSupportFragmentManager(), "exceptionDialog");
 				}
 			} else {
-			    //Show the error dialog
-				ExceptionDialog dialog = new ExceptionDialog();
-				dialog.setResult(result);
-				dialog.show(getSupportFragmentManager(), "exceptionDialog");
+			    if(result.getException() instanceof LowSpaceException){
+			        //Show the low space dialog
+                    LowSpaceDialog dialog = new LowSpaceDialog();
+                    dialog.setResult(result);
+                    dialog.show(getSupportFragmentManager(), "exceptionDialog");
+			    } else {
+    			    //Show the error dialog
+    				ExceptionDialog dialog = new ExceptionDialog();
+    				dialog.setResult(result);
+    				dialog.show(getSupportFragmentManager(), "exceptionDialog");
+			    }
 			}
 			
 			fileEditText.setText("");
@@ -471,11 +443,4 @@ public class MainActivity extends SherlockFragmentActivity {
 		}
 		
 	}
-
-	public static boolean isAvailable(Context ctx, Intent intent) {
-		   final PackageManager mgr = ctx.getPackageManager();
-		   List<ResolveInfo> list = mgr.queryIntentActivities(intent, 
-		         PackageManager.MATCH_DEFAULT_ONLY);
-		   return list.size() > 0;
-		}
 }

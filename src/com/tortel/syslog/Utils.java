@@ -27,10 +27,16 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 
+import android.content.Context;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Environment;
 import android.os.StatFs;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.tortel.syslog.exception.CreateFolderException;
 import com.tortel.syslog.exception.LowSpaceException;
@@ -47,6 +53,12 @@ public class Utils {
     public static final String LAST_KMSG = "/proc/last_kmsg";
     
     private static final int MB_TO_BYTE = 1048576;
+    
+    /**
+     * Minimum amount of free space needed to not throw a LowSpaceException.
+     * This is based on the average size of my runs (~5.5MB)
+     */
+    private static final double MIN_FREE_SPACE = 6;
     
     /**
      * Gets the free space of the primary storage, in MB
@@ -77,7 +89,7 @@ public class Utils {
         if (Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState())) {
             //Check how much space is on the primary storage
             double freeSpace = getStorageFreeSpace();
-            if(freeSpace < 7.0){
+            if(freeSpace < MIN_FREE_SPACE){
                 throw new LowSpaceException(freeSpace);
             }
             
@@ -221,5 +233,73 @@ public class Utils {
             result.setMessage(R.string.storage_err);
         }
     }
+    
+    public static boolean isHandlerAvailable(Context ctx, Intent intent) {
+        final PackageManager mgr = ctx.getPackageManager();
+        List<ResolveInfo> list = mgr.queryIntentActivities(intent, 
+              PackageManager.MATCH_DEFAULT_ONLY);
+        return list.size() > 0;
+     }
+    
+    /**
+     * Clean all the saved log files
+     */
+    public static class CleanAllTask extends AsyncTask<Void, Void, Void>{
+        private Context context;
+        private double startingSpace;
+        private double endingSpace;
+        
+        public CleanAllTask(Context context){
+            this.context = context;
+        }
+        
+        protected Void doInBackground(Void... params) {
+            startingSpace = Utils.getStorageFreeSpace();
+            String path = Environment.getExternalStorageDirectory().getPath();
+            path += "/SysLog/*";
+            Shell.SH.run("rm -rf "+path);
+            endingSpace = Utils.getStorageFreeSpace();
+            return null;
+        }
+        
+        protected void onPostExecute(Void param){
+            String spaceFreed = context.getResources().getString(R.string.space_freed,
+                    endingSpace - startingSpace);
+            
+            Toast.makeText(context, spaceFreed, Toast.LENGTH_SHORT).show();
+        }
+    }
 
+    /**
+     * Clean only the uncompressed logs
+     */
+    public static class CleanUncompressedTask extends AsyncTask<Void, Void, Void>{
+        private Context context;
+        private double startingSpace;
+        private double endingSpace;
+        
+        public CleanUncompressedTask(Context context){
+            this.context = context;
+        }
+        
+        protected Void doInBackground(Void... params) {
+            startingSpace = Utils.getStorageFreeSpace();
+            String path = Environment.getExternalStorageDirectory().getPath();
+            path += "/SysLog/*/";
+            //All the log files end in .log, and there are also notes.txt files
+            String commands[] = new String[2];
+            commands[0] = "rm "+path+"*.log";
+            commands[1] = "rm "+path+"*.txt";
+            Shell.SH.run(commands);
+            endingSpace = Utils.getStorageFreeSpace();
+            return null;
+        }
+        
+        protected void onPostExecute(Void param){
+            String spaceFreed = context.getResources().getString(R.string.space_freed,
+                    endingSpace - startingSpace);
+            
+            Toast.makeText(context, spaceFreed, Toast.LENGTH_SHORT).show();
+        }
+    }
 }

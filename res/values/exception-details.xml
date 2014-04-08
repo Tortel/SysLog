@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
  * SysLog - A simple logging tool
- * Copyright (C) 2013  Scott Warner <Tortel1210@gmail.com>
+ * Copyright (C) 2013-2014  Scott Warner <Tortel1210@gmail.com>
  * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -42,4 +42,7 @@
     <!-- No send intent available -->
     <string name="exception_send">There was no application available to send a zip file. The logs have been saved, but please install or enable
         an email application or cloud storage application to easily send the file.</string>
+        
+    <!-- Low space on primary storage -->
+    <string name="exception_space">Your primary storage does not have enough free space. You currently have %.1f MB free. SysLog can try to free space by cleaning old log files.</string>
 </resources>

@@ -35,6 +35,9 @@ import android.widget.TextView;
 
 import com.actionbarsherlock.app.SherlockDialogFragment;
 
+/**
+ * Dialog for general exceptions
+ */
 public class ExceptionDialog extends SherlockDialogFragment implements android.view.View.OnClickListener,
         DialogInterface.OnClickListener {
     
@@ -104,7 +107,7 @@ public class ExceptionDialog extends SherlockDialogFragment implements android.v
         intent.putExtra(Intent.EXTRA_SUBJECT, "SysLog bug report");
         intent.setType("plain/text");
         intent.putExtra(Intent.EXTRA_TEXT, getEmailReportBody());
-        if(!MainActivity.isAvailable(getActivity(), intent)){
+        if(!Utils.isHandlerAvailable(getActivity(), intent)){
             OhShitDialog dialog = new OhShitDialog();
             dialog.setException(result.getException());
             dialog.show(getActivity().getSupportFragmentManager(), "ohshit");
