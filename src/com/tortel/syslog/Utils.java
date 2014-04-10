@@ -29,12 +29,14 @@ import java.util.Locale;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Environment;
 import android.os.StatFs;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -51,6 +53,8 @@ import eu.chainfire.libsuperuser.Shell;
 public class Utils {
     public static final String TAG = "SysLog";
     public static final String LAST_KMSG = "/proc/last_kmsg";
+    public static final String PREF_PATH = "pref_root_path";
+    public static final String ROOT_PATH = "/data/media/";
     
     private static final int MB_TO_BYTE = 1048576;
     
@@ -90,7 +94,8 @@ public class Utils {
      * @throws NoFilesException
      * @throws LowSpaceException 
      */
-    public static void runCommand(Result result) throws CreateFolderException, RunCommandException, IOException, NoFilesException, LowSpaceException{
+    public static void runCommand(Context context, Result result) throws CreateFolderException,
+            RunCommandException, IOException, NoFilesException, LowSpaceException {
         RunCommand command = result.getCommand();
         String archivePath;
         
@@ -142,7 +147,9 @@ public class Utils {
              */
             String rootPath = path;
             if(isSeAndroid()){
-                rootPath = path.replaceAll("/storage/emulated/", "/data/media/");
+                SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+                
+                rootPath = path.replaceAll("/storage/emulated/", prefs.getString(PREF_PATH, ROOT_PATH));
                 Log.v(TAG, "Using path "+rootPath+" for root commands");
             }
 

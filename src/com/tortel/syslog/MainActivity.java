@@ -147,6 +147,9 @@ public class MainActivity extends SherlockFragmentActivity {
 		case R.id.clean_all:
 			new CleanAllTask(getBaseContext()).execute();
 			return true;
+		case R.id.change_path:
+		    showPathDialog();
+		    return true;
 		case R.id.about:
 			showAboutDialog();
 			return true;
@@ -157,6 +160,14 @@ public class MainActivity extends SherlockFragmentActivity {
 			return super.onOptionsItemSelected(item);
 		}
 	}
+	
+	/**
+     * Shows the change path dialog
+     */
+    private void showPathDialog(){
+        CustomPathDialog dialog = new CustomPathDialog();
+        dialog.show(getSupportFragmentManager(), "path");
+    }
 	
 	/**
 	 * Shows the About dialog box
@@ -357,7 +368,7 @@ public class MainActivity extends SherlockFragmentActivity {
 			result.setCommand(command);
 
 			try{
-			    Utils.runCommand(result);
+			    Utils.runCommand(getBaseContext(), result);
 			} catch(CreateFolderException e){
 			    //Error creating the folder
 			    e.printStackTrace();

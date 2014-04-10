@@ -43,6 +43,14 @@
     <string name="save_path">Logs saved to sdcard/</string>
     <string name="space_freed">Freed %.1f MB</string>
     
+    <!-- Edit path strings -->
+    <string name="change_path">Set Root Path</string>
+    <string name="path_info">This sets the path to use instead of /storage/emulated/ for root access on Android 4.3+ devices.\n
+<b>DO NOT CHANGE UNLESS YOU KNOW WHAT YOU ARE DOING.</b></string>
+    <string name="save">Save</string>
+    <string name="reset">Reset</string>
+    <string name="cancel">Cancel</string>
+    
     <!-- Warnings/Errors -->
     <string name="noroot">Warning: No root access. Logs may be incomplete or missing.</string>
     <string name="noroot_jb">Warning: No root access. Without root, it is not possible to get system or modem logs, 

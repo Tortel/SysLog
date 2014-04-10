@@ -32,6 +32,10 @@
 			        android:id="@+id/clean_all"
 			        android:title="@string/clean_all"
 			    	android:showAsAction="never" />
+			    <item
+			        android:id="@+id/change_path"
+			        android:title="@string/change_path"
+			        android:showAsAction="never" />
 			    <item android:id="@+id/faq"
 			        android:title="@string/faq"
 			        android:showAsAction="never" />

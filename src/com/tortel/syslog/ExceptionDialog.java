@@ -25,9 +25,11 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.os.Bundle;
 import android.os.Environment;
+import android.preference.PreferenceManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
@@ -124,6 +126,7 @@ public class ExceptionDialog extends SherlockDialogFragment implements android.v
     
     private String getEmailReportBody(){
         Context context = getActivity();
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         StringBuilder body = new StringBuilder();
         
         body.append("Device model: "+android.os.Build.MODEL+"\n");
@@ -140,6 +143,7 @@ public class ExceptionDialog extends SherlockDialogFragment implements android.v
         body.append("Free space: "+Utils.getStorageFreeSpace()+"mb \n");
         body.append("Storage path: "+Environment.getExternalStorageDirectory().getPath()+"\n");
         body.append("Using root: "+result.getCommand().hasRoot()+"\n");
+        body.append("Root path: "+prefs.getString(Utils.PREF_PATH, Utils.ROOT_PATH)+"\n");
         body.append(result.getCommand().getDebugString()+"\n");
         body.append("Stacktrace:\n");
         body.append(getStackTrace(result.getException()));
