@@ -21,6 +21,7 @@ import java.io.*;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
+import com.tortel.syslog.exception.LowSpaceException;
 import com.tortel.syslog.exception.NoFilesException;
 
 import android.util.Log;
@@ -47,42 +48,53 @@ public class ZipWriter {
 		zWriter = new ZipOutputStream(new FileOutputStream(outPath+zName));
 	}
 	
-	public void createZip() throws IOException{
-		for(int i=0; i < files.length; i++){
-			File cur = files[i];
-			
-			//Make sure we aren't adding the zip into its self
-			if(cur.getName().endsWith(".zip")){
-				continue;
-			}
-			
-			Log.v("SysLog", "Adding "+cur.getName()+" to zip");
-			//Zip it
-			BufferedInputStream reader = new BufferedInputStream(new FileInputStream(cur));
-			ZipEntry entry = new ZipEntry(cur.getName());
-			entry.setSize(cur.length());
-			
-			zWriter.putNextEntry(entry);
-			
-			int length;
-			byte[] buffer = new byte[10240];
-			
-			while( (length = reader.read(buffer)) != -1 ){
-				zWriter.write(buffer, 0, length);
-			}
-			
-			//Clean up
-			zWriter.closeEntry();
-			
-			reader.close();
-		}
-		
-		try {
-			zWriter.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+    public void createZip() throws IOException, LowSpaceException {
+        try {
+            for (int i = 0; i < files.length; i++) {
+                File cur = files[i];
 
-	}
+                // Make sure we aren't adding the zip into its self
+                if (cur.getName().endsWith(".zip")) {
+                    continue;
+                }
+
+                Log.v("SysLog", "Adding " + cur.getName() + " to zip");
+                // Zip it
+                BufferedInputStream reader = new BufferedInputStream(new FileInputStream(cur));
+                ZipEntry entry = new ZipEntry(cur.getName());
+                entry.setSize(cur.length());
+
+                zWriter.putNextEntry(entry);
+
+                int length;
+                byte[] buffer = new byte[10240];
+
+                while ((length = reader.read(buffer)) != -1) {
+                    zWriter.write(buffer, 0, length);
+                }
+
+                // Clean up
+                zWriter.closeEntry();
+
+                reader.close();
+            }
+
+            try {
+                zWriter.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        } catch (IOException e) {
+            
+            // Make sure that the IOException wasn't caused by running out of space
+            double freeSpace = Utils.getStorageFreeSpace();
+            if(freeSpace <= 1){
+                throw new LowSpaceException(freeSpace);
+            }
+            
+            // Nope, throw it on up
+            throw e;
+        }
+    }
 	
 }
