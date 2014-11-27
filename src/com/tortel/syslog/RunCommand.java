@@ -24,6 +24,7 @@ public class RunCommand {
 	private boolean kernelLog;
 	private boolean lastKernelLog;
 	private boolean mainLog;
+	private boolean eventLog;
 	private boolean modemLog;
 	private boolean root;
 	
@@ -63,6 +64,7 @@ public class RunCommand {
 		builder.append("\nkernelLog: "+kernelLog);
 		builder.append("\nlastKernelLog: "+lastKernelLog);
 		builder.append("\nmainLog: "+mainLog);
+		builder.append("\neventLog: "+eventLog);
 		builder.append("\nmodemLog: "+modemLog);
 		builder.append("\ngrepOption: "+grepOption.toString());
 		builder.append("\ngrep: "+grep);
@@ -130,5 +132,11 @@ public class RunCommand {
     }
     public void setRoot(boolean root) {
         this.root = root;
+    }
+    public boolean isEventLog() {
+        return eventLog;
+    }
+    public void setEventLog(boolean eventLog) {
+        this.eventLog = eventLog;
     }
 }

@@ -21,6 +21,7 @@
     <!-- Array for the grep spinner -->
     <string-array name="grep_options">
         <item>Main Log</item>
+        <item>Event Log</item>
         <item>Kernel Log</item>
         <item>Last Kernel Log</item>
         <item>Modem Log</item>

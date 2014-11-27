@@ -61,6 +61,13 @@
         android:onClick="logChange"/>
     
     <CheckBox 
+        android:id="@+id/event_log"
+        android:layout_height="wrap_content"
+        android:layout_width="fill_parent"
+        android:text="@string/event_log"
+        android:onClick="logChange"/>
+    
+    <CheckBox 
         android:id="@+id/modem_log"
         android:layout_height="wrap_content"
         android:layout_width="fill_parent"

@@ -54,6 +54,7 @@ import eu.chainfire.libsuperuser.Shell;
 public class MainActivity extends SherlockFragmentActivity {
 	private static final String KEY_KERNEL = "kernel";
 	private static final String KEY_MAIN = "main";
+	private static final String KEY_EVENT = "event";
 	private static final String KEY_MODEM = "modem";
 	private static final String KEY_LASTKMSG = "lastKmsg";
 	
@@ -63,6 +64,7 @@ public class MainActivity extends SherlockFragmentActivity {
 	private boolean kernelLog;
 	private boolean lastKmsg;
 	private boolean mainLog;
+	private boolean eventLog;
 	private boolean modemLog;
 	private static boolean root;
 	private ProgressDialog dialog;
@@ -76,17 +78,13 @@ public class MainActivity extends SherlockFragmentActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
 		
-		//Load the logging options
-		SharedPreferences prefs = getPreferences(Activity.MODE_PRIVATE);
-		kernelLog = prefs.getBoolean(KEY_KERNEL, true);
-		mainLog = prefs.getBoolean(KEY_MAIN, true);
-		modemLog = prefs.getBoolean(KEY_MODEM, true);
-		lastKmsg = prefs.getBoolean(KEY_LASTKMSG, true);
-		
 		fileEditText = (EditText) findViewById(R.id.file_name);
 		notesEditText = (EditText) findViewById(R.id.notes);
 		grepEditText = (EditText) findViewById(R.id.grep_string);
 		grepSpinner = (Spinner) findViewById(R.id.grep_log);
+		
+        //Load the logging options
+        loadSettings();
 		
 		//Create a new shell object
 		if(!root){
@@ -112,15 +110,19 @@ public class MainActivity extends SherlockFragmentActivity {
 		super.onResume();
 		
 		//Load the logging options
-		SharedPreferences prefs = getPreferences(Activity.MODE_PRIVATE);
-		kernelLog = prefs.getBoolean("kernel", true);
-		mainLog = prefs.getBoolean("main", true);
-		modemLog = prefs.getBoolean("modem", true);
-		lastKmsg = prefs.getBoolean("lastKmsg", true);
-		fileEditText = (EditText) findViewById(R.id.file_name);
-		notesEditText = (EditText) findViewById(R.id.notes);
-		
-		setCheckBoxes();
+		loadSettings();
+	}
+	
+	private void loadSettings(){
+	    SharedPreferences prefs = getPreferences(Activity.MODE_PRIVATE);
+        kernelLog = prefs.getBoolean(KEY_KERNEL, true);
+        mainLog = prefs.getBoolean(KEY_MAIN, true);
+        eventLog = prefs.getBoolean(KEY_EVENT, true);
+        modemLog = prefs.getBoolean(KEY_MODEM, true);
+        lastKmsg = prefs.getBoolean(KEY_LASTKMSG, true);
+        
+        // Set the checkboxes
+        setCheckBoxes();
 	}
 	
 	public boolean onCreateOptionsMenu(Menu menu){
@@ -191,6 +193,8 @@ public class MainActivity extends SherlockFragmentActivity {
 	private void setCheckBoxes(){
 		CheckBox box = (CheckBox) findViewById(R.id.main_log);
 		box.setChecked(mainLog);
+        box = (CheckBox) findViewById(R.id.event_log);
+        box.setChecked(eventLog);
 		box = (CheckBox) findViewById(R.id.modem_log);
 		box.setChecked(modemLog);
 		box = (CheckBox) findViewById(R.id.kernel_log);
@@ -230,6 +234,10 @@ public class MainActivity extends SherlockFragmentActivity {
 			mainLog = box.isChecked();
 			prefs.putBoolean(KEY_MAIN, mainLog);
 			break;
+		case R.id.event_log:
+            eventLog = box.isChecked();
+            prefs.putBoolean(KEY_EVENT, eventLog);
+            break;		    
 		case R.id.modem_log:
 			modemLog = box.isChecked();
 			prefs.putBoolean(KEY_MODEM, modemLog);
@@ -245,7 +253,7 @@ public class MainActivity extends SherlockFragmentActivity {
 		}
 		
 		//Make sure that at least one type is selected
-		enableLogButton(mainLog || lastKmsg
+		enableLogButton(mainLog || eventLog || lastKmsg
 		        || modemLog || kernelLog);
 		
 		//Save the settings
@@ -272,6 +280,7 @@ public class MainActivity extends SherlockFragmentActivity {
 			command.setKernelLog(kernelLog);
 			command.setLastKernelLog(lastKmsg);
 			command.setMainLog(mainLog);
+			command.setEventLog(eventLog);
 			command.setModemLog(modemLog);
 			
 			//Grep options

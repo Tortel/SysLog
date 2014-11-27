@@ -39,49 +39,64 @@
         android:paddingTop="20dip"
         android:padding="5dip" />
     
-    <TableLayout
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        >
-        
-        <TableRow>
+        android:orientation="horizontal"
+        android:baselineAligned="false" >
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_weight="1">
+
 		    <CheckBox 
 		        android:id="@+id/kernel_log"
 		        android:layout_height="wrap_content"
-		        android:layout_width="0dip"
-		        android:layout_weight=".5"
+		        android:layout_width="match_parent"
 		        android:text="@string/kernel_log"
-		        android:paddingRight="15dip"
 		        android:onClick="logChange"/>
 		    
 		    <CheckBox 
 		        android:id="@+id/last_kmsg"
 		        android:layout_height="wrap_content"
-		        android:layout_width="0dip"
-		        android:layout_weight=".5"
+		        android:layout_width="match_parent"
 		        android:text="@string/last_kmsg"
-		        android:paddingRight="15dip"
 		        android:onClick="logChange"/>
-	    </TableRow>
-	    
-	    <TableRow>
-		    <CheckBox 
-		        android:id="@+id/main_log"
-		        android:layout_height="wrap_content"
-		        android:layout_width="0dip"
-		        android:layout_weight=".5"
-		        android:text="@string/main_log"
-		        android:onClick="logChange"/>
-		    
+
+            <CheckBox 
+                android:id="@+id/main_log"
+                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+                android:text="@string/main_log"
+                android:onClick="logChange"/>
+
+	    </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_weight="1">
+
+            <CheckBox 
+                android:id="@+id/event_log"
+                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+                android:text="@string/event_log"
+                android:onClick="logChange"/>		    
+
 		    <CheckBox 
 		        android:id="@+id/modem_log"
 		        android:layout_height="wrap_content"
-		        android:layout_width="0dip"
-		        android:layout_weight=".5"
+		        android:layout_width="match_parent"
 		        android:text="@string/modem_log"
 		        android:onClick="logChange"/>
-    	</TableRow>
-    </TableLayout>
+
+    	</LinearLayout>
+
+    </LinearLayout>
     
     <TextView
         android:id="@+id/warnings"

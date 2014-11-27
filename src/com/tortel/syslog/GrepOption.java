@@ -22,6 +22,7 @@ package com.tortel.syslog;
  */
 public enum GrepOption {
 	MAIN("Main Log"),
+	EVENT("Event Log"),
 	KERNEL("Kernel Log"),
 	LAST_KERNEL("Last Kernel Log"),
 	MODEM("Modem Log"),

@@ -162,6 +162,14 @@ public class Utils {
                     commands.add("logcat -v time -d -f "+rootPath+"logcat.log");
                 }
             }
+            if(command.isEventLog()){
+                if(command.grep() && command.getGrepOption() == GrepOption.EVENT
+                        || command.getGrepOption() == GrepOption.ALL){
+                    commands.add("logcat -b events -v time -d | grep \""+command.getGrep()+"\" > "+rootPath+"event.log");
+                } else {
+                    commands.add("logcat -b events -v time -d -f "+rootPath+"event.log");
+                }
+            }
             if(command.isKernelLog()){
                 if(command.grep() && command.getGrepOption() == GrepOption.KERNEL
                         || command.getGrepOption() == GrepOption.ALL){
@@ -198,10 +206,12 @@ public class Utils {
                 commands.add("chown media_rw:media_rw "+rootPath+"/logcat.log");
                 commands.add("chown media_rw:media_rw "+rootPath+"/dmesg.log");
                 commands.add("chown media_rw:media_rw "+rootPath+"/modem.log");
+                commands.add("chown media_rw:media_rw "+rootPath+"/event.log");
                 commands.add("chown media_rw:media_rw "+rootPath+"/last_kmsg.log");
                 // Some Omni-based ROMs/kernels have issues even with the above
                 // When in doubt, overkill it
                 commands.add("chmod 666 "+rootPath+"/logcat.log");
+                commands.add("chmod 666 "+rootPath+"/event.log");
                 commands.add("chmod 666 "+rootPath+"/dmesg.log");
                 commands.add("chmod 666 "+rootPath+"/modem.log");
                 commands.add("chmod 666 "+rootPath+"/last_kmsg.log");
