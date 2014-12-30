@@ -2,3 +2,39 @@ bin/
 gen/
 *~
 .project
+
+.gradle
+/local.properties
+/.idea/workspace.xml
+/.idea/libraries
+.DS_Store
+/build
+/gradle
+
+#built application files
+*.apk
+*.ap_
+
+# files for the dex VM
+*.dex
+
+# Java class files
+*.class
+
+# generated files
+bin/
+gen/
+
+# files that end up being system specific
+.idea
+*.iml
+
+# this keeps wanting to update...
+gradle/wrapper/gradle-wrapper.properties
+/gradle/wrapper/gradle-wrapper.properties
+/gradle/wrapper/gradle-wrapper.properties
+
+# System specific stuff
+local.properties
+
+*~
