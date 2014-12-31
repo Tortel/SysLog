@@ -20,6 +20,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:padding="5dp"
     android:orientation="vertical" >
 
     <TextView
@@ -40,15 +41,14 @@
     <View
         android:layout_width="match_parent"
         android:layout_height="2dip"
-        android:background="@drawable/dialog_divider_horizontal_holo_dark" />
+        android:background="@color/divider" />
 
     <Button
         android:id="@+id/button_stacktrace"
         style="@android:style/Widget.ActionButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/show_stacktrace"
-        android:textColor="@android:color/white" />
+        android:text="@string/show_stacktrace" />
 
     <ScrollView
         android:layout_width="match_parent"
