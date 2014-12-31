@@ -55,6 +55,8 @@ public class Utils {
     public static final String LAST_KMSG = "/proc/last_kmsg";
     public static final String PREF_PATH = "pref_root_path";
     public static final String ROOT_PATH = "/data/media/";
+
+    private static final String PRESCRUB = "-prescrub";
     
     private static final int MB_TO_BYTE = 1048576;
     
@@ -157,43 +159,43 @@ public class Utils {
             if(command.isMainLog()){
                 if(command.grep() && command.getGrepOption() == GrepOption.MAIN
                         || command.getGrepOption() == GrepOption.ALL){
-                    commands.add("logcat -v time -d | grep \""+command.getGrep()+"\" > "+rootPath+"logcat.log");
+                    commands.add("logcat -v time -d | grep \""+command.getGrep()+"\" > "+rootPath+"logcat.log"+PRESCRUB);
                 } else {
-                    commands.add("logcat -v time -d -f "+rootPath+"logcat.log");
+                    commands.add("logcat -v time -d -f "+rootPath+"logcat.log"+PRESCRUB);
                 }
             }
             if(command.isEventLog()){
                 if(command.grep() && command.getGrepOption() == GrepOption.EVENT
                         || command.getGrepOption() == GrepOption.ALL){
-                    commands.add("logcat -b events -v time -d | grep \""+command.getGrep()+"\" > "+rootPath+"event.log");
+                    commands.add("logcat -b events -v time -d | grep \""+command.getGrep()+"\" > "+rootPath+"event.log"+PRESCRUB);
                 } else {
-                    commands.add("logcat -b events -v time -d -f "+rootPath+"event.log");
+                    commands.add("logcat -b events -v time -d -f "+rootPath+"event.log"+PRESCRUB);
                 }
             }
             if(command.isKernelLog()){
                 if(command.grep() && command.getGrepOption() == GrepOption.KERNEL
                         || command.getGrepOption() == GrepOption.ALL){
-                    commands.add("dmesg | grep \""+command.getGrep()+"\" > "+rootPath+"dmesg.log");
+                    commands.add("dmesg | grep \""+command.getGrep()+"\" > "+rootPath+"dmesg.log"+PRESCRUB);
                 } else {
-                    commands.add("dmesg > "+rootPath+"dmesg.log");
+                    commands.add("dmesg > "+rootPath+"dmesg.log"+PRESCRUB);
                 }
             }
             if(command.isModemLog()){
                 if(command.grep() && command.getGrepOption() == GrepOption.MODEM
                         || command.getGrepOption() == GrepOption.ALL){
-                    commands.add("logcat -v time -b radio -d | grep \""+command.getGrep()+"\" > "+rootPath+"modem.log");
+                    commands.add("logcat -v time -b radio -d | grep \""+command.getGrep()+"\" > "+rootPath+"modem.log"+PRESCRUB);
                 } else {
-                    commands.add("logcat -v time -b radio -d -f "+rootPath+"modem.log");
+                    commands.add("logcat -v time -b radio -d -f "+rootPath+"modem.log"+PRESCRUB);
                 }
             }
             if(command.isLastKernelLog()){
                 if(command.grep() && command.getGrepOption() == GrepOption.LAST_KERNEL
                         || command.getGrepOption() == GrepOption.ALL){
                     //Log should be run through grep
-                    commands.add("cat "+LAST_KMSG+" | grep \""+command.getGrep()+"\" > "+rootPath+"last_kmsg.log");
+                    commands.add("cat "+LAST_KMSG+" | grep \""+command.getGrep()+"\" > "+rootPath+"last_kmsg.log"+PRESCRUB);
                 } else {
                     //Try copying the last_kmsg over
-                    commands.add("cp "+LAST_KMSG+" "+rootPath+"last_kmsg.log");
+                    commands.add("cp "+LAST_KMSG+" "+rootPath+"last_kmsg.log"+PRESCRUB);
                 }
             }
 
@@ -203,18 +205,18 @@ public class Utils {
             if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2){
                 // Some kernels/systems may not work properly with /*
                 // List the files explicitly
-                commands.add("chown media_rw:media_rw "+rootPath+"/logcat.log");
-                commands.add("chown media_rw:media_rw "+rootPath+"/dmesg.log");
-                commands.add("chown media_rw:media_rw "+rootPath+"/modem.log");
-                commands.add("chown media_rw:media_rw "+rootPath+"/event.log");
-                commands.add("chown media_rw:media_rw "+rootPath+"/last_kmsg.log");
+                commands.add("chown media_rw:media_rw "+rootPath+"/logcat.log"+PRESCRUB);
+                commands.add("chown media_rw:media_rw "+rootPath+"/dmesg.log"+PRESCRUB);
+                commands.add("chown media_rw:media_rw "+rootPath+"/modem.log"+PRESCRUB);
+                commands.add("chown media_rw:media_rw "+rootPath+"/event.log"+PRESCRUB);
+                commands.add("chown media_rw:media_rw "+rootPath+"/last_kmsg.log"+PRESCRUB);
                 // Some Omni-based ROMs/kernels have issues even with the above
                 // When in doubt, overkill it
-                commands.add("chmod 666 "+rootPath+"/logcat.log");
-                commands.add("chmod 666 "+rootPath+"/event.log");
-                commands.add("chmod 666 "+rootPath+"/dmesg.log");
-                commands.add("chmod 666 "+rootPath+"/modem.log");
-                commands.add("chmod 666 "+rootPath+"/last_kmsg.log");
+                commands.add("chmod 666 "+rootPath+"/logcat.log"+PRESCRUB);
+                commands.add("chmod 666 "+rootPath+"/event.log"+PRESCRUB);
+                commands.add("chmod 666 "+rootPath+"/dmesg.log"+PRESCRUB);
+                commands.add("chmod 666 "+rootPath+"/modem.log"+PRESCRUB);
+                commands.add("chmod 666 "+rootPath+"/last_kmsg.log"+PRESCRUB);
             }
 
             //Run the commands
@@ -227,6 +229,9 @@ public class Utils {
                     throw new RunCommandException();
                 }
             }
+
+            // Scrub the files
+            scrubFiles(context, path, !command.isScrubEnabled());
 
             //If there are notes, write them to a notes file
             if(command.getNotes() != null && command.getNotes().length() > 0){
@@ -258,7 +263,33 @@ public class Utils {
             result.setMessage(R.string.storage_err);
         }
     }
-    
+
+    /**
+     * Runs the log file through the ScrubberUtils and removes the PRESCRUB extension
+     * @param path
+     */
+    private static void scrubFiles(Context context, String path, boolean disable) {
+        File logFolder = new File(path);
+        File logFiles[] = logFolder.listFiles();
+        for(File file : logFiles){
+            // Save it to a file without the PRESCRUB extension
+            File outFile = new File(path + "/" + file.getName().replace(PRESCRUB, ""));
+            if(disable){
+                Log.d(TAG, "Scrub disabled, renaming "+file.getName()+" to "+outFile.getName());
+                file.renameTo(outFile);
+            } else {
+                Log.d(TAG, "Scrubbing " + file.getName() + " to " + outFile.getName());
+
+                try {
+                    ScrubberUtils.scrubFile(context, file, outFile);
+                    file.delete();
+                } catch (IOException e) {
+                    Log.e(TAG, "Exception scrubbing file " + file.getName(), e);
+                }
+            }
+        }
+    }
+
     public static boolean isHandlerAvailable(Context ctx, Intent intent) {
         final PackageManager mgr = ctx.getPackageManager();
         List<ResolveInfo> list = mgr.queryIntentActivities(intent, 

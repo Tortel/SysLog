@@ -116,6 +116,13 @@
         android:text="@string/noroot"
         android:visibility="gone"
         android:textStyle="bold|italic" />
+
+    <CheckBox
+        android:id="@+id/scrub_logs"
+        android:layout_height="wrap_content"
+        android:layout_width="fill_parent"
+        android:text="@string/scrub_log"
+        android:onClick="logChange"/>
     
     <Button
         android:id="@+id/take_log"

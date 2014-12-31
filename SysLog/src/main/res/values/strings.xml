@@ -29,6 +29,8 @@
     <string name="last_kmsg">Last Kernel Log</string>
     <string name="modem_log">Modem Log</string>
     <string name="take_log">Take Log</string>
+
+    <string name="scrub_log">Scrub potentially personal information from the logs</string>
     
     <string name="optional_info">Optional Information:</string>
 	<string name="file_name">Text to append to file name</string>

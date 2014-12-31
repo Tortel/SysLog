@@ -27,6 +27,8 @@ public class RunCommand {
 	private boolean eventLog;
 	private boolean modemLog;
 	private boolean root;
+
+    private boolean scrubEnabled;
 	
 	private String appendText;
 	private String notes;
@@ -138,5 +140,13 @@ public class RunCommand {
     }
     public void setEventLog(boolean eventLog) {
         this.eventLog = eventLog;
+    }
+
+    public boolean isScrubEnabled() {
+        return scrubEnabled;
+    }
+
+    public void setScrubEnabled(boolean scrubEnabled) {
+        this.scrubEnabled = scrubEnabled;
     }
 }

@@ -56,6 +56,7 @@ public class MainActivity extends ActionBarActivity {
 	private static final String KEY_EVENT = "event";
 	private static final String KEY_MODEM = "modem";
 	private static final String KEY_LASTKMSG = "lastKmsg";
+    private static final String KEY_SCRUB = "scrub";
 	
 	//Flags for running threads
 	private static boolean running;
@@ -65,6 +66,8 @@ public class MainActivity extends ActionBarActivity {
 	private boolean mainLog;
 	private boolean eventLog;
 	private boolean modemLog;
+    private boolean scrubLog;
+
 	private static boolean root;
 	private ProgressDialog dialog;
 	private EditText fileEditText;
@@ -120,6 +123,7 @@ public class MainActivity extends ActionBarActivity {
         eventLog = prefs.getBoolean(KEY_EVENT, true);
         modemLog = prefs.getBoolean(KEY_MODEM, true);
         lastKmsg = prefs.getBoolean(KEY_LASTKMSG, true);
+        scrubLog = prefs.getBoolean(KEY_SCRUB, true);
         
         // Set the checkboxes
         setCheckBoxes();
@@ -193,6 +197,8 @@ public class MainActivity extends ActionBarActivity {
 		box.setChecked(kernelLog);
 		box = (CheckBox) findViewById(R.id.last_kmsg);
 		box.setChecked(lastKmsg);
+        box = (CheckBox) findViewById(R.id.scrub_logs);
+        box.setChecked(scrubLog);
 		
 		// Set the warning for modem logs
 		TextView view = (TextView) findViewById(R.id.warnings);
@@ -242,6 +248,10 @@ public class MainActivity extends ActionBarActivity {
 	            view.setVisibility(View.GONE);
 	        }
 			break;
+        case R.id.scrub_logs:
+            scrubLog = box.isChecked();
+            prefs.putBoolean(KEY_SCRUB, scrubLog);
+            break;
 		}
 		
 		//Make sure that at least one type is selected
@@ -274,6 +284,7 @@ public class MainActivity extends ActionBarActivity {
 			command.setMainLog(mainLog);
 			command.setEventLog(eventLog);
 			command.setModemLog(modemLog);
+            command.setScrubEnabled(scrubLog);
 			
 			//Grep options
 			command.setGrepOption(GrepOption.fromString(grepSpinner.getSelectedItem().toString()));
