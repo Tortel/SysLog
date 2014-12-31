@@ -21,10 +21,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
-import com.actionbarsherlock.app.SherlockFragmentActivity;
-import com.actionbarsherlock.view.Menu;
-import com.actionbarsherlock.view.MenuInflater;
-import com.actionbarsherlock.view.MenuItem;
 import com.tortel.syslog.exception.*;
 import com.tortel.syslog.Utils.CleanAllTask;
 import com.tortel.syslog.Utils.CleanUncompressedTask;
@@ -39,8 +35,11 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
+import android.support.v7.app.ActionBarActivity;
 import android.telephony.TelephonyManager;
-import android.view.KeyEvent;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
@@ -51,7 +50,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import eu.chainfire.libsuperuser.Shell;
 
-public class MainActivity extends SherlockFragmentActivity {
+public class MainActivity extends ActionBarActivity {
 	private static final String KEY_KERNEL = "kernel";
 	private static final String KEY_MAIN = "main";
 	private static final String KEY_EVENT = "event";
@@ -72,8 +71,8 @@ public class MainActivity extends SherlockFragmentActivity {
 	private EditText notesEditText;
 	private EditText grepEditText;
 	private Spinner grepSpinner;
-	private Menu settingsMenu;
-	
+
+    @Override
 	public void onCreate(Bundle savedInstanceState){
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
@@ -105,7 +104,8 @@ public class MainActivity extends SherlockFragmentActivity {
 			showRunningDialog();
 		}
 	}
-	
+
+    @Override
 	public void onResume(){
 		super.onResume();
 		
@@ -124,23 +124,15 @@ public class MainActivity extends SherlockFragmentActivity {
         // Set the checkboxes
         setCheckBoxes();
 	}
-	
+
+    @Override
 	public boolean onCreateOptionsMenu(Menu menu){
-		MenuInflater inflater = getSupportMenuInflater();
+		MenuInflater inflater = getMenuInflater();
 		inflater.inflate(R.menu.main_menu, menu);
-		settingsMenu = menu;
 		return true;
 	}
-	
-    public boolean onKeyUp(int keycode, KeyEvent e) {
-        switch (keycode) {
-        case KeyEvent.KEYCODE_MENU:
-            settingsMenu.performIdentifierAction(R.id.full_menu_settings, 0);
-            return true;
-        }
-        return super.onKeyUp(keycode, e);
-    }
-	
+
+    @Override
 	public boolean onOptionsItemSelected(MenuItem item){
 		switch(item.getItemId()){
 		case R.id.clean_uncompressed:
@@ -313,7 +305,8 @@ public class MainActivity extends SherlockFragmentActivity {
 	private class CheckOptionsTask extends AsyncTask<Void, Void, Void>{
 		private boolean hasLastKmsg = false;
 		private boolean hasRadio = false;
-		
+
+        @Override
 		protected Void doInBackground(Void... params) {
 			File lastKmsg = new File(Utils.LAST_KMSG);
 			hasLastKmsg = lastKmsg.exists();
@@ -321,7 +314,8 @@ public class MainActivity extends SherlockFragmentActivity {
 			hasRadio = manager.getPhoneType() != TelephonyManager.PHONE_TYPE_NONE;
 			return null;
 		}
-		
+
+        @Override
 		protected void onPostExecute(Void param){
 			if(!hasLastKmsg){
 				CheckBox lastKmsgBox = (CheckBox) findViewById(R.id.last_kmsg);
@@ -340,11 +334,13 @@ public class MainActivity extends SherlockFragmentActivity {
 	
 	private class CheckRootTask extends AsyncTask<Void, Void, Boolean>{
 
+        @Override
 		protected Boolean doInBackground(Void... params) {
 			root = Shell.SU.available();
 			return root;
 		}
-		
+
+        @Override
 		protected void onPostExecute(Boolean root){
 			//Check for root access
 			if(!root){
@@ -363,6 +359,7 @@ public class MainActivity extends SherlockFragmentActivity {
 	}
 	
 	private class LogTask extends AsyncTask<RunCommand, Void, Result> {
+        @Override
 		protected void onPreExecute(){
 			showRunningDialog();
 			running = true;
@@ -371,6 +368,7 @@ public class MainActivity extends SherlockFragmentActivity {
 		/**
 		 * Process the logs
 		 */
+        @Override
 		protected Result doInBackground(RunCommand... params) {
 			RunCommand command = params[0];
 			Result result = new Result(false);
@@ -414,7 +412,8 @@ public class MainActivity extends SherlockFragmentActivity {
 			
 			return result;
 		}
-		
+
+        @Override
 		protected void onPostExecute(Result result){
 			running = false;
 			try{

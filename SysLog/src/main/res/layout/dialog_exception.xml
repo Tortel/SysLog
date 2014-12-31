@@ -44,7 +44,7 @@
 
     <Button
         android:id="@+id/button_stacktrace"
-        style="@style/Widget.Sherlock.ActionButton"
+        style="@android:style/Widget.ActionButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/show_stacktrace"

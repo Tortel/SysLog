@@ -21,18 +21,18 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.support.v4.app.DialogFragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
-import com.actionbarsherlock.app.SherlockDialogFragment;
 import com.tortel.syslog.exception.LowSpaceException;
 
 /**
  * Dialog for low space
  */
-public class LowSpaceDialog extends SherlockDialogFragment implements DialogInterface.OnClickListener {
+public class LowSpaceDialog extends DialogFragment implements DialogInterface.OnClickListener {
     
     private static Result result;
     

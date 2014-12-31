@@ -30,17 +30,16 @@ import android.content.pm.PackageInfo;
 import android.os.Bundle;
 import android.os.Environment;
 import android.preference.PreferenceManager;
+import android.support.v4.app.DialogFragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
-import com.actionbarsherlock.app.SherlockDialogFragment;
-
 /**
  * Dialog for general exceptions
  */
-public class ExceptionDialog extends SherlockDialogFragment implements android.view.View.OnClickListener,
+public class ExceptionDialog extends DialogFragment implements android.view.View.OnClickListener,
         DialogInterface.OnClickListener {
     
     private static Result result;

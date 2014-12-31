@@ -21,13 +21,12 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
-
-import com.actionbarsherlock.app.SherlockDialogFragment;
+import android.support.v4.app.DialogFragment;
 
 /**
  * Well, shit dialog. Called if the send email intent fails.
  */
-public class OhShitDialog extends SherlockDialogFragment implements DialogInterface.OnClickListener {
+public class OhShitDialog extends DialogFragment implements DialogInterface.OnClickListener {
     private static Throwable exception;
     
     public void setException(Throwable exception){

@@ -2,39 +2,25 @@
 <!--
  * SysLog - A simple logging tool
  * Copyright (C) 2013-2014  Scott Warner <Tortel1210@gmail.com>
- * 
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 -->
-<menu xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
-    <item
-        android:id="@+id/clean_uncompressed"
-        android:title="@string/clean_uncompressed"
-        app:showAsAction="never" />
-    <item
-        android:id="@+id/clean_all"
-        android:title="@string/clean_all"
-        app:showAsAction="never" />
-    <item
-        android:id="@+id/change_path"
-        android:title="@string/change_path"
-        app:showAsAction="never" />
-    <item android:id="@+id/faq"
-        android:title="@string/faq"
-        app:showAsAction="never" />
-    <item android:id="@+id/about"
-        android:title="@string/about"
-        app:showAsAction="never" />
-</menu>
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
+    <style name="Theme.SysLog" parent="Theme.AppCompat">
+        <item name="colorPrimary">@color/primary</item>
+        <item name="colorPrimaryDark">@color/primary_dark</item>
+        <item name="colorAccent">@color/accent</item>
+    </style>
+</resources>

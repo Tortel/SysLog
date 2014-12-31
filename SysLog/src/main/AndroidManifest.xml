@@ -22,8 +22,6 @@
     android:versionCode="16"
     android:versionName="1.7.0">
 
-    <uses-sdk android:minSdkVersion="10" android:targetSdkVersion="19" />
-
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_LOGS" />
     <uses-permission android:name="android.permission.ACCESS_SUPERUSER" />
@@ -31,7 +29,7 @@
     <application android:label="@string/app_name"
         android:allowBackup="false"
         android:icon="@drawable/ic_launcher"
-        android:theme="@style/Theme.Sherlock">
+        android:theme="@style/Theme.SysLog">
         <activity
             android:name="com.tortel.syslog.MainActivity"
             android:label="@string/app_name" >
