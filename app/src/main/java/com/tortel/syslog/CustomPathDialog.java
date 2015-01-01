@@ -17,9 +17,7 @@
  */
 package com.tortel.syslog;
 
-import android.app.AlertDialog;
 import android.app.Dialog;
-import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -28,10 +26,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
 
+import com.afollestad.materialdialogs.MaterialDialog;
+
 /**
  * A dialog used for setting a custom root path
  */
-public class CustomPathDialog extends DialogFragment implements DialogInterface.OnClickListener{
+public class CustomPathDialog extends DialogFragment {
     
     private EditText pathEditText;
     private SharedPreferences prefs;
@@ -39,8 +39,8 @@ public class CustomPathDialog extends DialogFragment implements DialogInterface.
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
-        
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+
+        MaterialDialog.Builder builder = new MaterialDialog.Builder(getActivity());
         LayoutInflater inflator = getActivity().getLayoutInflater();
         
         View view = inflator.inflate(R.layout.dialog_path, null);
@@ -49,40 +49,42 @@ public class CustomPathDialog extends DialogFragment implements DialogInterface.
         
         pathEditText.setText(prefs.getString(Utils.PREF_PATH, Utils.ROOT_PATH));
         
-        builder.setView(view);
+        builder.customView(view, false);
 
         
-        builder.setPositiveButton(R.string.save, this);
-        builder.setNeutralButton(R.string.reset, this);
-        builder.setNegativeButton(R.string.cancel, this);
+        builder.positiveText(R.string.save);
+        builder.neutralText(R.string.reset);
+        builder.negativeText(R.string.cancel);
         
-        builder.setTitle(R.string.change_path);
-        
-        return builder.create();
-    }
+        builder.title(R.string.change_path);
 
-    @Override
-    public void onClick(DialogInterface dialog, int which) {
-        SharedPreferences.Editor editor = prefs.edit();
+        builder.callback(new MaterialDialog.ButtonCallback() {
+            @Override
+            public void onPositive(MaterialDialog dialog) {
+                // Save it
+                SharedPreferences.Editor editor = prefs.edit();
+                String path = pathEditText.getText().toString().trim();
+                editor.putString(Utils.PREF_PATH, path);
+                editor.apply();
+                dismiss();
+            }
+
+            @Override
+            public void onNegative(MaterialDialog dialog) {
+                dismiss();
+            }
+
+            @Override
+            public void onNeutral(MaterialDialog dialog) {
+                // Reset
+                SharedPreferences.Editor editor = prefs.edit();
+                editor.remove(Utils.PREF_PATH);
+                editor.apply();
+                dismiss();
+            }
+        });
         
-        switch(which){
-        case DialogInterface.BUTTON_POSITIVE:
-            // Save it
-            String path = pathEditText.getText().toString().trim();
-            editor.putString(Utils.PREF_PATH, path);
-            editor.apply();
-            this.dismiss();
-            return;
-        case DialogInterface.BUTTON_NEUTRAL:
-            // Reset
-            editor.remove(Utils.PREF_PATH);
-            editor.apply();
-            this.dismiss();
-            return;
-        case DialogInterface.BUTTON_NEGATIVE:
-            this.dismiss();
-            return;
-        }
+        return builder.build();
     }
 
 }

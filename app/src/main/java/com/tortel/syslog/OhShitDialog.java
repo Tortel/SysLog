@@ -17,16 +17,16 @@
  */
 package com.tortel.syslog;
 
-import android.app.AlertDialog;
 import android.app.Dialog;
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
+
+import com.afollestad.materialdialogs.MaterialDialog;
 
 /**
  * Well, shit dialog. Called if the send email intent fails.
  */
-public class OhShitDialog extends DialogFragment implements DialogInterface.OnClickListener {
+public class OhShitDialog extends DialogFragment {
     private static Throwable exception;
     
     public void setException(Throwable exception){
@@ -35,15 +35,18 @@ public class OhShitDialog extends DialogFragment implements DialogInterface.OnCl
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        builder.setMessage(R.string.oh_shit_message);
-        builder.setTitle(R.string.oh_shit_title);
-        builder.setPositiveButton(R.string.close, this);
-        return builder.create();
-    }
+        MaterialDialog.Builder builder = new MaterialDialog.Builder(getActivity());
+        builder.content(R.string.oh_shit_message);
+        builder.title(R.string.oh_shit_title);
+        builder.positiveText(R.string.close);
 
-    @Override
-    public void onClick(DialogInterface dialog, int which) {
-        throw new RuntimeException(exception);
+        builder.callback(new MaterialDialog.ButtonCallback() {
+            @Override
+            public void onPositive(MaterialDialog dialog) {
+                throw new RuntimeException(exception);
+            }
+        });
+
+        return builder.build();
     }
 }

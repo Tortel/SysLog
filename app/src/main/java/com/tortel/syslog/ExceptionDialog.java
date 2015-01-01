@@ -20,10 +20,8 @@ package com.tortel.syslog;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 
-import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
@@ -36,11 +34,12 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.afollestad.materialdialogs.MaterialDialog;
+
 /**
  * Dialog for general exceptions
  */
-public class ExceptionDialog extends DialogFragment implements android.view.View.OnClickListener,
-        DialogInterface.OnClickListener {
+public class ExceptionDialog extends DialogFragment implements android.view.View.OnClickListener {
     
     private static Result result;
     
@@ -53,7 +52,7 @@ public class ExceptionDialog extends DialogFragment implements android.view.View
     
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        MaterialDialog.Builder builder = new MaterialDialog.Builder(getActivity());
         LayoutInflater inflator = getActivity().getLayoutInflater();
         
         View view = inflator.inflate(R.layout.dialog_exception, null);
@@ -70,20 +69,37 @@ public class ExceptionDialog extends DialogFragment implements android.view.View
 
         TextView messageText = (TextView) view.findViewById(R.id.exception_message);
         messageText.setText(result.getMessage());
-        builder.setView(view);
+        builder.customView(view, false);
         //Skip the bugreport button if there is no stack trace or if 4.3+ without root
         if(result.getException() != null){
             if(result.disableReporting()){
                 reportNotice.setText(R.string.bugreport_disabled);
             } else {
-                builder.setPositiveButton(R.string.send_bugreport, this);
+                builder.positiveText(R.string.send_bugreport);
             }
         }
+
+        builder.callback(new MaterialDialog.ButtonCallback() {
+            @Override
+            public void onPositive(MaterialDialog dialog) {
+                Intent intent = getEmailIntent();
+                if(intent != null){
+                    getActivity().startActivity(intent);
+                }
+                dismiss();
+            }
+
+            @Override
+            public void onNegative(MaterialDialog dialog) {
+                result = null;
+                dismiss();
+            }
+        });
         
-        builder.setNegativeButton(R.string.dismiss, this);
-        builder.setTitle(R.string.error_dialog_title);
+        builder.negativeText(R.string.dismiss);
+        builder.title(R.string.error_dialog_title);
         
-        return builder.create();
+        return builder.build();
     }
 
     @Override
@@ -91,20 +107,6 @@ public class ExceptionDialog extends DialogFragment implements android.view.View
         //Hide the stacktrace button, show the stacktrace
         stackTraceButton.setVisibility(View.GONE);
         stackTraceView.setVisibility(View.VISIBLE);
-    }
-
-    @Override
-    public void onClick(DialogInterface dialog, int which) {
-        switch(which){
-        case DialogInterface.BUTTON_POSITIVE:
-            Intent intent = getEmailIntent();
-            if(intent != null){
-                getActivity().startActivity(intent);
-            }
-        case DialogInterface.BUTTON_NEGATIVE:
-            //Clear the static variable
-            result = null;
-        }
     }
     
     private Intent getEmailIntent(){

@@ -20,7 +20,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
-import android.app.AlertDialog;
 import android.app.Dialog;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
@@ -31,6 +30,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.TextView;
 
+import com.afollestad.materialdialogs.MaterialDialog;
+
 /**
  * Shows an about dialog
  */
@@ -38,7 +39,8 @@ public class AboutDialog extends DialogFragment {
     
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        MaterialDialog.Builder builder = new MaterialDialog.Builder(getActivity());
+
         LayoutInflater inflater = getActivity().getLayoutInflater();
         View view = inflater.inflate(R.layout.about, null);
         TextView text = (TextView) view.findViewById(R.id.text);
@@ -46,12 +48,12 @@ public class AboutDialog extends DialogFragment {
         text.setText(Html.fromHtml(readRawTextFile(R.raw.about)));
         Linkify.addLinks(text, Linkify.ALL);
         text.setMovementMethod(LinkMovementMethod.getInstance());
+
+        builder.customView(view, false);
+        builder.title(R.string.about);
+        builder.positiveText(R.string.close);
         
-        builder.setView(view);
-        builder.setTitle(R.string.about);
-        builder.setPositiveButton(R.string.close, null);
-        
-        return builder.create();
+        return builder.build();
     }
     
     private String readRawTextFile(int id) {
