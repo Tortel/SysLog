@@ -26,7 +26,7 @@ repositories {
 
 dependencies {
     compile 'com.android.support:appcompat-v7:21.0.+'
-    compile 'com.afollestad:material-dialogs:0.5.2'
+    compile 'com.afollestad:material-dialogs:0.6.0'
 
-	compile(name:'libsuperuser', ext:'aar')
+    compile(name:'libsuperuser', ext:'aar')
 }
