@@ -19,6 +19,8 @@ package com.tortel.syslog;
 
 import android.os.Environment;
 
+import com.tortel.syslog.utils.Utils;
+
 /**
  * A class to contain various information about the
  * status of running

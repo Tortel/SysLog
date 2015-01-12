@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.tortel.syslog;
+package com.tortel.syslog.dialog;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -31,25 +31,27 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.afollestad.materialdialogs.MaterialDialog;
+import com.tortel.syslog.R;
 
 /**
- * Shows a simple FAQ dialog
+ * Shows an about dialog
  */
-public class FaqDialog extends DialogFragment {
+public class AboutDialog extends DialogFragment {
     
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         MaterialDialog.Builder builder = new MaterialDialog.Builder(getActivity());
+
         LayoutInflater inflater = getActivity().getLayoutInflater();
         View view = inflater.inflate(R.layout.about, null);
         TextView text = (TextView) view.findViewById(R.id.text);
         
-        text.setText(Html.fromHtml(readRawTextFile(R.raw.faq)));
+        text.setText(Html.fromHtml(readRawTextFile(R.raw.about)));
         Linkify.addLinks(text, Linkify.ALL);
         text.setMovementMethod(LinkMovementMethod.getInstance());
-        
+
         builder.customView(view, false);
-        builder.title(R.string.syslog_faq);
+        builder.title(R.string.about);
         builder.positiveText(R.string.close);
         
         return builder.build();

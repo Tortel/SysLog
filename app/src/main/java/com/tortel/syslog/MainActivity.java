@@ -21,9 +21,15 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
+import com.tortel.syslog.dialog.AboutDialog;
+import com.tortel.syslog.dialog.CustomPathDialog;
+import com.tortel.syslog.dialog.ExceptionDialog;
+import com.tortel.syslog.dialog.FaqDialog;
+import com.tortel.syslog.dialog.LowSpaceDialog;
 import com.tortel.syslog.exception.*;
-import com.tortel.syslog.Utils.CleanAllTask;
-import com.tortel.syslog.Utils.CleanUncompressedTask;
+import com.tortel.syslog.utils.Utils;
+import com.tortel.syslog.utils.Utils.CleanAllTask;
+import com.tortel.syslog.utils.Utils.CleanUncompressedTask;
 
 import android.app.Activity;
 import android.app.ProgressDialog;

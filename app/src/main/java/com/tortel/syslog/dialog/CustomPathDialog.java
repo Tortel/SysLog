@@ -15,7 +15,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-package com.tortel.syslog;
+package com.tortel.syslog.dialog;
 
 import android.app.Dialog;
 import android.content.SharedPreferences;
@@ -27,6 +27,8 @@ import android.view.View;
 import android.widget.EditText;
 
 import com.afollestad.materialdialogs.MaterialDialog;
+import com.tortel.syslog.R;
+import com.tortel.syslog.utils.Utils;
 
 /**
  * A dialog used for setting a custom root path

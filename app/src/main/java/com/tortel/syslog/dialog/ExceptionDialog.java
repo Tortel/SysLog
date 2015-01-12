@@ -15,7 +15,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-package com.tortel.syslog;
+package com.tortel.syslog.dialog;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -35,6 +35,9 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.afollestad.materialdialogs.MaterialDialog;
+import com.tortel.syslog.R;
+import com.tortel.syslog.Result;
+import com.tortel.syslog.utils.Utils;
 
 /**
  * Dialog for general exceptions

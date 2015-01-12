@@ -23,6 +23,7 @@ import java.util.zip.ZipOutputStream;
 
 import com.tortel.syslog.exception.LowSpaceException;
 import com.tortel.syslog.exception.NoFilesException;
+import com.tortel.syslog.utils.Utils;
 
 import android.util.Log;
 

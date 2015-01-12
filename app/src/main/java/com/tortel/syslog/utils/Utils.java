@@ -15,7 +15,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-package com.tortel.syslog;
+package com.tortel.syslog.utils;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -40,6 +40,11 @@ import android.preference.PreferenceManager;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.tortel.syslog.GrepOption;
+import com.tortel.syslog.R;
+import com.tortel.syslog.Result;
+import com.tortel.syslog.RunCommand;
+import com.tortel.syslog.ZipWriter;
 import com.tortel.syslog.exception.CreateFolderException;
 import com.tortel.syslog.exception.LowSpaceException;
 import com.tortel.syslog.exception.NoFilesException;
@@ -87,7 +92,7 @@ public class Utils {
     }
     
     /**
-     * Runs the {@link RunCommand} contained within the {@link Result} passed in.<br />
+     * Runs the {@link com.tortel.syslog.RunCommand} contained within the {@link com.tortel.syslog.Result} passed in.<br />
      * On an error
      * @param result
      * @throws CreateFolderException
