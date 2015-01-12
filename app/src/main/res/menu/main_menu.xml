@@ -20,6 +20,10 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
+        android:id="@+id/live_logcat"
+        android:title="@string/show_live_logcat"
+        app:showAsAction="never" />
+    <item
         android:id="@+id/clean_uncompressed"
         android:title="@string/clean_uncompressed"
         app:showAsAction="never" />

@@ -145,6 +145,10 @@ public class MainActivity extends ActionBarActivity {
     @Override
 	public boolean onOptionsItemSelected(MenuItem item){
 		switch(item.getItemId()){
+        case R.id.live_logcat:
+            Intent intent = new Intent(this, LiveLogActivity.class);
+            startActivity(intent);
+            return true;
 		case R.id.clean_uncompressed:
 			new CleanUncompressedTask(getBaseContext()).execute();
 			return true;
