@@ -60,6 +60,8 @@ public class Utils {
     public static final String LAST_KMSG = "/proc/last_kmsg";
     public static final String PREF_PATH = "pref_root_path";
     public static final String ROOT_PATH = "/data/media/";
+    public static final String AUDIT_LOG = "/data/misc/audit/audit.log";
+    public static final String AUDIT_OLD_LOG = "/data/misc/audit/audit.old";
 
     private static final String PRESCRUB = "-prescrub";
     
@@ -114,7 +116,7 @@ public class Utils {
             }
             
             //Commands to execute
-            List<String> commands = new LinkedList<String>();
+            List<String> commands = new LinkedList<>();
 
             //Create the directories
             String path = Environment.getExternalStorageDirectory().getPath();
@@ -203,6 +205,10 @@ public class Utils {
                     commands.add("cp "+LAST_KMSG+" "+rootPath+"last_kmsg.log"+PRESCRUB);
                 }
             }
+            if(command.isAuditLog()){
+                commands.add("cp "+AUDIT_LOG+" "+rootPath+"audit.log");
+                commands.add("cp "+AUDIT_OLD_LOG+" "+rootPath+"audit.old");
+            }
 
             /*
              * More 4.3+ SU issues - need to chown to media_rw
@@ -215,6 +221,8 @@ public class Utils {
                 commands.add("chown media_rw:media_rw "+rootPath+"/modem.log"+PRESCRUB);
                 commands.add("chown media_rw:media_rw "+rootPath+"/event.log"+PRESCRUB);
                 commands.add("chown media_rw:media_rw "+rootPath+"/last_kmsg.log"+PRESCRUB);
+                commands.add("chown media_rw:media_rw "+rootPath+"/audit.log");
+                commands.add("chown media_rw:media_rw "+rootPath+"/audit.old");
                 // Some Omni-based ROMs/kernels have issues even with the above
                 // When in doubt, overkill it
                 commands.add("chmod 666 "+rootPath+"/logcat.log"+PRESCRUB);
@@ -222,6 +230,8 @@ public class Utils {
                 commands.add("chmod 666 "+rootPath+"/dmesg.log"+PRESCRUB);
                 commands.add("chmod 666 "+rootPath+"/modem.log"+PRESCRUB);
                 commands.add("chmod 666 "+rootPath+"/last_kmsg.log"+PRESCRUB);
+                commands.add("chmod 666 "+rootPath+"/audit.log");
+                commands.add("chmod 666 "+rootPath+"/audit.old");
             }
 
             //Run the commands

@@ -85,4 +85,5 @@ Please enable root access and try again.</string>
 	<string name="oh_shit_message">You don\'t seem to have an email application installed. SysLog will now crash.
 	    If you have the option, please send a report through the force close dialog.</string>
     <string name="show_live_logcat">Show Live Logcat</string>
+    <string name="audit_log">Audit Logs</string>
 </resources>

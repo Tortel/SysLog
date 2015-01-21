@@ -94,6 +94,13 @@
 		        android:text="@string/modem_log"
 		        android:onClick="logChange"/>
 
+            <CheckBox
+                android:id="@+id/audit_log"
+                android:layout_height="wrap_content"
+                android:layout_width="fill_parent"
+                android:text="@string/audit_log"
+                android:onClick="logChange"/>
+
     	</LinearLayout>
 
     </LinearLayout>

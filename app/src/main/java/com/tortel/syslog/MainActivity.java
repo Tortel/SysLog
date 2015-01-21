@@ -61,6 +61,7 @@ public class MainActivity extends ActionBarActivity {
 	private static final String KEY_MAIN = "main";
 	private static final String KEY_EVENT = "event";
 	private static final String KEY_MODEM = "modem";
+    private static final String KEY_AUDIT = "audit";
 	private static final String KEY_LASTKMSG = "lastKmsg";
     private static final String KEY_SCRUB = "scrub";
 	
@@ -72,6 +73,7 @@ public class MainActivity extends ActionBarActivity {
 	private boolean mainLog;
 	private boolean eventLog;
 	private boolean modemLog;
+    private boolean auditLog;
     private boolean scrubLog;
 
 	private static boolean root;
@@ -129,6 +131,7 @@ public class MainActivity extends ActionBarActivity {
         eventLog = prefs.getBoolean(KEY_EVENT, true);
         modemLog = prefs.getBoolean(KEY_MODEM, true);
         lastKmsg = prefs.getBoolean(KEY_LASTKMSG, true);
+        auditLog = prefs.getBoolean(KEY_AUDIT, Utils.isSeAndroid());
         scrubLog = prefs.getBoolean(KEY_SCRUB, true);
         
         // Set the checkboxes
@@ -209,6 +212,12 @@ public class MainActivity extends ActionBarActivity {
 		box.setChecked(lastKmsg);
         box = (CheckBox) findViewById(R.id.scrub_logs);
         box.setChecked(scrubLog);
+        box = (CheckBox) findViewById(R.id.audit_log);
+        box.setChecked(auditLog);
+        // Hide the audit logs if the android version doesn't support selinux
+        if(!Utils.isSeAndroid()){
+            box.setVisibility(View.GONE);
+        }
 		
 		// Set the warning for modem logs
 		TextView view = (TextView) findViewById(R.id.warnings);
@@ -258,6 +267,10 @@ public class MainActivity extends ActionBarActivity {
 	            view.setVisibility(View.GONE);
 	        }
 			break;
+            case R.id.audit_log:
+                auditLog = box.isChecked();
+                prefs.putBoolean(KEY_AUDIT, auditLog);
+                break;
         case R.id.scrub_logs:
             scrubLog = box.isChecked();
             prefs.putBoolean(KEY_SCRUB, scrubLog);
@@ -266,7 +279,7 @@ public class MainActivity extends ActionBarActivity {
 		
 		//Make sure that at least one type is selected
 		enableLogButton(mainLog || eventLog || lastKmsg
-		        || modemLog || kernelLog);
+		        || modemLog || kernelLog || auditLog);
 		
 		//Save the settings
 		prefs.apply();
@@ -295,6 +308,7 @@ public class MainActivity extends ActionBarActivity {
 			command.setEventLog(eventLog);
 			command.setModemLog(modemLog);
             command.setScrubEnabled(scrubLog);
+            command.setAuditLog(auditLog);
 			
 			//Grep options
 			command.setGrepOption(GrepOption.fromString(grepSpinner.getSelectedItem().toString()));

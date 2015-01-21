@@ -26,6 +26,7 @@ public class RunCommand {
 	private boolean mainLog;
 	private boolean eventLog;
 	private boolean modemLog;
+    private boolean auditLog;
 	private boolean root;
 
     private boolean scrubEnabled;
@@ -68,6 +69,7 @@ public class RunCommand {
 		builder.append("\nmainLog: "+mainLog);
 		builder.append("\neventLog: "+eventLog);
 		builder.append("\nmodemLog: "+modemLog);
+        builder.append("\nauditLog: "+auditLog);
 		builder.append("\ngrepOption: "+grepOption.toString());
 		builder.append("\ngrep: "+grep);
 		builder.append("\nfileAppendText: "+appendText);
@@ -140,6 +142,12 @@ public class RunCommand {
     }
     public void setEventLog(boolean eventLog) {
         this.eventLog = eventLog;
+    }
+    public boolean isAuditLog() {
+        return auditLog;
+    }
+    public void setAuditLog(boolean auditLog) {
+        this.auditLog = auditLog;
     }
 
     public boolean isScrubEnabled() {
