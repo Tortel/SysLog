@@ -37,6 +37,19 @@ import com.tortel.syslog.R;
  * Shows a simple FAQ dialog
  */
 public class FaqDialog extends DialogFragment {
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setRetainInstance(true);
+    }
+
+    @Override
+    public void onDestroyView() {
+        if (getDialog() != null && getRetainInstance())
+            getDialog().setDismissMessage(null);
+        super.onDestroyView();
+    }
     
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {

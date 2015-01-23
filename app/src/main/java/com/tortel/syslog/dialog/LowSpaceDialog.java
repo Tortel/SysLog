@@ -36,6 +36,19 @@ import com.tortel.syslog.exception.LowSpaceException;
  * Dialog for low space
  */
 public class LowSpaceDialog extends DialogFragment implements DialogInterface.OnClickListener {
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setRetainInstance(true);
+    }
+
+    @Override
+    public void onDestroyView() {
+        if (getDialog() != null && getRetainInstance())
+            getDialog().setDismissMessage(null);
+        super.onDestroyView();
+    }
     
     private static Result result;
     

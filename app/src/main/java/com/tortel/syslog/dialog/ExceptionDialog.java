@@ -52,6 +52,19 @@ public class ExceptionDialog extends DialogFragment implements android.view.View
     public void setResult(Result result){
         ExceptionDialog.result = result;
     }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setRetainInstance(true);
+    }
+
+    @Override
+    public void onDestroyView() {
+        if (getDialog() != null && getRetainInstance())
+            getDialog().setDismissMessage(null);
+        super.onDestroyView();
+    }
     
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {

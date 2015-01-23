@@ -29,6 +29,19 @@ import com.tortel.syslog.R;
  */
 public class OhShitDialog extends DialogFragment {
     private static Throwable exception;
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setRetainInstance(true);
+    }
+
+    @Override
+    public void onDestroyView() {
+        if (getDialog() != null && getRetainInstance())
+            getDialog().setDismissMessage(null);
+        super.onDestroyView();
+    }
     
     public void setException(Throwable exception){
         OhShitDialog.exception = exception;
