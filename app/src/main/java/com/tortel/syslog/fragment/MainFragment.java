@@ -1,10 +1,7 @@
 package com.tortel.syslog.fragment;
 
-import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
@@ -24,24 +21,12 @@ import android.widget.Toast;
 
 import com.tortel.syslog.GrepOption;
 import com.tortel.syslog.R;
-import com.tortel.syslog.Result;
 import com.tortel.syslog.RunCommand;
-import com.tortel.syslog.dialog.AboutDialog;
-import com.tortel.syslog.dialog.CustomPathDialog;
-import com.tortel.syslog.dialog.ExceptionDialog;
-import com.tortel.syslog.dialog.FaqDialog;
-import com.tortel.syslog.dialog.LowSpaceDialog;
 import com.tortel.syslog.dialog.RunningDialog;
-import com.tortel.syslog.exception.CreateFolderException;
-import com.tortel.syslog.exception.LowSpaceException;
-import com.tortel.syslog.exception.NoFilesException;
-import com.tortel.syslog.exception.RunCommandException;
 import com.tortel.syslog.utils.Log;
 import com.tortel.syslog.utils.Utils;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
 
 import eu.chainfire.libsuperuser.Shell;
 
