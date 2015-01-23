@@ -17,10 +17,13 @@
  */
 package com.tortel.syslog;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 /**
  * A class that contains all the command details
  */
-public class RunCommand {
+public class RunCommand implements Parcelable {
 	private boolean kernelLog;
 	private boolean lastKernelLog;
 	private boolean mainLog;
@@ -149,12 +152,61 @@ public class RunCommand {
     public void setAuditLog(boolean auditLog) {
         this.auditLog = auditLog;
     }
-
     public boolean isScrubEnabled() {
         return scrubEnabled;
     }
-
     public void setScrubEnabled(boolean scrubEnabled) {
         this.scrubEnabled = scrubEnabled;
     }
+
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeByte(kernelLog ? (byte) 1 : (byte) 0);
+        dest.writeByte(lastKernelLog ? (byte) 1 : (byte) 0);
+        dest.writeByte(mainLog ? (byte) 1 : (byte) 0);
+        dest.writeByte(eventLog ? (byte) 1 : (byte) 0);
+        dest.writeByte(modemLog ? (byte) 1 : (byte) 0);
+        dest.writeByte(auditLog ? (byte) 1 : (byte) 0);
+        dest.writeByte(root ? (byte) 1 : (byte) 0);
+        dest.writeByte(scrubEnabled ? (byte) 1 : (byte) 0);
+        dest.writeString(this.appendText);
+        dest.writeString(this.notes);
+        dest.writeInt(this.grepOption == null ? -1 : this.grepOption.ordinal());
+        dest.writeString(this.grep);
+    }
+
+    public RunCommand() {
+    }
+
+    private RunCommand(Parcel in) {
+        this.kernelLog = in.readByte() != 0;
+        this.lastKernelLog = in.readByte() != 0;
+        this.mainLog = in.readByte() != 0;
+        this.eventLog = in.readByte() != 0;
+        this.modemLog = in.readByte() != 0;
+        this.auditLog = in.readByte() != 0;
+        this.root = in.readByte() != 0;
+        this.scrubEnabled = in.readByte() != 0;
+        this.appendText = in.readString();
+        this.notes = in.readString();
+        int tmpGrepOption = in.readInt();
+        this.grepOption = tmpGrepOption == -1 ? null : GrepOption.values()[tmpGrepOption];
+        this.grep = in.readString();
+    }
+
+    public static final Parcelable.Creator<RunCommand> CREATOR = new Parcelable.Creator<RunCommand>() {
+        public RunCommand createFromParcel(Parcel source) {
+            return new RunCommand(source);
+        }
+
+        public RunCommand[] newArray(int size) {
+            return new RunCommand[size];
+        }
+    };
 }
