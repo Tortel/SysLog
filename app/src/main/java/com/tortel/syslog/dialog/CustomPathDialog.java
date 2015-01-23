@@ -37,7 +37,7 @@ public class CustomPathDialog extends DialogFragment {
     
     private EditText pathEditText;
     private SharedPreferences prefs;
-    private String path;
+    private String path = null;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -50,6 +50,9 @@ public class CustomPathDialog extends DialogFragment {
         if (getDialog() != null && getRetainInstance())
             getDialog().setDismissMessage(null);
         path = pathEditText.getText().toString();
+        if("".equals(path)){
+            path = null;
+        }
         super.onDestroyView();
     }
     
@@ -64,7 +67,7 @@ public class CustomPathDialog extends DialogFragment {
         
         pathEditText = (EditText) view.findViewById(R.id.edit_path);
         
-        pathEditText.setText(path != null ? prefs.getString(Utils.PREF_PATH,Utils.ROOT_PATH) : path);
+        pathEditText.setText(path == null ? prefs.getString(Utils.PREF_PATH,Utils.ROOT_PATH) : path);
         
         builder.customView(view, false);
 

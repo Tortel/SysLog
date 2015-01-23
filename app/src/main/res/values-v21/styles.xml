@@ -18,12 +18,6 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 -->
 <resources xmlns:android="http://schemas.android.com/apk/res/android">
-    <style name="Theme.SysLog.Base" parent="Theme.AppCompat.Light.DarkActionBar">
-        <item name="colorPrimary">@color/primary</item>
-        <item name="colorPrimaryDark">@color/primary_dark</item>
-        <item name="colorAccent">@color/accent</item>
-    </style>
-
     <style name="Theme.SysLog" parent="Theme.SysLog.Base">
     </style>
 </resources>
