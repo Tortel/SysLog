@@ -61,7 +61,6 @@ public class MainFragment extends Fragment implements View.OnClickListener {
         super.onCreate(savedInstanceState);
         setRetainInstance(true);
         loadSettings();
-
     }
 
     private void loadSettings(){
@@ -295,7 +294,6 @@ public class MainFragment extends Fragment implements View.OnClickListener {
     }
 
     private class CheckRootTask extends AsyncTask<Void, Void, Boolean>{
-
         @Override
         protected Boolean doInBackground(Void... params) {
             Log.d("Checking for root");

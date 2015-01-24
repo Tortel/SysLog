@@ -20,7 +20,6 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
-        android:visible="false"
         android:id="@+id/live_logcat"
         android:title="@string/show_live_logcat"
         app:showAsAction="never" />
