@@ -34,6 +34,7 @@ public class RunningDialog extends DialogFragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setRetainInstance(true);
+        setCancelable(false);
 
         Bundle args = getArguments();
         mCommand = args.getParcelable(COMMAND);
@@ -55,6 +56,8 @@ public class RunningDialog extends DialogFragment {
         builder.customView(view, false);
         return builder.build();
     }
+
+
 
     private AsyncTask<Void, Void, Result> mLogTask = new AsyncTask<Void, Void, Result>(){
 
