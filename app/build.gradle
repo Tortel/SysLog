@@ -20,7 +20,7 @@ android {
 
 dependencies {
     compile 'com.android.support:appcompat-v7:21.0.+'
-    compile 'com.afollestad:material-dialogs:0.6.1.+'
+    compile 'com.afollestad:material-dialogs:0.6.3.+'
 
     compile 'eu.chainfire:libsuperuser:1.0.0.+'
 }
