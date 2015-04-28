@@ -3,7 +3,7 @@ package com.tortel.syslog;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -20,7 +20,7 @@ import jackpal.androidterm.emulatorview.TermSession;
 /**
  * Activity for viewing the love logcat
  */
-public class LiveLogActivity extends ActionBarActivity {
+public class LiveLogActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

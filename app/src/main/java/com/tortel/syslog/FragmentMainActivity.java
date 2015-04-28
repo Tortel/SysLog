@@ -3,7 +3,7 @@ package com.tortel.syslog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -18,7 +18,7 @@ import com.tortel.syslog.utils.Utils;
 /**
  * Main activity, fragment version
  */
-public class FragmentMainActivity extends ActionBarActivity {
+public class FragmentMainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
