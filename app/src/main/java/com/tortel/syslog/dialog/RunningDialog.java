@@ -17,6 +17,7 @@ import com.tortel.syslog.exception.CreateFolderException;
 import com.tortel.syslog.exception.LowSpaceException;
 import com.tortel.syslog.exception.NoFilesException;
 import com.tortel.syslog.exception.RunCommandException;
+import com.tortel.syslog.utils.Log;
 import com.tortel.syslog.utils.Utils;
 
 import java.io.FileNotFoundException;
@@ -110,41 +111,45 @@ public class RunningDialog extends DialogFragment {
 
         @Override
         protected void onPostExecute(Result result){
-            if(result.success()){
-                String msg = getResources().getString(R.string.save_path)+result.getShortPath();
-                Toast.makeText(getActivity(), msg, Toast.LENGTH_LONG).show();
+            try {
+                if (result.success()) {
+                    String msg = getResources().getString(R.string.save_path) + result.getShortPath();
+                    Toast.makeText(getActivity(), msg, Toast.LENGTH_LONG).show();
 
-                //Display a share intent
-                Intent share = new Intent(android.content.Intent.ACTION_SEND);
-                share.setType("application/zip");
-                share.putExtra(Intent.EXTRA_STREAM, Uri.parse("file://" + result.getArchivePath()));
+                    //Display a share intent
+                    Intent share = new Intent(android.content.Intent.ACTION_SEND);
+                    share.setType("application/zip");
+                    share.putExtra(Intent.EXTRA_STREAM, Uri.parse("file://" + result.getArchivePath()));
 
-                if(Utils.isHandlerAvailable(getActivity().getApplicationContext(), share)){
-                    startActivity(share);
+                    if (Utils.isHandlerAvailable(getActivity().getApplicationContext(), share)) {
+                        startActivity(share);
+                    } else {
+                        result.setMessage(R.string.exception_send);
+                        result.setException(null);
+
+                        //Show the error dialog. It will have stacktrace/bugreport disabled
+                        ExceptionDialog dialog = new ExceptionDialog();
+                        dialog.setResult(result);
+                        dialog.show(getFragmentManager(), "exceptionDialog");
+                    }
                 } else {
-                    result.setMessage(R.string.exception_send);
-                    result.setException(null);
-
-                    //Show the error dialog. It will have stacktrace/bugreport disabled
-                    ExceptionDialog dialog = new ExceptionDialog();
-                    dialog.setResult(result);
-                    dialog.show(getFragmentManager(), "exceptionDialog");
+                    if (result.getException() instanceof LowSpaceException) {
+                        //Show the low space dialog
+                        LowSpaceDialog dialog = new LowSpaceDialog();
+                        dialog.setResult(result);
+                        dialog.show(getFragmentManager(), "exceptionDialog");
+                    } else {
+                        //Show the error dialog
+                        ExceptionDialog dialog = new ExceptionDialog();
+                        dialog.setResult(result);
+                        dialog.show(getFragmentManager(), "exceptionDialog");
+                    }
                 }
-            } else {
-                if(result.getException() instanceof LowSpaceException){
-                    //Show the low space dialog
-                    LowSpaceDialog dialog = new LowSpaceDialog();
-                    dialog.setResult(result);
-                    dialog.show(getFragmentManager(), "exceptionDialog");
-                } else {
-                    //Show the error dialog
-                    ExceptionDialog dialog = new ExceptionDialog();
-                    dialog.setResult(result);
-                    dialog.show(getFragmentManager(), "exceptionDialog");
-                }
+                // Close the dialog
+                dismiss();
+            } catch(IllegalStateException e){
+                Log.v("Ignorning IllegalStateException - The user probably left the application, and we tried to show a dialog");
             }
-            // Close the dialog
-            dismiss();
         }
     };
 }
