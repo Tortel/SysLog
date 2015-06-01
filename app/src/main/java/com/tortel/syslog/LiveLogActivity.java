@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.tortel.syslog.utils.InputStreamWrapper;
+import com.tortel.syslog.utils.Log;
 
 import java.io.InputStream;
 
@@ -57,7 +58,11 @@ public class LiveLogActivity extends AppCompatActivity {
             super.onCreate(savedInstanceState);
             setRetainInstance(true);
             try {
-                mTermProcess = Runtime.getRuntime().exec("su -c logcat");
+                mTermProcess = new ProcessBuilder()
+                        .command("su", "-c", "logcat")
+                        .redirectErrorStream(true)
+                        .start();
+                //mTermProcess = Runtime.getRuntime().exec("su -c logcat");
 
                 mTermSession = new TermSession();
 
@@ -87,8 +92,12 @@ public class LiveLogActivity extends AppCompatActivity {
         @Override
         public void onDestroy() {
             super.onDestroy();
-            mTermSession.finish();
             mTermProcess.destroy();
+            mTermSession.finish();
+
+            // Yes, its not the best practice to manually invoke GC, but leaving this activity leaves stuff in
+            // memory that will be GC'ed anyway, might as well clean up now so nothing else needs to wait for it
+            System.gc();
         }
 
     }
