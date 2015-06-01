@@ -19,9 +19,9 @@ android {
 }
 
 dependencies {
-    compile 'com.android.support:appcompat-v7:22.1.+'
+    compile 'com.android.support:appcompat-v7:22.2.+'
     // https://github.com/afollestad/material-dialogs
-    compile 'com.afollestad:material-dialogs:0.7.2.+'
+    compile 'com.afollestad:material-dialogs:0.7.5.+'
 
     compile 'eu.chainfire:libsuperuser:1.0.0.+'
 }
