@@ -89,7 +89,7 @@ public class TermSession {
     private CharsetEncoder mUTF8Encoder;
 
     // Number of rows in the transcript
-    private static final int TRANSCRIPT_ROWS = 10000;
+    private static final int TRANSCRIPT_ROWS = 250;
 
     private static final int NEW_INPUT = 1;
     private static final int NEW_OUTPUT = 2;

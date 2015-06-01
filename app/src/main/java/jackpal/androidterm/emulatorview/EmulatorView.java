@@ -105,7 +105,7 @@ public class EmulatorView extends View implements GestureDetector.OnGestureListe
     /**
      * Text size. Zero means 4 x 8 font.
      */
-    private int mTextSize = 10;
+    private int mTextSize = 8;
 
     private int mCursorBlink;
 
