@@ -56,6 +56,8 @@ import android.os.Message;
  * and closes the attached I/O streams.
  */
 public class TermSession {
+    private static final int BUFFER_SIZE = 64;
+
     public void setKeyListener(TermKeyListener l) {
         mKeyListener = l;
     }
@@ -130,10 +132,10 @@ public class TermSession {
         mUTF8Encoder.onMalformedInput(CodingErrorAction.REPLACE);
         mUTF8Encoder.onUnmappableCharacter(CodingErrorAction.REPLACE);
 
-        mReceiveBuffer = new byte[4 * 1024];
-        mByteQueue = new ByteQueue(4 * 1024);
+        mReceiveBuffer = new byte[4 * BUFFER_SIZE];
+        mByteQueue = new ByteQueue(4 * BUFFER_SIZE);
         mReaderThread = new Thread() {
-            private byte[] mBuffer = new byte[4096];
+            private byte[] mBuffer = new byte[4 * BUFFER_SIZE];
 
             @Override
             public void run() {
@@ -161,9 +163,9 @@ public class TermSession {
         };
         mReaderThread.setName("TermSession input reader");
 
-        mWriteQueue = new ByteQueue(4096);
+        mWriteQueue = new ByteQueue(4 * BUFFER_SIZE);
         mWriterThread = new Thread() {
-            private byte[] mBuffer = new byte[4096];
+            private byte[] mBuffer = new byte[4 * BUFFER_SIZE];
 
             @Override
             public void run() {
