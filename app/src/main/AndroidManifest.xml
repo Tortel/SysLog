@@ -44,7 +44,7 @@
         </activity>
 
         <activity android:name=".LiveLogActivity"
-            android:label="@string/app_name" />
+            android:label="@string/live_logcat" />
 
     </application>
 
