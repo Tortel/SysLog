@@ -1,5 +1,6 @@
 package com.tortel.syslog;
 
+import android.app.PendingIntent;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
@@ -15,10 +16,14 @@ import com.tortel.syslog.fragment.MainFragment;
 import com.tortel.syslog.utils.Log;
 import com.tortel.syslog.utils.Utils;
 
+import cyanogenmod.app.CMStatusBarManager;
+import cyanogenmod.app.CustomTile;
+
 /**
  * Main activity, fragment version
  */
 public class FragmentMainActivity extends AppCompatActivity {
+    private static final int TILE_ID = 4321;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,6 +36,18 @@ public class FragmentMainActivity extends AppCompatActivity {
             MainFragment frag = new MainFragment();
             fragmentManager.beginTransaction().replace(R.id.content_frame, frag).commit();
         }
+
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, new Intent(this, FragmentMainActivity.class), PendingIntent.FLAG_UPDATE_CURRENT);
+
+        CustomTile tile = new CustomTile.Builder(this)
+                .setIcon(R.drawable.ic_launcher)
+                .setLabel(R.string.app_name)
+                .setContentDescription("Do Something")
+                .setOnClickIntent(pendingIntent)
+                .build();
+
+        CMStatusBarManager cmStatusBarManager = CMStatusBarManager.getInstance(this);
+        cmStatusBarManager.publishTile(TILE_ID, tile);
     }
     @Override
     public boolean onCreateOptionsMenu(Menu menu){

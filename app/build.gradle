@@ -18,10 +18,19 @@ android {
     }
 }
 
+repositories {
+    flatDir {
+        dirs 'libs'
+    }
+}
+
 dependencies {
     compile 'com.android.support:appcompat-v7:22.2.+'
     // https://github.com/afollestad/material-dialogs
     compile 'com.afollestad:material-dialogs:0.7.5.+'
 
     compile 'eu.chainfire:libsuperuser:1.0.0.+'
+
+    // File-based deps
+    compile(name:'org.cyanogenmod.platform.sdk', ext:'jar')
 }
