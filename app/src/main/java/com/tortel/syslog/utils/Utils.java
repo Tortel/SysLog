@@ -311,6 +311,29 @@ public class Utils {
               PackageManager.MATCH_DEFAULT_ONLY);
         return list.size() > 0;
      }
+
+    /**
+     * Task to clear the logcat buffer (logcat -c)
+     */
+    public static class ClearLogcatBufferTask extends AsyncTask<Void, Void, Void> {
+        private Context context;
+
+        public ClearLogcatBufferTask(Context context){
+            this.context = context;
+        }
+
+        @Override
+        protected Void doInBackground(Void... params){
+            Shell.SU.run("logcat -c");
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void param){
+            Toast.makeText(context, R.string.buffer_cleared, Toast.LENGTH_SHORT).show();
+        }
+
+    }
     
     /**
      * Clean all the saved log files
@@ -319,11 +342,12 @@ public class Utils {
         private Context context;
         private double startingSpace;
         private double endingSpace;
-        
+
         public CleanAllTask(Context context){
             this.context = context;
         }
-        
+
+        @Override
         protected Void doInBackground(Void... params) {
             startingSpace = Utils.getStorageFreeSpace();
             String path = Environment.getExternalStorageDirectory().getPath();
@@ -332,7 +356,8 @@ public class Utils {
             endingSpace = Utils.getStorageFreeSpace();
             return null;
         }
-        
+
+        @Override
         protected void onPostExecute(Void param){
             String spaceFreed = context.getResources().getString(R.string.space_freed,
                     endingSpace - startingSpace);
@@ -352,7 +377,8 @@ public class Utils {
         public CleanUncompressedTask(Context context){
             this.context = context;
         }
-        
+
+        @Override
         protected Void doInBackground(Void... params) {
             startingSpace = Utils.getStorageFreeSpace();
             String path = Environment.getExternalStorageDirectory().getPath();
@@ -365,7 +391,8 @@ public class Utils {
             endingSpace = Utils.getStorageFreeSpace();
             return null;
         }
-        
+
+        @Override
         protected void onPostExecute(Void param){
             String spaceFreed = context.getResources().getString(R.string.space_freed,
                     endingSpace - startingSpace);

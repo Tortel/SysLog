@@ -39,7 +39,15 @@
 	<string name="grep_prompt">Grep the following log:</string>
 	<string name="grep_hint">Grep String</string>
     <string name="live_logcat">Live Logcat</string>
-    
+
+    <!-- Clear buffer dialog strings -->
+    <string name="warning">Warning</string>
+    <string name="clear_buffer_warning">This will remove everything that is currently in your logcat.\nAre you sure you want to do this?</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+    <string name="dont_show_again">Don\'t show this message again</string>
+    <string name="buffer_cleared">Logcat buffer cleared</string>
+
     <!-- Status messages -->
     <string name="working">Working&#8230;</string>
     <string name="done">Done!</string>
@@ -68,7 +76,8 @@ and with some 3.x kernels it also may not be able to get kernel logs.</string>
 	<string name="about">About</string>
 	<string name="faq">FAQ</string>
 	<string name="clean_uncompressed">Clean Uncompressed Logs</string>
-	<string name="clean_all">Clean All Logs</string>
+	<string name="clean_all">Clean All Saved Logs</string>
+    <string name="clear_buffer">Clear logcat buffer</string>
 	<string name="menu_settings">Settings</string>
     <string name="show_live_logcat">Show Live Logcat</string>
 	

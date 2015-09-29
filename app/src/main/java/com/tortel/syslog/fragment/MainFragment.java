@@ -24,6 +24,7 @@ import com.tortel.syslog.R;
 import com.tortel.syslog.RunCommand;
 import com.tortel.syslog.dialog.RunningDialog;
 import com.tortel.syslog.utils.Log;
+import com.tortel.syslog.utils.Prefs;
 import com.tortel.syslog.utils.Utils;
 
 import java.io.File;
@@ -34,14 +35,6 @@ import eu.chainfire.libsuperuser.Shell;
  * Fragment which contains the logic for the main UI
  */
 public class MainFragment extends Fragment implements View.OnClickListener {
-    private static final String KEY_KERNEL = "kernel";
-    private static final String KEY_MAIN = "main";
-    private static final String KEY_EVENT = "event";
-    private static final String KEY_MODEM = "modem";
-    private static final String KEY_AUDIT = "audit";
-    private static final String KEY_LASTKMSG = "lastKmsg";
-    private static final String KEY_SCRUB = "scrub";
-
     private boolean kernelLog;
     private boolean lastKmsg;
     private boolean mainLog;
@@ -66,13 +59,13 @@ public class MainFragment extends Fragment implements View.OnClickListener {
     private void loadSettings(){
         Log.d("Loading settings");
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity().getApplicationContext());
-        kernelLog = prefs.getBoolean(KEY_KERNEL, true);
-        mainLog = prefs.getBoolean(KEY_MAIN, true);
-        eventLog = prefs.getBoolean(KEY_EVENT, true);
-        modemLog = prefs.getBoolean(KEY_MODEM, true);
-        lastKmsg = prefs.getBoolean(KEY_LASTKMSG, true);
-        auditLog = prefs.getBoolean(KEY_AUDIT, Utils.isSeAndroid());
-        scrubLog = prefs.getBoolean(KEY_SCRUB, true);
+        kernelLog = prefs.getBoolean(Prefs.KEY_KERNEL, true);
+        mainLog = prefs.getBoolean(Prefs.KEY_MAIN, true);
+        eventLog = prefs.getBoolean(Prefs.KEY_EVENT, true);
+        modemLog = prefs.getBoolean(Prefs.KEY_MODEM, true);
+        lastKmsg = prefs.getBoolean(Prefs.KEY_LASTKMSG, true);
+        auditLog = prefs.getBoolean(Prefs.KEY_AUDIT, Utils.isSeAndroid());
+        scrubLog = prefs.getBoolean(Prefs.KEY_SCRUB, true);
     }
 
     /**
@@ -175,23 +168,23 @@ public class MainFragment extends Fragment implements View.OnClickListener {
             switch (box.getId()) {
                 case R.id.kernel_log:
                     kernelLog = box.isChecked();
-                    prefs.putBoolean(KEY_KERNEL, kernelLog);
+                    prefs.putBoolean(Prefs.KEY_KERNEL, kernelLog);
                     break;
                 case R.id.last_kmsg:
                     lastKmsg = box.isChecked();
-                    prefs.putBoolean(KEY_LASTKMSG, lastKmsg);
+                    prefs.putBoolean(Prefs.KEY_LASTKMSG, lastKmsg);
                     break;
                 case R.id.main_log:
                     mainLog = box.isChecked();
-                    prefs.putBoolean(KEY_MAIN, mainLog);
+                    prefs.putBoolean(Prefs.KEY_MAIN, mainLog);
                     break;
                 case R.id.event_log:
                     eventLog = box.isChecked();
-                    prefs.putBoolean(KEY_EVENT, eventLog);
+                    prefs.putBoolean(Prefs.KEY_EVENT, eventLog);
                     break;
                 case R.id.modem_log:
                     modemLog = box.isChecked();
-                    prefs.putBoolean(KEY_MODEM, modemLog);
+                    prefs.putBoolean(Prefs.KEY_MODEM, modemLog);
                     // Set the warning for modem logs
                     TextView view = (TextView) getView().findViewById(R.id.warnings);
                     if (modemLog) {
@@ -203,11 +196,11 @@ public class MainFragment extends Fragment implements View.OnClickListener {
                     break;
                 case R.id.audit_log:
                     auditLog = box.isChecked();
-                    prefs.putBoolean(KEY_AUDIT, auditLog);
+                    prefs.putBoolean(Prefs.KEY_AUDIT, auditLog);
                     break;
                 case R.id.scrub_logs:
                     scrubLog = box.isChecked();
-                    prefs.putBoolean(KEY_SCRUB, scrubLog);
+                    prefs.putBoolean(Prefs.KEY_SCRUB, scrubLog);
                     break;
             }
 
