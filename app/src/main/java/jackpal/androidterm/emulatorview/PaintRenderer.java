@@ -30,8 +30,8 @@ class PaintRenderer extends BaseTextRenderer {
         mTextPaint.setAntiAlias(true);
         mTextPaint.setTextSize(fontSize);
 
-        mCharHeight = (int) FloatMath.ceil(mTextPaint.getFontSpacing());
-        mCharAscent = (int) FloatMath.ceil(mTextPaint.ascent());
+        mCharHeight = (int) Math.ceil(mTextPaint.getFontSpacing());
+        mCharAscent = (int) Math.ceil(mTextPaint.ascent());
         mCharDescent = mCharHeight + mCharAscent;
         mCharWidth = mTextPaint.measureText(EXAMPLE_CHAR, 0, 1);
     }
