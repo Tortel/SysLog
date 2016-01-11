@@ -93,10 +93,6 @@ public class LiveLogActivity extends AppCompatActivity {
             super.onDestroy();
             mTermProcess.destroy();
             mTermSession.finish();
-
-            // Yes, its not the best practice to manually invoke GC, but leaving this activity leaves stuff in
-            // memory that will be GC'ed anyway, might as well clean up now so nothing else needs to wait for it
-            System.gc();
         }
 
     }
