@@ -59,10 +59,9 @@ public class LiveLogActivity extends AppCompatActivity {
             setRetainInstance(true);
             try {
                 mTermProcess = new ProcessBuilder()
-                        .command("su", "-c", "logcat")
+                        .command("su", "-c", "logcat -v brief -C -T 100")
                         .redirectErrorStream(true)
                         .start();
-                //mTermProcess = Runtime.getRuntime().exec("su -c logcat");
 
                 mTermSession = new TermSession();
 
