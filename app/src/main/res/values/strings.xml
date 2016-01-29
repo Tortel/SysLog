@@ -40,6 +40,10 @@
 	<string name="grep_hint">Grep String</string>
     <string name="live_logcat">Live Logcat</string>
 
+    <!-- Permission detail strings -->
+    <string name="required_permission_detail">SysLog needs this permissions to function. Without it, it will be unable to save your logs.</string>
+    <string name="scrub_permission_detail">This permission is used to determine what information to scrub from the logs.</string>
+
     <!-- Clear buffer dialog strings -->
     <string name="warning">Warning</string>
     <string name="clear_buffer_warning">This will remove everything that is currently in your logcat.\nAre you sure you want to do this?</string>

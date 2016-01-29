@@ -19,6 +19,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.tortel.syslog.FragmentMainActivity;
 import com.tortel.syslog.GrepOption;
 import com.tortel.syslog.R;
 import com.tortel.syslog.RunCommand;
@@ -200,6 +201,10 @@ public class MainFragment extends Fragment implements View.OnClickListener {
                     break;
                 case R.id.scrub_logs:
                     scrubLog = box.isChecked();
+                    if(scrubLog){
+                        // Force a check of permissions needed to scrub the logs
+                        ((FragmentMainActivity) getActivity()).checkScrubPermissions();
+                    }
                     prefs.putBoolean(Prefs.KEY_SCRUB, scrubLog);
                     break;
             }
@@ -211,6 +216,16 @@ public class MainFragment extends Fragment implements View.OnClickListener {
             //Save the settings
             prefs.apply();
         } else if(v.getId() == R.id.take_log) {
+            // Force a check of our permissions. Stop if we don't have them
+            if(!((FragmentMainActivity) getActivity()).checkRequiredPermissions()){
+                return;
+            }
+            if(scrubLog){
+                if(!((FragmentMainActivity) getActivity()).checkScrubPermissions()){
+                    return;
+                }
+            }
+
             //Check for external storage
             if(Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState())){
                 //Build the command
