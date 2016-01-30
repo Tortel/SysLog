@@ -6,12 +6,13 @@ import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.tortel.syslog.utils.InputStreamWrapper;
-import com.tortel.syslog.utils.Log;
 
 import java.io.InputStream;
 
@@ -33,9 +34,15 @@ public class LiveLogActivity extends AppCompatActivity {
 
         FragmentManager fragMan = getSupportFragmentManager();
         if(fragMan.findFragmentById(R.id.content_frame) == null){
-            Fragment frag = new LiveLogFragemnt();
-            fragMan.beginTransaction().replace(R.id.content_frame, frag).commit();
+            restartLogcatFragment();
         }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu){
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.logcat_menu, menu);
+        return true;
     }
 
     @Override
@@ -44,14 +51,38 @@ public class LiveLogActivity extends AppCompatActivity {
             case android.R.id.home:
                 finish();
                 return true;
+            case R.id.stop_logcat:
+                LiveLogFragment fragment = getFragment();
+                if(fragment != null) {
+                    fragment.stop();
+                }
+                return true;
+            case R.id.restart_logcat:
+                restartLogcatFragment();
+                return true;
         }
         return super.onOptionsItemSelected(item);
     }
 
-    public static class LiveLogFragemnt extends Fragment {
+    private void restartLogcatFragment(){
+        FragmentManager fragMan = getSupportFragmentManager();
+        Fragment frag = new LiveLogFragment();
+        fragMan.beginTransaction().replace(R.id.content_frame, frag).commit();
+    }
+
+    private LiveLogFragment getFragment(){
+        FragmentManager fragMan = getSupportFragmentManager();
+        if(fragMan.findFragmentById(R.id.content_frame) != null) {
+            return (LiveLogFragment) fragMan.findFragmentById(R.id.content_frame);
+        }
+        return null;
+    }
+
+    public static class LiveLogFragment extends Fragment {
         private EmulatorView mEmulatorView;
         private TermSession mTermSession;
         private Process mTermProcess;
+        private boolean running = true;
 
         @Override
         public void onCreate(Bundle savedInstanceState) {
@@ -77,6 +108,22 @@ public class LiveLogActivity extends AppCompatActivity {
                 }
                 e1.printStackTrace();
             }
+        }
+
+        /**
+         * Return if the logcat process is running
+         * @return
+         */
+        public boolean isRunning(){
+            return running;
+        }
+
+        /**
+         * Stop the logcat process
+         */
+        public void stop(){
+            mTermProcess.destroy();
+            running = false;
         }
 
         @Override
