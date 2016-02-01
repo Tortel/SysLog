@@ -1,6 +1,8 @@
 package com.tortel.syslog;
 
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
@@ -12,7 +14,9 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.tortel.syslog.dialog.AboutLogcatDialog;
 import com.tortel.syslog.utils.InputStreamWrapper;
+import com.tortel.syslog.utils.Prefs;
 
 import java.io.InputStream;
 
@@ -35,6 +39,16 @@ public class LiveLogActivity extends AppCompatActivity {
         FragmentManager fragMan = getSupportFragmentManager();
         if(fragMan.findFragmentById(R.id.content_frame) == null){
             restartLogcatFragment();
+        }
+
+        // Check to show the about dialog
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        if(!prefs.getBoolean(Prefs.KEY_LIVE_LOGCAT_ABOUT, false)){
+            AboutLogcatDialog dialog = new AboutLogcatDialog();
+            dialog.show(getSupportFragmentManager(), "logcat_about");
+
+            // Save the preference
+            prefs.edit().putBoolean(Prefs.KEY_LIVE_LOGCAT_ABOUT, true).apply();
         }
     }
 

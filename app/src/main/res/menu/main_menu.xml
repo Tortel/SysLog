@@ -23,6 +23,9 @@
         android:id="@+id/live_logcat"
         android:title="@string/show_live_logcat"
         app:showAsAction="never" />
+    <item android:id="@+id/about_live"
+        android:title="@string/about_live"
+        app:showAsAction="never" />
     <item
         android:id="@+id/clean_uncompressed"
         android:title="@string/clean_uncompressed"

@@ -12,6 +12,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 
 import com.tortel.syslog.dialog.AboutDialog;
+import com.tortel.syslog.dialog.AboutLogcatDialog;
 import com.tortel.syslog.dialog.ClearBufferDialog;
 import com.tortel.syslog.dialog.CustomPathDialog;
 import com.tortel.syslog.dialog.FaqDialog;
@@ -109,6 +110,9 @@ public class FragmentMainActivity extends AppCompatActivity implements EasyPermi
             case R.id.about:
                 showAboutDialog();
                 return true;
+            case R.id.about_live:
+                showAboutLiveLogcatDialog();
+                return true;
             case R.id.faq:
                 showFaqDialog();
                 return true;
@@ -146,6 +150,14 @@ public class FragmentMainActivity extends AppCompatActivity implements EasyPermi
     private void showAboutDialog(){
         AboutDialog dialog = new AboutDialog();
         dialog.show(getSupportFragmentManager(), "about");
+    }
+
+    /**
+     * Shows the About dialog box
+     */
+    private void showAboutLiveLogcatDialog(){
+        AboutLogcatDialog dialog = new AboutLogcatDialog();
+        dialog.show(getSupportFragmentManager(), "about_logcat");
     }
 
     /**

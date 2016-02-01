@@ -37,6 +37,8 @@ public class Prefs {
      */
     public static final String KEY_NO_BUFFER_WARN = "buffer";
 
+    public static final String KEY_LIVE_LOGCAT_ABOUT = "about_live_logcat";
+
     private Prefs(){
         // Prevent the class from being created
     }
