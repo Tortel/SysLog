@@ -53,8 +53,8 @@ public class RunningDialog extends DialogFragment {
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         MaterialDialog.Builder builder = new MaterialDialog.Builder(getActivity());
         builder.autoDismiss(false);
-        View view = getActivity().getLayoutInflater().inflate(R.layout.dialog_running, null, false);
-        builder.customView(view, false);
+        builder.progress(true, 0);
+        builder.content(R.string.working);
         return builder.build();
     }
 
