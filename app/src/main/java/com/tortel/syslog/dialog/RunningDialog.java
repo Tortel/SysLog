@@ -119,6 +119,7 @@ public class RunningDialog extends DialogFragment {
                     //Display a share intent
                     Intent share = new Intent(android.content.Intent.ACTION_SEND);
                     share.setType("application/zip");
+                    share.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
                     share.putExtra(Intent.EXTRA_STREAM, Uri.parse("file://" + result.getArchivePath()));
 
                     if (Utils.isHandlerAvailable(getActivity().getApplicationContext(), share)) {
