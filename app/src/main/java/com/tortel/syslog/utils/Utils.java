@@ -92,6 +92,14 @@ public class Utils {
     public static boolean isSeAndroid(){
         return Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2;
     }
+
+    /**
+     * Returns true if the android version is M, or 6.0+
+     * @return
+     */
+    public static boolean isMarshmallow(){
+        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.M;
+    }
     
     /**
      * Runs the {@link com.tortel.syslog.RunCommand} contained within the {@link com.tortel.syslog.Result} passed in.<br />
@@ -157,9 +165,19 @@ public class Utils {
             String rootPath = path;
             if(isSeAndroid()){
                 SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-                
-                rootPath = path.replaceAll("/storage/emulated/", prefs.getString(PREF_PATH, ROOT_PATH));
-                Log.v(TAG, "Using path "+rootPath+" for root commands");
+
+                String rootPathPref = prefs.getString(PREF_PATH, ROOT_PATH);
+                /**
+                 * On M+, you can adopt external storage. Because of this, the root path can't be hard coded to /data/media
+                 * I have tested (On CyanogenMod 13.0) that using the original path actually works fine.
+                 * Magic?
+                 */
+                if(isMarshmallow() && rootPathPref.equals(ROOT_PATH)){
+                    Log.v(TAG, "Android M+ detected - not changing root path.");
+                } else {
+                    rootPath = path.replaceAll("/storage/emulated/", prefs.getString(PREF_PATH, ROOT_PATH));
+                    Log.v(TAG, "Using path "+rootPath+" for root commands");
+                }
             }
 
             //Commands to dump the logs
