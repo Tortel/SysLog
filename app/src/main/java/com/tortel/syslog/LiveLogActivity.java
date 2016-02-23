@@ -94,7 +94,7 @@ public class LiveLogActivity extends AppCompatActivity {
 
     public static class LiveLogFragment extends Fragment {
         private EmulatorView mEmulatorView;
-        private TermSession mTermSession;
+        private TermSession mTermSession = new TermSession();
         private Process mTermProcess;
         private boolean running = true;
 
@@ -107,8 +107,6 @@ public class LiveLogActivity extends AppCompatActivity {
                         .command("su", "-c", "logcat -v brief")
                         .redirectErrorStream(true)
                         .start();
-
-                mTermSession = new TermSession();
 
                 InputStream is = new InputStreamWrapper(mTermProcess.getInputStream());
                 mTermSession.setTermIn(is);
