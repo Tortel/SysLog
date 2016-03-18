@@ -84,7 +84,11 @@ public class ExceptionDialog extends DialogFragment implements android.view.View
         stackTraceView.setText(getStackTrace(result.getException()));
 
         TextView messageText = (TextView) view.findViewById(R.id.exception_message);
-        messageText.setText(result.getMessage());
+        int messageId = result.getMessage();
+        if(messageId == 0){
+            messageId = R.string.error;
+        }
+        messageText.setText(messageId);
         builder.customView(view, false);
         //Skip the bugreport button if there is no stack trace or if 4.3+ without root
         if(result.getException() != null){

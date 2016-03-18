@@ -17,6 +17,7 @@
  */
 package com.tortel.syslog.utils;
 
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -111,10 +112,9 @@ public class Utils {
      * @throws NoFilesException
      * @throws LowSpaceException 
      */
-    public static void runCommand(Context context, Result result) throws CreateFolderException,
+    public static void runCommand(final Context context, final Result result) throws CreateFolderException,
             RunCommandException, IOException, NoFilesException, LowSpaceException {
-        RunCommand command = result.getCommand();
-        String archivePath;
+        final RunCommand command = result.getCommand();
         
         if (Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState())) {
             //Check how much space is on the primary storage
@@ -123,32 +123,36 @@ public class Utils {
                 throw new LowSpaceException(freeSpace);
             }
             
-            //Commands to execute
+            // Commands to execute
             List<String> commands = new LinkedList<>();
+            // Where to write the command output
+            List<String> files = new LinkedList<>();
 
-            //Create the directories
+            // Create the directories
             String path = Environment.getExternalStorageDirectory().getPath();
 
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd_HH.mm", Locale.US);
-            Date date = new Date();
+            final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd_HH.mm", Locale.US);
+            final Date date = new Date();
             File nomedia = new File(path+"/SysLog/.nomedia");
             path += "/SysLog/"+sdf.format(date)+"/";
             File outPath = new File(path);
-            //Check if this path already exists (Happens if you run this multiple times a minute
+            // Check if this path already exists (Happens if you run this multiple times a minute
             if(outPath.exists()){
-                //Append the seconds
+                // Append the seconds
                 path =  path.substring(0, path.length()-1) +"."+Calendar.getInstance().get(Calendar.SECOND)+"/";
                 outPath = new File(path);
                 Log.v(TAG, "Path already exists, added seconds");
             }
 
+            final String finalPath = path;
+
             Log.v(TAG, "Path: "+path);
-            //Make the directory
+            // Make the directory
             if(!outPath.mkdirs() && !outPath.isDirectory()){
                 throw new CreateFolderException();
             }
 
-            //Put a .nomedia file in the directory
+            // Put a .nomedia file in the directory
             if(!nomedia.exists()){
                 try {
                     nomedia.createNewFile();
@@ -157,143 +161,154 @@ public class Utils {
                 }
             }
 
-            /*
-             *  If the system is 4.3, some superuser setups (CM10.2) have issues accessing
-             *  the normal external storage path. Replace the first portion of the path
-             *  with /data/media/{UID}
-             */
-            String rootPath = path;
-            if(isSeAndroid()){
-                SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-
-                String rootPathPref = prefs.getString(PREF_PATH, ROOT_PATH);
-                /**
-                 * On M+, you can adopt external storage. Because of this, the root path can't be hard coded to /data/media
-                 * I have tested (On CyanogenMod 13.0) that using the original path actually works fine.
-                 * Magic?
-                 */
-                if(isMarshmallow() && rootPathPref.equals(ROOT_PATH)){
-                    Log.v(TAG, "Android M+ detected - not changing root path.");
-                } else {
-                    rootPath = path.replaceAll("/storage/emulated/", prefs.getString(PREF_PATH, ROOT_PATH));
-                    Log.v(TAG, "Using path "+rootPath+" for root commands");
-                }
-            }
-
-            //Commands to dump the logs
+            // Commands to dump the logs
             if(command.isMainLog()){
                 if(command.grep() && command.getGrepOption() == GrepOption.MAIN
                         || command.getGrepOption() == GrepOption.ALL){
-                    commands.add("logcat -v time -d | grep \""+command.getGrep()+"\" > "+rootPath+"logcat.log"+PRESCRUB);
+                    commands.add("logcat -v time -d | grep \""+command.getGrep()+"\"");
                 } else {
-                    commands.add("logcat -v time -d -f "+rootPath+"logcat.log"+PRESCRUB);
+                    commands.add("logcat -v time -d");
                 }
+                files.add(outPath.getAbsolutePath()+"/logcat.log"+PRESCRUB);
             }
             if(command.isEventLog()){
                 if(command.grep() && command.getGrepOption() == GrepOption.EVENT
                         || command.getGrepOption() == GrepOption.ALL){
-                    commands.add("logcat -b events -v time -d | grep \""+command.getGrep()+"\" > "+rootPath+"event.log"+PRESCRUB);
+                    commands.add("logcat -b events -v time -d | grep \""+command.getGrep()+"\"");
                 } else {
-                    commands.add("logcat -b events -v time -d -f "+rootPath+"event.log"+PRESCRUB);
+                    commands.add("logcat -b events -v time -d");
                 }
+                files.add(outPath.getAbsolutePath()+"/event.log"+PRESCRUB);
             }
             if(command.isKernelLog()){
                 if(command.grep() && command.getGrepOption() == GrepOption.KERNEL
                         || command.getGrepOption() == GrepOption.ALL){
-                    commands.add("dmesg | grep \""+command.getGrep()+"\" > "+rootPath+"dmesg.log"+PRESCRUB);
+                    commands.add("dmesg | grep \""+command.getGrep()+"\"");
                 } else {
-                    commands.add("dmesg > "+rootPath+"dmesg.log"+PRESCRUB);
+                    commands.add("dmesg");
                 }
+                files.add(outPath.getAbsolutePath()+"/dmesg.log"+PRESCRUB);
             }
             if(command.isModemLog()){
                 if(command.grep() && command.getGrepOption() == GrepOption.MODEM
                         || command.getGrepOption() == GrepOption.ALL){
-                    commands.add("logcat -v time -b radio -d | grep \""+command.getGrep()+"\" > "+rootPath+"modem.log"+PRESCRUB);
+                    commands.add("logcat -v time -b radio -d | grep \""+command.getGrep()+"\"");
                 } else {
-                    commands.add("logcat -v time -b radio -d -f "+rootPath+"modem.log"+PRESCRUB);
+                    commands.add("logcat -v time -b radio -d");
                 }
+                files.add(outPath.getAbsolutePath()+"/modem.log"+PRESCRUB);
             }
             if(command.isLastKernelLog()){
                 if(command.grep() && command.getGrepOption() == GrepOption.LAST_KERNEL
                         || command.getGrepOption() == GrepOption.ALL){
                     //Log should be run through grep
-                    commands.add("cat "+LAST_KMSG+" | grep \""+command.getGrep()+"\" > "+rootPath+"last_kmsg.log"+PRESCRUB);
+                    commands.add("cat "+LAST_KMSG+" | grep \""+command.getGrep()+"\"");
                 } else {
                     //Try copying the last_kmsg over
-                    commands.add("cp "+LAST_KMSG+" "+rootPath+"last_kmsg.log"+PRESCRUB);
+                    commands.add("cat "+LAST_KMSG);
                 }
+                files.add(outPath.getAbsolutePath()+"/last_kmsg.log"+PRESCRUB);
             }
             if(command.isAuditLog()){
-                commands.add("cp "+AUDIT_LOG+" "+rootPath+"audit.log");
-                commands.add("cp "+AUDIT_OLD_LOG+" "+rootPath+"audit.old");
+                commands.add("cat "+AUDIT_LOG);
+                files.add(outPath.getAbsolutePath()+"/audit.log");
+                commands.add("cat "+AUDIT_OLD_LOG);
+                files.add(outPath.getAbsolutePath()+"/audit.old");
             }
 
-            /*
-             * More 4.3+ SU issues - need to chown to media_rw
-             */
-            if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2){
-                // Some kernels/systems may not work properly with /*
-                // List the files explicitly
-                commands.add("chown media_rw:media_rw "+rootPath+"/logcat.log"+PRESCRUB);
-                commands.add("chown media_rw:media_rw "+rootPath+"/dmesg.log"+PRESCRUB);
-                commands.add("chown media_rw:media_rw "+rootPath+"/modem.log"+PRESCRUB);
-                commands.add("chown media_rw:media_rw "+rootPath+"/event.log"+PRESCRUB);
-                commands.add("chown media_rw:media_rw "+rootPath+"/last_kmsg.log"+PRESCRUB);
-                commands.add("chown media_rw:media_rw "+rootPath+"/audit.log");
-                commands.add("chown media_rw:media_rw "+rootPath+"/audit.old");
-                // Some Omni-based ROMs/kernels have issues even with the above
-                // When in doubt, overkill it
-                commands.add("chmod 666 "+rootPath+"/logcat.log"+PRESCRUB);
-                commands.add("chmod 666 "+rootPath+"/event.log"+PRESCRUB);
-                commands.add("chmod 666 "+rootPath+"/dmesg.log"+PRESCRUB);
-                commands.add("chmod 666 "+rootPath+"/modem.log"+PRESCRUB);
-                commands.add("chmod 666 "+rootPath+"/last_kmsg.log"+PRESCRUB);
-                commands.add("chmod 666 "+rootPath+"/audit.log");
-                commands.add("chmod 666 "+rootPath+"/audit.old");
-            }
+            Shell.Builder builder = new Shell.Builder();
 
             //Run the commands
             if(command.hasRoot()){
-                if(Shell.SU.run(commands) == null){
-                    throw new RunCommandException();
-                }
+                builder.useSU();
             } else {
-                if(Shell.SH.run(commands) == null){
-                    throw new RunCommandException();
+                builder.useSH();
+            }
+
+            Shell.Interactive shell = builder.open();
+            runComamnds(shell, commands, files, new Shell.OnCommandResultListener() {
+                @Override
+                public void onCommandResult(int commandCode, int exitCode, List<String> output) {
+                    // Scrub the files
+                    scrubFiles(context, finalPath, !command.isScrubEnabled());
+
+                    //If there are notes, write them to a notes file
+                    if(command.getNotes() != null && command.getNotes().length() > 0){
+                        try{
+                            File noteFile = new File(finalPath+"/notes.txt");
+                            FileWriter writer = new FileWriter(noteFile);
+                            writer.write(command.getNotes());
+                            writer.close();
+                        } catch(Exception e){
+                            //Ignore
+                        }
+                    }
+
+                    // Append the users input into the zip
+                    String archivePath;
+                    if(command.getAppendText().length() > 0){
+                        archivePath = sdf.format(date)+"-"+command.getAppendText()+".zip";
+                    } else {
+                        archivePath = sdf.format(date)+".zip";
+                    }
+                    try {
+                        ZipWriter writer = new ZipWriter(finalPath, archivePath);
+                        archivePath = finalPath + archivePath;
+                        result.setArchivePath(archivePath);
+
+                        writer.createZip();
+                        result.setSuccess(true);
+                    } catch(Exception e){
+                        Log.e(TAG, "Exception creating zip", e);
+                        result.setSuccess(false);
+                        result.setMessage(R.string.error);
+                    }
                 }
-            }
-
-            // Scrub the files
-            scrubFiles(context, path, !command.isScrubEnabled());
-
-            //If there are notes, write them to a notes file
-            if(command.getNotes() != null && command.getNotes().length() > 0){
-                File noteFile = new File(path+"/notes.txt");
-                FileWriter writer = new FileWriter(noteFile);
-                writer.write(command.getNotes());
-                try{
-                    writer.close();
-                } catch(Exception e){
-                    //Ignore
-                }
-            }
-
-            //Append the users input into the zip
-            if(command.getAppendText().length() > 0){
-                archivePath = sdf.format(date)+"-"+command.getAppendText()+".zip";
-            } else {
-                archivePath = sdf.format(date)+".zip";
-            }
-            ZipWriter writer = new ZipWriter(path, archivePath);
-            archivePath = path+archivePath;
-            result.setArchivePath(archivePath);
-
-            writer.createZip();
-            result.setSuccess(true);
+            });
         } else {
             //Default storage not accessible
             result.setSuccess(false);
             result.setMessage(R.string.storage_err);
+        }
+    }
+
+    private static void runComamnds(final Shell.Interactive shell, final List<String> commands, final List<String> outputFiles, final Shell.OnCommandResultListener callback){
+        if(commands.size() == 0){
+            callback.onCommandResult(0, 0, null);
+            return;
+        }
+        try {
+            String command = commands.remove(0);
+            String outputFileName = outputFiles.remove(0);
+            File outputFile = new File(outputFileName);
+            final BufferedWriter output = new BufferedWriter(new FileWriter(outputFile));
+
+            shell.addCommand(command, 0, new Shell.OnCommandLineListener() {
+                @Override
+                public void onCommandResult(int commandCode, int exitCode) {
+                    try{
+                        output.flush();
+                        output.close();
+                    } catch(IOException e){
+                        Log.e(TAG, "Exception closing writer", e);
+                    }
+                    runComamnds(shell, commands, outputFiles, callback);
+                }
+
+                @Override
+                public void onLine(String line) {
+                    try {
+                        // Make sure to include a newline
+                        output.write(line+"\n");
+                    } catch (IOException e) {
+                        Log.e(TAG, "Exception writing line", e);
+                    }
+                }
+            });
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            callback.onCommandResult(0, -1, null);
         }
     }
 
