@@ -148,7 +148,7 @@ public class Utils {
 
             Log.v(TAG, "Path: "+path);
             // Make the directory
-            if(!outPath.mkdirs() && !outPath.isDirectory()){
+            if(!outPath.mkdirs() || !outPath.isDirectory()){
                 throw new CreateFolderException();
             }
 
