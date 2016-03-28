@@ -29,4 +29,5 @@ dependencies {
     compile 'pub.devrel:easypermissions:0.1.4'
 
     compile 'eu.chainfire:libsuperuser:1.0.0.+'
+    compile 'org.greenrobot:eventbus:3.0.0'
 }
