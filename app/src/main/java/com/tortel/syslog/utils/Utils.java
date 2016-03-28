@@ -64,7 +64,7 @@ public class Utils {
     public static final String AUDIT_LOG = "/data/misc/audit/audit.log";
     public static final String AUDIT_OLD_LOG = "/data/misc/audit/audit.old";
 
-    private static final String PRESCRUB = "-prescrub";
+    public static final String PRESCRUB = "-prescrub";
     
     private static final int MB_TO_BYTE = 1048576;
     
@@ -72,7 +72,7 @@ public class Utils {
      * Minimum amount of free space needed to not throw a LowSpaceException.
      * This is based on the average size of my runs (~5.5MB)
      */
-    private static final double MIN_FREE_SPACE = 6;
+    public static final double MIN_FREE_SPACE = 6;
     
     /**
      * Gets the free space of the primary storage, in MB
@@ -314,9 +314,11 @@ public class Utils {
 
     /**
      * Runs the log file through the ScrubberUtils and removes the PRESCRUB extension
-     * @param path
+     * @param context
+     * @param path where to look for files
+     * @param disable flag to simply rename the files to their final names
      */
-    private static void scrubFiles(Context context, String path, boolean disable) {
+    public static void scrubFiles(Context context, String path, boolean disable) {
         File logFolder = new File(path);
         File logFiles[] = logFolder.listFiles();
         for(File file : logFiles){

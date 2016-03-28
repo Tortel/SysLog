@@ -17,11 +17,17 @@ import com.tortel.syslog.exception.CreateFolderException;
 import com.tortel.syslog.exception.LowSpaceException;
 import com.tortel.syslog.exception.NoFilesException;
 import com.tortel.syslog.exception.RunCommandException;
+import com.tortel.syslog.utils.GrabLogThread;
 import com.tortel.syslog.utils.Log;
 import com.tortel.syslog.utils.Utils;
 
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.concurrent.ThreadPoolExecutor;
 
 /**
  * Fragment which actually runs the commands
@@ -36,10 +42,21 @@ public class RunningDialog extends DialogFragment {
         super.onCreate(savedInstanceState);
         setRetainInstance(true);
         setCancelable(false);
+        // Register for EventBus notifications
+        EventBus.getDefault().register(this);
 
         Bundle args = getArguments();
         mCommand = args.getParcelable(COMMAND);
-        mLogTask.execute();
+        // Start the background thread
+        Thread thread = new Thread(new GrabLogThread(mCommand, getActivity()));
+        thread.start();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        // Unregister from event bus
+        EventBus.getDefault().unregister(this);
     }
 
     @Override
@@ -58,99 +75,49 @@ public class RunningDialog extends DialogFragment {
         return builder.build();
     }
 
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onLogResult(Result result){
+        Log.v("Received Result via EventBus");
+        try {
+            if (result.success()) {
+                String msg = getResources().getString(R.string.save_path) + result.getShortPath();
+                Toast.makeText(getActivity(), msg, Toast.LENGTH_LONG).show();
 
+                //Display a share intent
+                Intent share = new Intent(android.content.Intent.ACTION_SEND);
+                share.setType("application/zip");
+                share.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                share.putExtra(Intent.EXTRA_STREAM, Uri.parse("file://" + result.getArchivePath()));
 
-    private AsyncTask<Void, Void, Result> mLogTask = new AsyncTask<Void, Void, Result>(){
-
-        /**
-         * Process the logs
-         */
-        @Override
-        protected Result doInBackground(Void... params) {
-            Result result = new Result(false);
-            result.setCommand(mCommand);
-
-            try{
-                Utils.runCommand(getActivity().getApplicationContext(), result);
-            } catch(CreateFolderException e){
-                //Error creating the folder
-                e.printStackTrace();
-                result.setException(e);
-                result.setMessage(R.string.exception_folder);
-            } catch (FileNotFoundException e) {
-                //Exception creating zip
-                e.printStackTrace();
-                result.setException(e);
-                result.setMessage(R.string.exception_zip);
-            } catch (RunCommandException e) {
-                //Exception running commands
-                e.printStackTrace();
-                result.setException(e);
-                result.setMessage(R.string.exception_commands);
-            } catch (NoFilesException e) {
-                //No files to zip
-                e.printStackTrace();
-                result.setException(e);
-                result.setMessage(R.string.exception_zip_nofiles);
-            } catch (IOException e) {
-                //Exception writing zip
-                e.printStackTrace();
-                result.setException(e);
-                result.setMessage(R.string.exception_zip);
-            } catch(LowSpaceException e){
-                e.printStackTrace();
-                result.setException(e);
-                result.setMessage(R.string.exception_space);
-            } catch(Exception e){
-                //Unknown exception
-                e.printStackTrace();
-            }
-
-            return result;
-        }
-
-        @Override
-        protected void onPostExecute(Result result){
-            try {
-                if (result.success()) {
-                    String msg = getResources().getString(R.string.save_path) + result.getShortPath();
-                    Toast.makeText(getActivity(), msg, Toast.LENGTH_LONG).show();
-
-                    //Display a share intent
-                    Intent share = new Intent(android.content.Intent.ACTION_SEND);
-                    share.setType("application/zip");
-                    share.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-                    share.putExtra(Intent.EXTRA_STREAM, Uri.parse("file://" + result.getArchivePath()));
-
-                    if (Utils.isHandlerAvailable(getActivity().getApplicationContext(), share)) {
-                        startActivity(share);
-                    } else {
-                        result.setMessage(R.string.exception_send);
-                        result.setException(null);
-
-                        //Show the error dialog. It will have stacktrace/bugreport disabled
-                        ExceptionDialog dialog = new ExceptionDialog();
-                        dialog.setResult(result);
-                        dialog.show(getFragmentManager(), "exceptionDialog");
-                    }
+                if (Utils.isHandlerAvailable(getActivity().getApplicationContext(), share)) {
+                    startActivity(share);
                 } else {
-                    if (result.getException() instanceof LowSpaceException) {
-                        //Show the low space dialog
-                        LowSpaceDialog dialog = new LowSpaceDialog();
-                        dialog.setResult(result);
-                        dialog.show(getFragmentManager(), "exceptionDialog");
-                    } else {
-                        //Show the error dialog
-                        ExceptionDialog dialog = new ExceptionDialog();
-                        dialog.setResult(result);
-                        dialog.show(getFragmentManager(), "exceptionDialog");
-                    }
+                    result.setMessage(R.string.exception_send);
+                    result.setException(null);
+
+                    //Show the error dialog. It will have stacktrace/bugreport disabled
+                    ExceptionDialog dialog = new ExceptionDialog();
+                    dialog.setResult(result);
+                    dialog.show(getFragmentManager(), "exceptionDialog");
                 }
-                // Close the dialog
-                dismiss();
-            } catch(IllegalStateException e){
-                Log.v("Ignorning IllegalStateException - The user probably left the application, and we tried to show a dialog");
+            } else {
+                if (result.getException() instanceof LowSpaceException) {
+                    //Show the low space dialog
+                    LowSpaceDialog dialog = new LowSpaceDialog();
+                    dialog.setResult(result);
+                    dialog.show(getFragmentManager(), "exceptionDialog");
+                } else {
+                    //Show the error dialog
+                    ExceptionDialog dialog = new ExceptionDialog();
+                    dialog.setResult(result);
+                    dialog.show(getFragmentManager(), "exceptionDialog");
+                }
             }
+            // Close the dialog
+            dismiss();
+        } catch(IllegalStateException e){
+            Log.v("Ignorning IllegalStateException - The user probably left the application, and we tried to show a dialog");
         }
-    };
+    }
+
 }
