@@ -17,39 +17,22 @@
  */
 package com.tortel.syslog.utils;
 
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Locale;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Environment;
 import android.os.StatFs;
-import android.preference.PreferenceManager;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.tortel.syslog.GrepOption;
 import com.tortel.syslog.R;
-import com.tortel.syslog.Result;
-import com.tortel.syslog.RunCommand;
-import com.tortel.syslog.ZipWriter;
-import com.tortel.syslog.exception.CreateFolderException;
-import com.tortel.syslog.exception.LowSpaceException;
-import com.tortel.syslog.exception.NoFilesException;
-import com.tortel.syslog.exception.RunCommandException;
 
 import eu.chainfire.libsuperuser.Shell;
 
@@ -59,7 +42,6 @@ import eu.chainfire.libsuperuser.Shell;
 public class Utils {
     public static final String TAG = "SysLog";
     public static final String LAST_KMSG = "/proc/last_kmsg";
-    public static final String ROOT_PATH = "/data/media/";
     public static final String AUDIT_LOG = "/data/misc/audit/audit.log";
     public static final String AUDIT_OLD_LOG = "/data/misc/audit/audit.old";
 
