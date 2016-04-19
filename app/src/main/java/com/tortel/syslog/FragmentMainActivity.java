@@ -14,7 +14,6 @@ import android.view.MenuItem;
 import com.tortel.syslog.dialog.AboutDialog;
 import com.tortel.syslog.dialog.AboutLogcatDialog;
 import com.tortel.syslog.dialog.ClearBufferDialog;
-import com.tortel.syslog.dialog.CustomPathDialog;
 import com.tortel.syslog.dialog.FaqDialog;
 import com.tortel.syslog.fragment.MainFragment;
 import com.tortel.syslog.utils.Log;
@@ -104,9 +103,6 @@ public class FragmentMainActivity extends AppCompatActivity implements EasyPermi
                     showClearBufferConfirmation();
                 }
                 return true;
-            case R.id.change_path:
-                showPathDialog();
-                return true;
             case R.id.about:
                 showAboutDialog();
                 return true;
@@ -134,14 +130,6 @@ public class FragmentMainActivity extends AppCompatActivity implements EasyPermi
     private void showClearBufferConfirmation(){
         ClearBufferDialog dialog = new ClearBufferDialog();
         dialog.show(getSupportFragmentManager(), "buffer");
-    }
-
-    /**
-     * Shows the change path dialog
-     */
-    private void showPathDialog(){
-        CustomPathDialog dialog = new CustomPathDialog();
-        dialog.show(getSupportFragmentManager(), "path");
     }
 
     /**

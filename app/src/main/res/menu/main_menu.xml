@@ -38,10 +38,6 @@
         android:id="@+id/clear_buffer"
         android:title="@string/clear_buffer"
         app:showAsAction="never" />
-    <item
-        android:id="@+id/change_path"
-        android:title="@string/change_path"
-        app:showAsAction="never" />
     <item android:id="@+id/faq"
         android:title="@string/faq"
         app:showAsAction="never" />
