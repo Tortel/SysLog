@@ -164,7 +164,6 @@ public class ExceptionDialog extends DialogFragment implements android.view.View
         body.append("Free space: "+Utils.getStorageFreeSpace()+"mb \n");
         body.append("Storage path: "+Environment.getExternalStorageDirectory().getPath()+"\n");
         body.append("Using root: "+result.getCommand().hasRoot()+"\n");
-        body.append("Root path: "+prefs.getString(Utils.PREF_PATH, Utils.ROOT_PATH)+"\n");
         body.append(result.getCommand().getDebugString()+"\n");
         body.append("Stacktrace:\n");
         body.append(getStackTrace(result.getException()));

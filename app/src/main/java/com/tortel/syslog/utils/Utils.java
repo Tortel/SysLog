@@ -59,7 +59,6 @@ import eu.chainfire.libsuperuser.Shell;
 public class Utils {
     public static final String TAG = "SysLog";
     public static final String LAST_KMSG = "/proc/last_kmsg";
-    public static final String PREF_PATH = "pref_root_path";
     public static final String ROOT_PATH = "/data/media/";
     public static final String AUDIT_LOG = "/data/misc/audit/audit.log";
     public static final String AUDIT_OLD_LOG = "/data/misc/audit/audit.old";
@@ -94,223 +93,6 @@ public class Utils {
         return Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2;
     }
 
-    /**
-     * Returns true if the android version is M, or 6.0+
-     * @return
-     */
-    public static boolean isMarshmallow(){
-        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.M;
-    }
-    
-    /**
-     * Runs the {@link com.tortel.syslog.RunCommand} contained within the {@link com.tortel.syslog.Result} passed in.<br />
-     * On an error
-     * @param result
-     * @throws CreateFolderException
-     * @throws RunCommandException
-     * @throws IOException
-     * @throws NoFilesException
-     * @throws LowSpaceException 
-     */
-    public static void runCommand(final Context context, final Result result) throws CreateFolderException,
-            RunCommandException, IOException, NoFilesException, LowSpaceException {
-        final RunCommand command = result.getCommand();
-        
-        if (Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState())) {
-            //Check how much space is on the primary storage
-            double freeSpace = getStorageFreeSpace();
-            if(freeSpace < MIN_FREE_SPACE){
-                throw new LowSpaceException(freeSpace);
-            }
-            
-            // Commands to execute
-            List<String> commands = new LinkedList<>();
-            // Where to write the command output
-            List<String> files = new LinkedList<>();
-
-            // Create the directories
-            String path = Environment.getExternalStorageDirectory().getPath();
-
-            final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd_HH.mm", Locale.US);
-            final Date date = new Date();
-            File nomedia = new File(path+"/SysLog/.nomedia");
-            path += "/SysLog/"+sdf.format(date)+"/";
-            File outPath = new File(path);
-            // Check if this path already exists (Happens if you run this multiple times a minute
-            if(outPath.exists()){
-                // Append the seconds
-                path =  path.substring(0, path.length()-1) +"."+Calendar.getInstance().get(Calendar.SECOND)+"/";
-                outPath = new File(path);
-                Log.v(TAG, "Path already exists, added seconds");
-            }
-
-            final String finalPath = path;
-
-            Log.v(TAG, "Path: "+path);
-            // Make the directory
-            if(!outPath.mkdirs() || !outPath.isDirectory()){
-                throw new CreateFolderException();
-            }
-
-            // Put a .nomedia file in the directory
-            if(!nomedia.exists()){
-                try {
-                    nomedia.createNewFile();
-                } catch (IOException e) {
-                    Log.e(TAG, "Failed to create .nomedia file", e);
-                }
-            }
-
-            // Commands to dump the logs
-            if(command.isMainLog()){
-                if(command.grep() && command.getGrepOption() == GrepOption.MAIN
-                        || command.getGrepOption() == GrepOption.ALL){
-                    commands.add("logcat -v time -d | grep \""+command.getGrep()+"\"");
-                } else {
-                    commands.add("logcat -v time -d");
-                }
-                files.add(outPath.getAbsolutePath()+"/logcat.log"+PRESCRUB);
-            }
-            if(command.isEventLog()){
-                if(command.grep() && command.getGrepOption() == GrepOption.EVENT
-                        || command.getGrepOption() == GrepOption.ALL){
-                    commands.add("logcat -b events -v time -d | grep \""+command.getGrep()+"\"");
-                } else {
-                    commands.add("logcat -b events -v time -d");
-                }
-                files.add(outPath.getAbsolutePath()+"/event.log"+PRESCRUB);
-            }
-            if(command.isKernelLog()){
-                if(command.grep() && command.getGrepOption() == GrepOption.KERNEL
-                        || command.getGrepOption() == GrepOption.ALL){
-                    commands.add("dmesg | grep \""+command.getGrep()+"\"");
-                } else {
-                    commands.add("dmesg");
-                }
-                files.add(outPath.getAbsolutePath()+"/dmesg.log"+PRESCRUB);
-            }
-            if(command.isModemLog()){
-                if(command.grep() && command.getGrepOption() == GrepOption.MODEM
-                        || command.getGrepOption() == GrepOption.ALL){
-                    commands.add("logcat -v time -b radio -d | grep \""+command.getGrep()+"\"");
-                } else {
-                    commands.add("logcat -v time -b radio -d");
-                }
-                files.add(outPath.getAbsolutePath()+"/modem.log"+PRESCRUB);
-            }
-            if(command.isLastKernelLog()){
-                if(command.grep() && command.getGrepOption() == GrepOption.LAST_KERNEL
-                        || command.getGrepOption() == GrepOption.ALL){
-                    //Log should be run through grep
-                    commands.add("cat "+LAST_KMSG+" | grep \""+command.getGrep()+"\"");
-                } else {
-                    //Try copying the last_kmsg over
-                    commands.add("cat "+LAST_KMSG);
-                }
-                files.add(outPath.getAbsolutePath()+"/last_kmsg.log"+PRESCRUB);
-            }
-            if(command.isAuditLog()){
-                commands.add("cat "+AUDIT_LOG);
-                files.add(outPath.getAbsolutePath()+"/audit.log");
-                commands.add("cat "+AUDIT_OLD_LOG);
-                files.add(outPath.getAbsolutePath()+"/audit.old");
-            }
-
-            Shell.Builder builder = new Shell.Builder();
-
-            //Run the commands
-            if(command.hasRoot()){
-                builder.useSU();
-            } else {
-                builder.useSH();
-            }
-
-            Shell.Interactive shell = builder.open();
-            runComamnds(shell, commands, files, new Shell.OnCommandResultListener() {
-                @Override
-                public void onCommandResult(int commandCode, int exitCode, List<String> output) {
-                    // Scrub the files
-                    scrubFiles(context, finalPath, !command.isScrubEnabled());
-
-                    //If there are notes, write them to a notes file
-                    if(command.getNotes() != null && command.getNotes().length() > 0){
-                        try{
-                            File noteFile = new File(finalPath+"/notes.txt");
-                            FileWriter writer = new FileWriter(noteFile);
-                            writer.write(command.getNotes());
-                            writer.close();
-                        } catch(Exception e){
-                            //Ignore
-                        }
-                    }
-
-                    // Append the users input into the zip
-                    String archivePath;
-                    if(command.getAppendText().length() > 0){
-                        archivePath = sdf.format(date)+"-"+command.getAppendText()+".zip";
-                    } else {
-                        archivePath = sdf.format(date)+".zip";
-                    }
-                    try {
-                        ZipWriter writer = new ZipWriter(finalPath, archivePath);
-                        archivePath = finalPath + archivePath;
-                        result.setArchivePath(archivePath);
-
-                        writer.createZip();
-                        result.setSuccess(true);
-                    } catch(Exception e){
-                        Log.e(TAG, "Exception creating zip", e);
-                        result.setSuccess(false);
-                        result.setMessage(R.string.error);
-                    }
-                }
-            });
-        } else {
-            //Default storage not accessible
-            result.setSuccess(false);
-            result.setMessage(R.string.storage_err);
-        }
-    }
-
-    private static void runComamnds(final Shell.Interactive shell, final List<String> commands, final List<String> outputFiles, final Shell.OnCommandResultListener callback){
-        if(commands.size() == 0){
-            callback.onCommandResult(0, 0, null);
-            return;
-        }
-        try {
-            String command = commands.remove(0);
-            String outputFileName = outputFiles.remove(0);
-            File outputFile = new File(outputFileName);
-            final BufferedWriter output = new BufferedWriter(new FileWriter(outputFile));
-
-            shell.addCommand(command, 0, new Shell.OnCommandLineListener() {
-                @Override
-                public void onCommandResult(int commandCode, int exitCode) {
-                    try{
-                        output.flush();
-                        output.close();
-                    } catch(IOException e){
-                        Log.e(TAG, "Exception closing writer", e);
-                    }
-                    runComamnds(shell, commands, outputFiles, callback);
-                }
-
-                @Override
-                public void onLine(String line) {
-                    try {
-                        // Make sure to include a newline
-                        output.write(line+"\n");
-                    } catch (IOException e) {
-                        Log.e(TAG, "Exception writing line", e);
-                    }
-                }
-            });
-
-        } catch (IOException e) {
-            e.printStackTrace();
-            callback.onCommandResult(0, -1, null);
-        }
-    }
 
     /**
      * Runs the log file through the ScrubberUtils and removes the PRESCRUB extension
@@ -340,6 +122,12 @@ public class Utils {
         }
     }
 
+    /**
+     * Check if there is an app available to handle the provided intent
+     * @param ctx
+     * @param intent
+     * @return
+     */
     public static boolean isHandlerAvailable(Context ctx, Intent intent) {
         final PackageManager mgr = ctx.getPackageManager();
         List<ResolveInfo> list = mgr.queryIntentActivities(intent, 
