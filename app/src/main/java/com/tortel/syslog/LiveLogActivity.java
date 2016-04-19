@@ -13,6 +13,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.tortel.syslog.dialog.AboutLogcatDialog;
 import com.tortel.syslog.utils.InputStreamWrapper;
@@ -95,7 +96,6 @@ public class LiveLogActivity extends AppCompatActivity {
     public static class LiveLogFragment extends Fragment {
         private EmulatorView mEmulatorView;
         private TermSession mTermSession = new TermSession();
-        private Process mTermProcess;
         private boolean running = true;
 
         @Override
@@ -103,18 +103,10 @@ public class LiveLogActivity extends AppCompatActivity {
             super.onCreate(savedInstanceState);
             setRetainInstance(true);
             try {
-                mTermProcess = new ProcessBuilder()
-                        .command("su", "-c", "logcat -v brief")
-                        .redirectErrorStream(true)
-                        .start();
-
-                InputStream is = new InputStreamWrapper(mTermProcess.getInputStream());
-                mTermSession.setTermIn(is);
-                mTermSession.setTermOut(mTermProcess.getOutputStream());
                 mTermSession.setDefaultUTF8Mode(true);
             } catch (Throwable e1) {
                 try{
-                    mTermProcess.destroy();
+                    mTermSession.stopLogcat();
                 } catch (Exception e2) {
                     // Ignore
                 }
@@ -134,8 +126,9 @@ public class LiveLogActivity extends AppCompatActivity {
          * Stop the logcat process
          */
         public void stop(){
-            mTermProcess.destroy();
+            mTermSession.stopLogcat();
             running = false;
+            Toast.makeText(getActivity(), R.string.stopped_logcat, Toast.LENGTH_SHORT).show();
         }
 
         @Override
@@ -150,7 +143,6 @@ public class LiveLogActivity extends AppCompatActivity {
         @Override
         public void onDestroy() {
             super.onDestroy();
-            mTermProcess.destroy();
             mTermSession.finish();
         }
 
