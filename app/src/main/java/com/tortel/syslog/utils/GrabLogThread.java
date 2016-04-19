@@ -25,6 +25,7 @@ import com.tortel.syslog.R;
 import com.tortel.syslog.Result;
 import com.tortel.syslog.RunCommand;
 import com.tortel.syslog.ZipWriter;
+import com.tortel.syslog.dialog.RunningDialog;
 import com.tortel.syslog.exception.CreateFolderException;
 import com.tortel.syslog.exception.LowSpaceException;
 import com.tortel.syslog.exception.NoFilesException;
@@ -203,6 +204,11 @@ public class GrabLogThread implements Runnable {
                 builder.useSH();
             }
 
+            // Send an update
+            RunningDialog.ProgressUpdate update = new RunningDialog.ProgressUpdate();
+            update.messageResource = R.string.getting_logs;
+            EventBus.getDefault().post(update);
+
             final Shell.Interactive shell = builder.open();
             runComamnds(shell, commands, files);
         } else {
@@ -253,6 +259,11 @@ public class GrabLogThread implements Runnable {
             archivePath = sdf.format(date) + ".zip";
         }
         try {
+            // Send a progress update
+            RunningDialog.ProgressUpdate update = new RunningDialog.ProgressUpdate();
+            update.messageResource = R.string.compressing_logs;
+            EventBus.getDefault().post(update);
+
             ZipWriter writer = new ZipWriter(finalPath, archivePath);
             archivePath = finalPath + archivePath;
             mResult.setArchivePath(archivePath);

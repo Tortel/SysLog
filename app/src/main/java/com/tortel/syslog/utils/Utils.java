@@ -33,6 +33,9 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.tortel.syslog.R;
+import com.tortel.syslog.dialog.RunningDialog;
+
+import org.greenrobot.eventbus.EventBus;
 
 import eu.chainfire.libsuperuser.Shell;
 
@@ -83,6 +86,11 @@ public class Utils {
      * @param disable flag to simply rename the files to their final names
      */
     public static void scrubFiles(Context context, String path, boolean disable) {
+        // Send a progress update
+        RunningDialog.ProgressUpdate update = new RunningDialog.ProgressUpdate();
+        update.messageResource = R.string.scrubbing_logs;
+        EventBus.getDefault().post(update);
+
         File logFolder = new File(path);
         File logFiles[] = logFolder.listFiles();
         for(File file : logFiles){

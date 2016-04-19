@@ -7,6 +7,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.afollestad.materialdialogs.MaterialDialog;
@@ -36,6 +37,8 @@ public class RunningDialog extends DialogFragment {
     public static final String COMMAND = "command";
 
     private RunCommand mCommand;
+    private TextView mTextView;
+    private int mLastProgressString = R.string.working;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -71,10 +74,16 @@ public class RunningDialog extends DialogFragment {
         MaterialDialog.Builder builder = new MaterialDialog.Builder(getActivity());
         builder.autoDismiss(false);
         builder.progress(true, 0);
-        builder.content(R.string.working);
-        return builder.build();
+        builder.content(mLastProgressString);
+        Dialog dialog = builder.build();
+        mTextView = (TextView) dialog.findViewById(com.afollestad.materialdialogs.R.id.content);
+        return dialog;
     }
 
+    /**
+     * Called when the background log grabbing thread is completed
+     * @param result
+     */
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onLogResult(Result result){
         Log.v("Received Result via EventBus");
@@ -118,6 +127,27 @@ public class RunningDialog extends DialogFragment {
         } catch(IllegalStateException e){
             Log.v("Ignorning IllegalStateException - The user probably left the application, and we tried to show a dialog");
         }
+    }
+
+    /**
+     * Called when the background log grabbing thread has a progress update
+     * @param update
+     */
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onProgressUpdate(ProgressUpdate update) {
+        try{
+            mLastProgressString = update.messageResource;
+            mTextView.setText(mLastProgressString);
+        } catch (Exception e){
+            // Ignore
+        }
+    }
+
+    /**
+     * Class for sending progress updates from the processing thread to the main thread
+     */
+    public static class ProgressUpdate {
+        public int messageResource;
     }
 
 }
