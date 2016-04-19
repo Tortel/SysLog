@@ -21,9 +21,9 @@ android {
 }
 
 dependencies {
-    compile 'com.android.support:appcompat-v7:23.2.+'
+    compile 'com.android.support:appcompat-v7:23.3.+'
     // https://github.com/afollestad/material-dialogs
-    compile('com.github.afollestad.material-dialogs:core:0.8.5.7@aar') {
+    compile('com.github.afollestad.material-dialogs:core:0.8.5.8@aar') {
         transitive = true
     }
     compile 'pub.devrel:easypermissions:0.1.4'
