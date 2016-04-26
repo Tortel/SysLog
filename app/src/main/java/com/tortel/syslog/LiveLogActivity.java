@@ -16,10 +16,7 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.tortel.syslog.dialog.AboutLogcatDialog;
-import com.tortel.syslog.utils.InputStreamWrapper;
 import com.tortel.syslog.utils.Prefs;
-
-import java.io.InputStream;
 
 import jackpal.androidterm.emulatorview.EmulatorView;
 import jackpal.androidterm.emulatorview.TermSession;
