@@ -27,6 +27,8 @@ import java.nio.charset.CodingErrorAction;
 import android.os.Handler;
 import android.os.Message;
 
+import com.tortel.syslog.utils.Log;
+
 import eu.chainfire.libsuperuser.Shell;
 
 /**
@@ -63,7 +65,7 @@ public class TermSession {
     private TranscriptScreen mTranscriptScreen;
     private TerminalEmulator mEmulator;
 
-    private boolean mDefaultUTF8Mode;
+    private boolean mDefaultUTF8Mode = true;
 
     private Thread mReaderThread;
 
@@ -110,24 +112,38 @@ public class TermSession {
 
             @Override
             public void run() {
-                Shell.Builder builder = new Shell.Builder();
-                builder.useSU();
-                builder.setOnSTDOUTLineListener(new Shell.OnCommandLineListener() {
-                    @Override
-                    public void onCommandResult(int commandCode, int exitCode) {
+                try {
+                    Shell.Builder builder = new Shell.Builder();
+                    builder.useSU();
+                    builder.setOnSTDOUTLineListener(new Shell.OnCommandLineListener() {
+                        @Override
+                        public void onCommandResult(int commandCode, int exitCode) {
+                            sendLine("Logcat process ended.");
+                        }
 
-                    }
+                        @Override
+                        public void onLine(String line) {
+                            sendLine(line);
+                        }
 
-                    @Override
-                    public void onLine(String line) {
-                        Message message = mMsgHandler.obtainMessage(NEW_INPUT);
-                        message.getData().putString(NEW_LINE, line+"\n\r");
+                        /**
+                         * Send a line to be printed. A newline will be added to the line automatically
+                         * @param line
+                         */
+                        private void sendLine(String line){
+                            Message message = mMsgHandler.obtainMessage(NEW_INPUT);
+                            message.getData().putString(NEW_LINE, line + "\n\r");
 
-                        mMsgHandler.sendMessage(message);
-                    }
-                });
-                shell = builder.open();
-                shell.addCommand("logcat");
+                            mMsgHandler.sendMessage(message);
+                        }
+                    });
+                    shell = builder.open();
+                    shell.addCommand("logcat");
+                } catch(Exception e){
+                    Log.e("Some exception occured when starting logcat thread", e);
+                    Message message = mMsgHandler.obtainMessage(NEW_INPUT);
+                    message.getData().putString(NEW_LINE, "Exception starting logcat thread");
+                }
             }
         };
         mReaderThread.setName("TermSession input reader");

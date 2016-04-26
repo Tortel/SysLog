@@ -96,30 +96,11 @@ public class LiveLogActivity extends AppCompatActivity {
     public static class LiveLogFragment extends Fragment {
         private EmulatorView mEmulatorView;
         private TermSession mTermSession = new TermSession();
-        private boolean running = true;
 
         @Override
         public void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
             setRetainInstance(true);
-            try {
-                mTermSession.setDefaultUTF8Mode(true);
-            } catch (Throwable e1) {
-                try{
-                    mTermSession.stopLogcat();
-                } catch (Exception e2) {
-                    // Ignore
-                }
-                e1.printStackTrace();
-            }
-        }
-
-        /**
-         * Return if the logcat process is running
-         * @return
-         */
-        public boolean isRunning(){
-            return running;
         }
 
         /**
@@ -127,7 +108,6 @@ public class LiveLogActivity extends AppCompatActivity {
          */
         public void stop(){
             mTermSession.stopLogcat();
-            running = false;
             Toast.makeText(getActivity(), R.string.stopped_logcat, Toast.LENGTH_SHORT).show();
         }
 
