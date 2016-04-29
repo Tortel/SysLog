@@ -27,7 +27,7 @@ dependencies {
     compile('com.github.afollestad.material-dialogs:core:0.8.5.8@aar') {
         transitive = true
     }
-    compile 'pub.devrel:easypermissions:0.1.4'
+    compile 'pub.devrel:easypermissions:0.1.5'
 
     compile 'eu.chainfire:libsuperuser:1.0.0.+'
     compile 'org.greenrobot:eventbus:3.0.0'
