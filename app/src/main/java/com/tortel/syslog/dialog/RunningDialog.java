@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.annotation.StringRes;
 import android.support.v4.app.DialogFragment;
 import android.view.View;
 import android.widget.TextView;
@@ -38,6 +39,7 @@ public class RunningDialog extends DialogFragment {
 
     private RunCommand mCommand;
     private TextView mTextView;
+    @StringRes
     private int mLastProgressString = R.string.working;
 
     @Override
@@ -147,6 +149,7 @@ public class RunningDialog extends DialogFragment {
      * Class for sending progress updates from the processing thread to the main thread
      */
     public static class ProgressUpdate {
+        @StringRes
         public int messageResource;
     }
 
