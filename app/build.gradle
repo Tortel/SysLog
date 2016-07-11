@@ -2,13 +2,13 @@ apply plugin: 'com.android.application'
 apply plugin: 'com.github.ben-manes.versions'
 
 android {
-    compileSdkVersion 23
+    compileSdkVersion 24
     buildToolsVersion "23.0.3"
 
     defaultConfig {
         applicationId "com.tortel.syslog"
         minSdkVersion 10
-        targetSdkVersion 23
+        targetSdkVersion 24
         versionCode 24
         versionName "2.1.0"
     }
@@ -22,12 +22,12 @@ android {
 }
 
 dependencies {
-    compile 'com.android.support:appcompat-v7:23.3.+'
+    compile 'com.android.support:appcompat-v7:24.0.+'
     // https://github.com/afollestad/material-dialogs
-    compile('com.github.afollestad.material-dialogs:core:0.8.5.8@aar') {
+    compile('com.github.afollestad.material-dialogs:core:0.8.6.1@aar') {
         transitive = true
     }
-    compile 'pub.devrel:easypermissions:0.1.5'
+    compile 'pub.devrel:easypermissions:0.1.8'
 
     compile 'eu.chainfire:libsuperuser:1.0.0.+'
     compile 'org.greenrobot:eventbus:3.0.0'
