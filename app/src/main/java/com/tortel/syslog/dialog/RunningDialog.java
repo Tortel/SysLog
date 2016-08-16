@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.StringRes;
 import android.support.v4.app.DialogFragment;
 import android.view.View;
@@ -37,7 +38,6 @@ import java.util.concurrent.ThreadPoolExecutor;
 public class RunningDialog extends DialogFragment {
     public static final String COMMAND = "command";
 
-    private RunCommand mCommand;
     private TextView mTextView;
     @StringRes
     private int mLastProgressString = R.string.working;
@@ -51,9 +51,9 @@ public class RunningDialog extends DialogFragment {
         EventBus.getDefault().register(this);
 
         Bundle args = getArguments();
-        mCommand = args.getParcelable(COMMAND);
+        RunCommand command = args.getParcelable(COMMAND);
         // Start the background thread
-        Thread thread = new Thread(new GrabLogThread(mCommand, getActivity()));
+        Thread thread = new Thread(new GrabLogThread(command, getActivity()));
         thread.start();
     }
 
@@ -71,6 +71,7 @@ public class RunningDialog extends DialogFragment {
         super.onDestroyView();
     }
 
+    @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         MaterialDialog.Builder builder = new MaterialDialog.Builder(getActivity());
@@ -78,7 +79,7 @@ public class RunningDialog extends DialogFragment {
         builder.progress(true, 0);
         builder.content(mLastProgressString);
         Dialog dialog = builder.build();
-        mTextView = (TextView) dialog.findViewById(com.afollestad.materialdialogs.R.id.content);
+        mTextView = (TextView) dialog.findViewById(com.afollestad.materialdialogs.R.id.md_content);
         return dialog;
     }
 
