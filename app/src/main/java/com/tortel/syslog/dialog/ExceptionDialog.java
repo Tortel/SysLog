@@ -28,12 +28,14 @@ import android.content.pm.PackageInfo;
 import android.os.Bundle;
 import android.os.Environment;
 import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.tortel.syslog.R;
 import com.tortel.syslog.Result;
@@ -66,6 +68,7 @@ public class ExceptionDialog extends DialogFragment implements android.view.View
         super.onDestroyView();
     }
     
+    @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         MaterialDialog.Builder builder = new MaterialDialog.Builder(getActivity());
@@ -99,18 +102,20 @@ public class ExceptionDialog extends DialogFragment implements android.view.View
             }
         }
 
-        builder.callback(new MaterialDialog.ButtonCallback() {
+        builder.onPositive(new MaterialDialog.SingleButtonCallback() {
             @Override
-            public void onPositive(MaterialDialog dialog) {
+            public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
                 Intent intent = getEmailIntent();
                 if(intent != null){
                     getActivity().startActivity(intent);
                 }
                 dismiss();
             }
+        });
 
+        builder.onNegative(new MaterialDialog.SingleButtonCallback() {
             @Override
-            public void onNegative(MaterialDialog dialog) {
+            public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
                 result = null;
                 dismiss();
             }

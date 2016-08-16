@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
@@ -118,7 +119,7 @@ public class FragmentMainActivity extends AppCompatActivity implements EasyPermi
     }
 
     @Override
-    public void onRequestPermissionsResult(int resultCode, String[] permissions, int[] grantResults){
+    public void onRequestPermissionsResult(int resultCode, @NonNull String[] permissions, @NonNull int[] grantResults){
         super.onRequestPermissionsResult(resultCode, permissions, grantResults);
         // Pass everything to EasyPermissions
         EasyPermissions.onRequestPermissionsResult(resultCode, permissions, grantResults, this);

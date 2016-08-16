@@ -3,12 +3,10 @@ package com.tortel.syslog.dialog;
 import android.app.Dialog;
 import android.content.Intent;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.StringRes;
 import android.support.v4.app.DialogFragment;
-import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -16,13 +14,8 @@ import com.afollestad.materialdialogs.MaterialDialog;
 import com.tortel.syslog.R;
 import com.tortel.syslog.Result;
 import com.tortel.syslog.RunCommand;
-import com.tortel.syslog.exception.CreateFolderException;
-import com.tortel.syslog.exception.LowSpaceException;
-import com.tortel.syslog.exception.NoFilesException;
-import com.tortel.syslog.exception.RunCommandException;
-import com.tortel.syslog.utils.GrabLogThread;
-import com.tortel.syslog.utils.Log;
-import com.tortel.syslog.utils.Utils;
+import com.tortel.syslog.exception.*;
+import com.tortel.syslog.utils.*;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;

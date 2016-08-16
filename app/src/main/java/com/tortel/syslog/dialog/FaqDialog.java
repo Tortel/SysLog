@@ -22,6 +22,7 @@ import java.io.InputStreamReader;
 
 import android.app.Dialog;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
 import android.text.Html;
 import android.text.method.LinkMovementMethod;
@@ -51,6 +52,7 @@ public class FaqDialog extends DialogFragment {
         super.onDestroyView();
     }
     
+    @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         MaterialDialog.Builder builder = new MaterialDialog.Builder(getActivity());

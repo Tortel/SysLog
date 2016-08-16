@@ -19,8 +19,10 @@ package com.tortel.syslog.dialog;
 
 import android.app.Dialog;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
 
+import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.tortel.syslog.R;
 
@@ -47,6 +49,7 @@ public class OhShitDialog extends DialogFragment {
         OhShitDialog.exception = exception;
     }
 
+    @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         MaterialDialog.Builder builder = new MaterialDialog.Builder(getActivity());
@@ -54,9 +57,9 @@ public class OhShitDialog extends DialogFragment {
         builder.title(R.string.oh_shit_title);
         builder.positiveText(R.string.close);
 
-        builder.callback(new MaterialDialog.ButtonCallback() {
+        builder.onAny(new MaterialDialog.SingleButtonCallback() {
             @Override
-            public void onPositive(MaterialDialog dialog) {
+            public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
                 throw new RuntimeException(exception);
             }
         });

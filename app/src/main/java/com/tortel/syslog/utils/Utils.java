@@ -29,7 +29,6 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Environment;
 import android.os.StatFs;
-import android.util.Log;
 import android.widget.Toast;
 
 import com.tortel.syslog.R;
@@ -43,7 +42,6 @@ import eu.chainfire.libsuperuser.Shell;
  * General utilities and the main run command code
  */
 public class Utils {
-    public static final String TAG = "SysLog";
     public static final String LAST_KMSG = "/proc/last_kmsg";
     public static final String AUDIT_LOG = "/data/misc/audit/audit.log";
     public static final String AUDIT_OLD_LOG = "/data/misc/audit/audit.old";
@@ -97,16 +95,16 @@ public class Utils {
             // Save it to a file without the PRESCRUB extension
             File outFile = new File(path + "/" + file.getName().replace(PRESCRUB, ""));
             if(disable){
-                Log.d(TAG, "Scrub disabled, renaming "+file.getName()+" to "+outFile.getName());
+                Log.d("Scrub disabled, renaming "+file.getName()+" to "+outFile.getName());
                 file.renameTo(outFile);
             } else {
-                Log.d(TAG, "Scrubbing " + file.getName() + " to " + outFile.getName());
+                Log.d("Scrubbing " + file.getName() + " to " + outFile.getName());
 
                 try {
                     ScrubberUtils.scrubFile(context, file, outFile);
                     file.delete();
                 } catch (IOException e) {
-                    Log.e(TAG, "Exception scrubbing file " + file.getName(), e);
+                    Log.e("Exception scrubbing file " + file.getName(), e);
                 }
             }
         }
