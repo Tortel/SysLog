@@ -22,12 +22,11 @@ android {
 }
 
 dependencies {
-    compile 'com.android.support:appcompat-v7:24.1.+'
+    compile 'com.android.support:appcompat-v7:24.2.+'
     // https://github.com/afollestad/material-dialogs
-    compile('com.github.afollestad.material-dialogs:core:0.9.0.1@aar') {
-        transitive = true
-    }
-    compile 'pub.devrel:easypermissions:0.1.9'
+    compile 'com.afollestad.material-dialogs:core:0.9.0.2'
+
+    compile 'pub.devrel:easypermissions:0.2.0'
 
     compile 'eu.chainfire:libsuperuser:1.0.0.+'
     compile 'org.greenrobot:eventbus:3.0.0'
