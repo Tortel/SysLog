@@ -1,5 +1,4 @@
 apply plugin: 'com.android.application'
-apply plugin: 'com.github.ben-manes.versions'
 
 android {
     compileSdkVersion 24
@@ -19,6 +18,7 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
         }
     }
+    return void
 }
 
 dependencies {
