@@ -2,11 +2,11 @@ apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 25
-    buildToolsVersion "25.0.2"
+    buildToolsVersion "26.0.0"
 
     defaultConfig {
         applicationId "com.tortel.syslog"
-        minSdkVersion 10
+        minSdkVersion 13
         targetSdkVersion 25
         versionCode 24
         versionName "2.1.1"
@@ -22,11 +22,12 @@ android {
 }
 
 dependencies {
-    compile 'com.android.support:appcompat-v7:25.1.+'
+    //noinspection GradleCompatible
+    compile 'com.android.support:appcompat-v7:25.4.0'
     // https://github.com/afollestad/material-dialogs
-    compile 'com.afollestad.material-dialogs:core:0.9.0.2'
+    compile 'com.afollestad.material-dialogs:core:0.9.4.5'
 
-    compile 'pub.devrel:easypermissions:0.2.0'
+    compile 'pub.devrel:easypermissions:0.4.2'
 
     compile 'eu.chainfire:libsuperuser:1.0.0.+'
     compile 'org.greenrobot:eventbus:3.0.0'
