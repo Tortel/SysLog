@@ -120,7 +120,11 @@ public class LiveLogActivity extends AppCompatActivity {
         @Override
         public void onDestroy() {
             super.onDestroy();
-            mTermSession.finish();
+            try {
+                mTermSession.finish();
+            } catch(Exception e){
+                // Just suppress it
+            }
         }
 
     }

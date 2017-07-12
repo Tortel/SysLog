@@ -316,19 +316,23 @@ public class MainFragment extends Fragment implements View.OnClickListener {
 
         @Override
         protected void onPostExecute(Boolean root){
-            //Check for root access
-            if(!root){
-                Log.d("Root not available");
-                //Warn the user
-                TextView noRoot = (TextView) getView().findViewById(R.id.warn_root);
-                noRoot.setVisibility(View.VISIBLE);
-                if(android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.JELLY_BEAN){
-                    //JB and higher needs a different warning
-                    noRoot.setText(R.string.noroot_jb);
+            try {
+                //Check for root access
+                if (!root) {
+                    Log.d("Root not available");
+                    //Warn the user
+                    TextView noRoot = (TextView) getView().findViewById(R.id.warn_root);
+                    noRoot.setVisibility(View.VISIBLE);
+                    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.JELLY_BEAN) {
+                        //JB and higher needs a different warning
+                        noRoot.setText(R.string.noroot_jb);
+                    }
                 }
-            }
 
-            enableLogButton(true);
+                enableLogButton(true);
+            } catch (NullPointerException e) {
+                // Supress it
+            }
         }
     }
 
