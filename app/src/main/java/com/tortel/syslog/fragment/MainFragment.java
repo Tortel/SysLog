@@ -279,8 +279,13 @@ public class MainFragment extends Fragment implements View.OnClickListener {
             Log.d("Checking if last_kmsg and radio are available");
             File lastKmsg = new File(Utils.LAST_KMSG);
             hasLastKmsg = lastKmsg.exists();
-            TelephonyManager manager = (TelephonyManager)getActivity().getSystemService(Context.TELEPHONY_SERVICE);
-            hasRadio = manager.getPhoneType() != TelephonyManager.PHONE_TYPE_NONE;
+            try {
+                TelephonyManager manager = (TelephonyManager) getActivity().getSystemService(Context.TELEPHONY_SERVICE);
+                hasRadio = manager.getPhoneType() != TelephonyManager.PHONE_TYPE_NONE;
+            } catch (Exception e) {
+                // Default to true - most of the crashes here are on phones
+                hasRadio = true;
+            }
             return null;
         }
 
