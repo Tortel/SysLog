@@ -6,7 +6,7 @@ buildscript {
         maven { url "https://maven.google.com" }
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.0.0-alpha6'
+        classpath 'com.android.tools.build:gradle:2.3.2'
         classpath 'com.github.ben-manes:gradle-versions-plugin:0.15.0'
     }
 }
