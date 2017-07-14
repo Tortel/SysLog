@@ -1,3 +1,6 @@
+v2.1.1 (July 14, 2017)
+* Fixed issues with Android 7
+
 v2.1.0 (April 30, 2016)
 * Fixed an issue while creating the log directories
 * Re-wrote how logs are captured.
