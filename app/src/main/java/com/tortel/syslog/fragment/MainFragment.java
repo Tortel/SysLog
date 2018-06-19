@@ -6,6 +6,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.telephony.TelephonyManager;
 import android.view.LayoutInflater;
@@ -81,16 +82,16 @@ public class MainFragment extends Fragment implements View.OnClickListener {
         }
         Log.d("Setting the checkboxes");
 
-        CheckBox box = (CheckBox) getView().findViewById(R.id.main_log);
+        CheckBox box = getView().findViewById(R.id.main_log);
         box.setChecked(mainLog);
         box.setOnClickListener(this);
-        box = (CheckBox) getView().findViewById(R.id.event_log);
+        box = getView().findViewById(R.id.event_log);
         box.setChecked(eventLog);
         box.setOnClickListener(this);
-        box = (CheckBox) getView().findViewById(R.id.modem_log);
+        box = getView().findViewById(R.id.modem_log);
         box.setChecked(modemLog);
         box.setOnClickListener(this);
-        box = (CheckBox) getView().findViewById(R.id.kernel_log);
+        box = getView().findViewById(R.id.kernel_log);
         box.setChecked(kernelLog);
         box.setOnClickListener(this);
         box = getView().findViewById(R.id.last_kmsg);
@@ -99,10 +100,10 @@ public class MainFragment extends Fragment implements View.OnClickListener {
         box = getView().findViewById(R.id.pstore);
         box.setChecked(pstore);
         box.setOnClickListener(this);
-        box = (CheckBox) getView().findViewById(R.id.scrub_logs);
+        box = getView().findViewById(R.id.scrub_logs);
         box.setChecked(scrubLog);
         box.setOnClickListener(this);
-        box = (CheckBox) getView().findViewById(R.id.audit_log);
+        box = getView().findViewById(R.id.audit_log);
         box.setChecked(auditLog);
         box.setOnClickListener(this);
         // Hide the audit logs if the android version doesn't support selinux
@@ -131,20 +132,20 @@ public class MainFragment extends Fragment implements View.OnClickListener {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.main, container, false);
         view.findViewById(R.id.take_log).setOnClickListener(this);
 
-        fileEditText = (EditText) view.findViewById(R.id.file_name);
-        notesEditText = (EditText) view.findViewById(R.id.notes);
-        grepEditText = (EditText) view.findViewById(R.id.grep_string);
-        grepSpinner = (Spinner) view.findViewById(R.id.grep_log);
+        fileEditText = view.findViewById(R.id.file_name);
+        notesEditText = view.findViewById(R.id.notes);
+        grepEditText = view.findViewById(R.id.grep_string);
+        grepSpinner = view.findViewById(R.id.grep_log);
 
         return view;
     }
 
     @Override
-    public void onViewCreated(View view, Bundle savedInstanceState) {
+    public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
         // Check for root
@@ -196,7 +197,7 @@ public class MainFragment extends Fragment implements View.OnClickListener {
                     modemLog = box.isChecked();
                     prefs.putBoolean(Prefs.KEY_MODEM, modemLog);
                     // Set the warning for modem logs
-                    TextView view = (TextView) getView().findViewById(R.id.warnings);
+                    TextView view = getView().findViewById(R.id.warnings);
                     if (modemLog) {
                         view.setText(R.string.warn_modem);
                         view.setVisibility(View.VISIBLE);
@@ -331,7 +332,7 @@ public class MainFragment extends Fragment implements View.OnClickListener {
                 if (!root) {
                     Log.d("Root not available");
                     //Warn the user
-                    TextView noRoot = (TextView) getView().findViewById(R.id.warn_root);
+                    TextView noRoot = getView().findViewById(R.id.warn_root);
                     noRoot.setVisibility(View.VISIBLE);
                     if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.JELLY_BEAN) {
                         //JB and higher needs a different warning
