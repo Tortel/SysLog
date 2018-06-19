@@ -45,6 +45,7 @@ public class Utils {
     public static final String LAST_KMSG = "/proc/last_kmsg";
     public static final String AUDIT_LOG = "/data/misc/audit/audit.log";
     public static final String AUDIT_OLD_LOG = "/data/misc/audit/audit.old";
+    public static final String PSTORE_CONSOLE = "/sys/fs/pstore/console-ramoops*";
 
     public static final String PRESCRUB = "-prescrub";
     
@@ -130,7 +131,7 @@ public class Utils {
         private Context context;
 
         public ClearLogcatBufferTask(Context context){
-            this.context = context;
+            this.context = context.getApplicationContext();
         }
 
         @Override
@@ -155,7 +156,7 @@ public class Utils {
         private double endingSpace;
 
         public CleanAllTask(Context context){
-            this.context = context;
+            this.context = context.getApplicationContext();
         }
 
         @Override
@@ -186,7 +187,7 @@ public class Utils {
         private double endingSpace;
         
         public CleanUncompressedTask(Context context){
-            this.context = context;
+            this.context = context.getApplicationContext();
         }
 
         @Override

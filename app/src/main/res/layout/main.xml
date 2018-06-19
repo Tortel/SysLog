@@ -52,7 +52,14 @@
         android:layout_width="match_parent"
         android:text="@string/last_kmsg"
         android:onClick="logChange"/>
-    
+
+    <CheckBox
+        android:id="@+id/pstore"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:text="@string/pstore"
+        android:onClick="logChange"/>
+
     <CheckBox 
         android:id="@+id/main_log"
         android:layout_height="wrap_content"

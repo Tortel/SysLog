@@ -29,6 +29,10 @@ public class Prefs {
      */
     public static final String KEY_LASTKMSG = "lastKmsg";
     /**
+     * PStore pref
+     */
+    public static final String KEY_PSTORE = "pstore";
+    /**
      * Scrub the logs pref
      */
     public static final String KEY_SCRUB = "scrub";

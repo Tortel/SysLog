@@ -53,8 +53,6 @@ public class GrabLogThread implements Runnable {
     // Flag is a thread is running
     private static boolean isRunning;
 
-    private static final String PRESCRUB = "-prescrub";
-
     private RunCommand mCommand;
     private Result mResult;
     private Context mContext;
@@ -148,7 +146,7 @@ public class GrabLogThread implements Runnable {
                 } else {
                     commands.add("logcat -v time -d");
                 }
-                files.add(outPath.getAbsolutePath()+"/logcat.log"+PRESCRUB);
+                files.add(outPath.getAbsolutePath()+"/logcat.log"+Utils.PRESCRUB);
             }
             if(mCommand.isEventLog()){
                 if(mCommand.grep() && mCommand.getGrepOption() == GrepOption.EVENT
@@ -157,7 +155,7 @@ public class GrabLogThread implements Runnable {
                 } else {
                     commands.add("logcat -b events -v time -d");
                 }
-                files.add(outPath.getAbsolutePath()+"/event.log"+PRESCRUB);
+                files.add(outPath.getAbsolutePath()+"/event.log"+Utils.PRESCRUB);
             }
             if(mCommand.isKernelLog()){
                 if(mCommand.grep() && mCommand.getGrepOption() == GrepOption.KERNEL
@@ -166,7 +164,16 @@ public class GrabLogThread implements Runnable {
                 } else {
                     commands.add("dmesg");
                 }
-                files.add(outPath.getAbsolutePath()+"/dmesg.log"+PRESCRUB);
+                files.add(outPath.getAbsolutePath()+"/dmesg.log"+Utils.PRESCRUB);
+            }
+            if(mCommand.isPstore()) {
+                if(mCommand.grep() && mCommand.getGrepOption() == GrepOption.KERNEL
+                        || mCommand.getGrepOption() == GrepOption.ALL){
+                    commands.add("cat " + Utils.PSTORE_CONSOLE + "| grep \"" + mCommand.getGrep() + "\"");
+                } else {
+                    commands.add("cat " + Utils.PSTORE_CONSOLE);
+                }
+                files.add(outPath.getAbsolutePath() + "/pstore_console" + Utils.PRESCRUB);
             }
             if(mCommand.isModemLog()){
                 if(mCommand.grep() && mCommand.getGrepOption() == GrepOption.MODEM
@@ -175,7 +182,7 @@ public class GrabLogThread implements Runnable {
                 } else {
                     commands.add("logcat -v time -b radio -d");
                 }
-                files.add(outPath.getAbsolutePath()+"/modem.log"+PRESCRUB);
+                files.add(outPath.getAbsolutePath()+"/modem.log"+Utils.PRESCRUB);
             }
             if(mCommand.isLastKernelLog()){
                 if(mCommand.grep() && mCommand.getGrepOption() == GrepOption.LAST_KERNEL
@@ -186,7 +193,7 @@ public class GrabLogThread implements Runnable {
                     //Try copying the last_kmsg over
                     commands.add("cat "+Utils.LAST_KMSG);
                 }
-                files.add(outPath.getAbsolutePath()+"/last_kmsg.log"+PRESCRUB);
+                files.add(outPath.getAbsolutePath()+"/last_kmsg.log"+Utils.PRESCRUB);
             }
             if(mCommand.isAuditLog()){
                 commands.add("cat "+Utils.AUDIT_LOG);

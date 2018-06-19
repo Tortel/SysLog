@@ -38,6 +38,7 @@ import eu.chainfire.libsuperuser.Shell;
 public class MainFragment extends Fragment implements View.OnClickListener {
     private boolean kernelLog;
     private boolean lastKmsg;
+    private boolean pstore;
     private boolean mainLog;
     private boolean eventLog;
     private boolean modemLog;
@@ -67,6 +68,7 @@ public class MainFragment extends Fragment implements View.OnClickListener {
         lastKmsg = prefs.getBoolean(Prefs.KEY_LASTKMSG, true);
         auditLog = prefs.getBoolean(Prefs.KEY_AUDIT, Utils.isSeAndroid());
         scrubLog = prefs.getBoolean(Prefs.KEY_SCRUB, true);
+        pstore = prefs.getBoolean(Prefs.KEY_PSTORE, true);
     }
 
     /**
@@ -91,8 +93,11 @@ public class MainFragment extends Fragment implements View.OnClickListener {
         box = (CheckBox) getView().findViewById(R.id.kernel_log);
         box.setChecked(kernelLog);
         box.setOnClickListener(this);
-        box = (CheckBox) getView().findViewById(R.id.last_kmsg);
+        box = getView().findViewById(R.id.last_kmsg);
         box.setChecked(lastKmsg);
+        box.setOnClickListener(this);
+        box = getView().findViewById(R.id.pstore);
+        box.setChecked(pstore);
         box.setOnClickListener(this);
         box = (CheckBox) getView().findViewById(R.id.scrub_logs);
         box.setChecked(scrubLog);
@@ -175,6 +180,10 @@ public class MainFragment extends Fragment implements View.OnClickListener {
                     lastKmsg = box.isChecked();
                     prefs.putBoolean(Prefs.KEY_LASTKMSG, lastKmsg);
                     break;
+                case R.id.pstore:
+                    pstore = box.isChecked();
+                    prefs.putBoolean(Prefs.KEY_PSTORE, pstore);
+                    break;
                 case R.id.main_log:
                     mainLog = box.isChecked();
                     prefs.putBoolean(Prefs.KEY_MAIN, mainLog);
@@ -234,6 +243,7 @@ public class MainFragment extends Fragment implements View.OnClickListener {
                 //Log flags
                 command.setKernelLog(kernelLog);
                 command.setLastKernelLog(lastKmsg);
+                command.setPstore(pstore);
                 command.setMainLog(mainLog);
                 command.setEventLog(eventLog);
                 command.setModemLog(modemLog);

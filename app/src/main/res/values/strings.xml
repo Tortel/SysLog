@@ -27,6 +27,7 @@
     <string name="event_log">Event Log</string>
     <string name="kernel_log">Kernel Log (dmesg)</string>
     <string name="last_kmsg">Last Kernel Log (last_kmsg)</string>
+    <string name="pstore">PStore console</string>
     <string name="modem_log">Modem Log</string>
     <string name="take_log">Take Log</string>
     <string name="audit_log">Audit Logs</string>

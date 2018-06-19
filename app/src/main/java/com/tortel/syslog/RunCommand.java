@@ -30,6 +30,7 @@ public class RunCommand implements Parcelable {
 	private boolean eventLog;
 	private boolean modemLog;
     private boolean auditLog;
+    private boolean pstore;
 	private boolean root;
 
     private boolean scrubEnabled;
@@ -69,6 +70,7 @@ public class RunCommand implements Parcelable {
 		builder.append("Command information:");
 		builder.append("\nkernelLog: "+kernelLog);
 		builder.append("\nlastKernelLog: "+lastKernelLog);
+		builder.append("\npstore: "+pstore);
 		builder.append("\nmainLog: "+mainLog);
 		builder.append("\neventLog: "+eventLog);
 		builder.append("\nmodemLog: "+modemLog);
@@ -91,7 +93,13 @@ public class RunCommand implements Parcelable {
 	private String cleanFileName(String name){
 		return name.replaceAll("[^a-zA-Z0-9.-]", "_");
 	}
-	
+
+	public boolean isPstore() {
+		return pstore;
+	}
+	public void setPstore(boolean pstore) {
+		this.pstore = pstore;
+	}
 	public boolean isKernelLog() {
 		return kernelLog;
 	}
@@ -169,6 +177,7 @@ public class RunCommand implements Parcelable {
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeByte(kernelLog ? (byte) 1 : (byte) 0);
         dest.writeByte(lastKernelLog ? (byte) 1 : (byte) 0);
+        dest.writeByte(pstore ? (byte) 1 : (byte) 0);
         dest.writeByte(mainLog ? (byte) 1 : (byte) 0);
         dest.writeByte(eventLog ? (byte) 1 : (byte) 0);
         dest.writeByte(modemLog ? (byte) 1 : (byte) 0);
@@ -187,6 +196,7 @@ public class RunCommand implements Parcelable {
     private RunCommand(Parcel in) {
         this.kernelLog = in.readByte() != 0;
         this.lastKernelLog = in.readByte() != 0;
+        this.pstore = in.readByte() != 0;
         this.mainLog = in.readByte() != 0;
         this.eventLog = in.readByte() != 0;
         this.modemLog = in.readByte() != 0;
