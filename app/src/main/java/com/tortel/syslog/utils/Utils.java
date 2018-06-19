@@ -46,6 +46,7 @@ public class Utils {
     public static final String AUDIT_LOG = "/data/misc/audit/audit.log";
     public static final String AUDIT_OLD_LOG = "/data/misc/audit/audit.old";
     public static final String PSTORE_CONSOLE = "/sys/fs/pstore/console-ramoops*";
+    public static final String PSTORE_DEVINFO = "/sys/fs/pstore/device*ramoops*";
 
     public static final String PRESCRUB = "-prescrub";
     

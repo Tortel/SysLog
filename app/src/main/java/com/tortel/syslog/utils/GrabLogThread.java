@@ -170,10 +170,13 @@ public class GrabLogThread implements Runnable {
                 if(mCommand.grep() && mCommand.getGrepOption() == GrepOption.KERNEL
                         || mCommand.getGrepOption() == GrepOption.ALL){
                     commands.add("cat " + Utils.PSTORE_CONSOLE + "| grep \"" + mCommand.getGrep() + "\"");
+                    commands.add("cat " + Utils.PSTORE_DEVINFO + "| grep \"" + mCommand.getGrep() + "\"");
                 } else {
                     commands.add("cat " + Utils.PSTORE_CONSOLE);
+                    commands.add("cat " + Utils.PSTORE_DEVINFO);
                 }
                 files.add(outPath.getAbsolutePath() + "/pstore_console" + Utils.PRESCRUB);
+                files.add(outPath.getAbsolutePath() + "/pstore_devinfo" + Utils.PRESCRUB);
             }
             if(mCommand.isModemLog()){
                 if(mCommand.grep() && mCommand.getGrepOption() == GrepOption.MODEM
