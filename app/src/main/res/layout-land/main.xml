@@ -72,6 +72,13 @@
                 android:text="@string/main_log"
                 android:onClick="logChange"/>
 
+            <CheckBox
+                android:id="@+id/pstore"
+                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+                android:text="@string/pstore"
+                android:onClick="logChange"/>
+
 	    </LinearLayout>
 
         <LinearLayout
