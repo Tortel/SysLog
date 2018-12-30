@@ -19,6 +19,7 @@ import android.app.Dialog;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
+import android.support.v7.app.AlertDialog;
 import android.text.Html;
 import android.text.method.LinkMovementMethod;
 import android.text.util.Linkify;
@@ -26,7 +27,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.TextView;
 
-import com.afollestad.materialdialogs.MaterialDialog;
 import com.tortel.syslog.R;
 
 import java.io.BufferedReader;
@@ -55,7 +55,7 @@ public class AboutLogcatDialog extends DialogFragment {
     @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        MaterialDialog.Builder builder = new MaterialDialog.Builder(getActivity());
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 
         LayoutInflater inflater = getActivity().getLayoutInflater();
         View view = inflater.inflate(R.layout.about, null);
@@ -65,11 +65,11 @@ public class AboutLogcatDialog extends DialogFragment {
         Linkify.addLinks(text, Linkify.ALL);
         text.setMovementMethod(LinkMovementMethod.getInstance());
 
-        builder.customView(view, false);
-        builder.title(R.string.about_live);
-        builder.positiveText(R.string.close);
+        builder.setView(view);
+        builder.setTitle(R.string.about_live);
+        builder.setPositiveButton(R.string.close, null);
 
-        return builder.build();
+        return builder.create();
     }
 
     private String readRawTextFile(int id) {

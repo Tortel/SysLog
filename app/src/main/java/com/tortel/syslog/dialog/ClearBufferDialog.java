@@ -16,16 +16,17 @@
 package com.tortel.syslog.dialog;
 
 import android.app.Dialog;
+import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
+import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.CheckBox;
 
-import com.afollestad.materialdialogs.MaterialDialog;
 import com.tortel.syslog.R;
 import com.tortel.syslog.utils.Prefs;
 import com.tortel.syslog.utils.Utils;
@@ -33,7 +34,7 @@ import com.tortel.syslog.utils.Utils;
 /**
  * Shows a dialog warning about clearing the logcat buffers
  */
-public class ClearBufferDialog extends DialogFragment {
+public class ClearBufferDialog extends DialogFragment implements DialogInterface.OnClickListener {
     private CheckBox mCheckBox;
 
     @Override
@@ -52,33 +53,33 @@ public class ClearBufferDialog extends DialogFragment {
     @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        MaterialDialog.Builder builder = new MaterialDialog.Builder(getActivity());
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 
         LayoutInflater inflater = getActivity().getLayoutInflater();
         View view = inflater.inflate(R.layout.dialog_buffer, null);
-        mCheckBox = (CheckBox) view.findViewById(R.id.dont_show_again);
+        mCheckBox = view.findViewById(R.id.dont_show_again);
 
-        builder.customView(view, false);
-        builder.title(R.string.about);
-        builder.positiveText(R.string.yes);
-        builder.negativeText(R.string.no);
+        builder.setView(view);
+        builder.setTitle(R.string.about);
 
-        builder.callback(new MaterialDialog.ButtonCallback() {
-            @Override
-            public void onPositive(MaterialDialog dialog) {
-                // If they don't want to see the dialog again, save the pref
-                if (mCheckBox.isChecked()) {
-                    SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity().getApplicationContext());
-                    SharedPreferences.Editor editor = prefs.edit();
-                    editor.putBoolean(Prefs.KEY_NO_BUFFER_WARN, true);
-                    editor.apply();
-                }
-                // Run the task to clear the buffer
-                new Utils.ClearLogcatBufferTask(getContext()).execute();
-            }
-        });
+        builder.setPositiveButton(R.string.yes, this);
+        builder.setNegativeButton(R.string.no, this);
 
-        return builder.build();
+        return builder.create();
     }
 
+    @Override
+    public void onClick(DialogInterface dialogInterface, int which) {
+        if (which == DialogInterface.BUTTON_POSITIVE) {
+            // If they don't want to see the dialog again, save the pref
+            if (mCheckBox.isChecked()) {
+                SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity().getApplicationContext());
+                SharedPreferences.Editor editor = prefs.edit();
+                editor.putBoolean(Prefs.KEY_NO_BUFFER_WARN, true);
+                editor.apply();
+            }
+            // Run the task to clear the buffer
+            new Utils.ClearLogcatBufferTask(getContext()).execute();
+        }
+    }
 }

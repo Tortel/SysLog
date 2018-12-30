@@ -64,24 +64,23 @@ public class LowSpaceDialog extends DialogFragment implements DialogInterface.On
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        LayoutInflater inflator = getActivity().getLayoutInflater();
+        LayoutInflater inflater = getActivity().getLayoutInflater();
         
-        View view = inflator.inflate(R.layout.dialog_exception, null);
-        stackTraceButton = (Button) view.findViewById(R.id.button_stacktrace);
+        View view = inflater.inflate(R.layout.dialog_exception, null);
+        stackTraceButton = view.findViewById(R.id.button_stacktrace);
         stackTraceButton.setVisibility(View.GONE);
         view.findViewById(R.id.bugreport_notice).setVisibility(View.GONE);
 
-        stackTraceView = (TextView) view.findViewById(R.id.exception_stacktrace);
+        stackTraceView = view.findViewById(R.id.exception_stacktrace);
         stackTraceView.setVisibility(View.GONE);
 
-        TextView messageText = (TextView) view.findViewById(R.id.exception_message);
+        TextView messageText = view.findViewById(R.id.exception_message);
         LowSpaceException e = (LowSpaceException) result.getException();
         
         messageText.setText(getActivity().getResources().getString(result.getMessage(),
                 e.getFreeSpace()));
         
         builder.setView(view);
-
         
         builder.setPositiveButton(R.string.clean_uncompressed, this);
         builder.setNeutralButton(R.string.clean_all, this);

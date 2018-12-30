@@ -22,6 +22,7 @@ import java.io.StringWriter;
 
 import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
@@ -30,13 +31,12 @@ import android.os.Environment;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
+import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
-import com.afollestad.materialdialogs.DialogAction;
-import com.afollestad.materialdialogs.MaterialDialog;
 import com.tortel.syslog.R;
 import com.tortel.syslog.Result;
 import com.tortel.syslog.utils.Utils;
@@ -44,7 +44,7 @@ import com.tortel.syslog.utils.Utils;
 /**
  * Dialog for general exceptions
  */
-public class ExceptionDialog extends DialogFragment implements android.view.View.OnClickListener {
+public class ExceptionDialog extends DialogFragment implements android.view.View.OnClickListener, DialogInterface.OnClickListener {
     
     private static Result result;
     
@@ -71,13 +71,13 @@ public class ExceptionDialog extends DialogFragment implements android.view.View
     @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        MaterialDialog.Builder builder = new MaterialDialog.Builder(getActivity());
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         LayoutInflater inflator = getActivity().getLayoutInflater();
         
         View view = inflator.inflate(R.layout.dialog_exception, null);
-        stackTraceButton = (Button) view.findViewById(R.id.button_stacktrace);
+        stackTraceButton = view.findViewById(R.id.button_stacktrace);
         stackTraceButton.setOnClickListener(this);
-        TextView reportNotice = (TextView) view.findViewById(R.id.bugreport_notice);
+        TextView reportNotice = view.findViewById(R.id.bugreport_notice);
         if(result.getException() == null){
             stackTraceButton.setVisibility(View.GONE);
             reportNotice.setVisibility(View.GONE);
@@ -92,39 +92,20 @@ public class ExceptionDialog extends DialogFragment implements android.view.View
             messageId = R.string.error;
         }
         messageText.setText(messageId);
-        builder.customView(view, false);
+        builder.setView(view);
         //Skip the bugreport button if there is no stack trace or if 4.3+ without root
         if(result.getException() != null){
             if(result.disableReporting()){
                 reportNotice.setText(R.string.bugreport_disabled);
             } else {
-                builder.positiveText(R.string.send_bugreport);
+                builder.setPositiveButton(R.string.send_bugreport, this);
             }
         }
-
-        builder.onPositive(new MaterialDialog.SingleButtonCallback() {
-            @Override
-            public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                Intent intent = getEmailIntent();
-                if(intent != null){
-                    getActivity().startActivity(intent);
-                }
-                dismiss();
-            }
-        });
-
-        builder.onNegative(new MaterialDialog.SingleButtonCallback() {
-            @Override
-            public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                result = null;
-                dismiss();
-            }
-        });
         
-        builder.negativeText(R.string.dismiss);
-        builder.title(R.string.error_dialog_title);
+        builder.setNegativeButton(R.string.dismiss, this);
+        builder.setTitle(R.string.error_dialog_title);
         
-        return builder.build();
+        return builder.create();
     }
 
     @Override
@@ -186,5 +167,18 @@ public class ExceptionDialog extends DialogFragment implements android.view.View
         t.printStackTrace(pw);
         
         return sw.toString();
+    }
+
+    @Override
+    public void onClick(DialogInterface dialogInterface, int which) {
+        if (which == DialogInterface.BUTTON_POSITIVE) {
+            Intent intent = getEmailIntent();
+            if(intent != null){
+                getActivity().startActivity(intent);
+            }
+        } else {
+            result = null;
+        }
+        dismiss();
     }
 }

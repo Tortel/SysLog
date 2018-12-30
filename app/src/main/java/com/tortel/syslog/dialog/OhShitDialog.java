@@ -18,12 +18,12 @@
 package com.tortel.syslog.dialog;
 
 import android.app.Dialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
+import android.support.v7.app.AlertDialog;
 
-import com.afollestad.materialdialogs.DialogAction;
-import com.afollestad.materialdialogs.MaterialDialog;
 import com.tortel.syslog.R;
 
 /**
@@ -52,18 +52,16 @@ public class OhShitDialog extends DialogFragment {
     @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        MaterialDialog.Builder builder = new MaterialDialog.Builder(getActivity());
-        builder.content(R.string.oh_shit_message);
-        builder.title(R.string.oh_shit_title);
-        builder.positiveText(R.string.close);
-
-        builder.onAny(new MaterialDialog.SingleButtonCallback() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setMessage(R.string.oh_shit_message);
+        builder.setTitle(R.string.oh_shit_title);
+        builder.setPositiveButton(R.string.close, new DialogInterface.OnClickListener() {
             @Override
-            public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+            public void onClick(DialogInterface dialogInterface, int i) {
                 throw new RuntimeException(exception);
             }
         });
 
-        return builder.build();
+        return builder.create();
     }
 }

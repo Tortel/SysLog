@@ -7,10 +7,12 @@ import android.support.annotation.NonNull;
 import android.support.annotation.StringRes;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.content.FileProvider;
+import android.support.v7.app.AlertDialog;
+import android.view.LayoutInflater;
+import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.afollestad.materialdialogs.MaterialDialog;
 import com.tortel.syslog.R;
 import com.tortel.syslog.Result;
 import com.tortel.syslog.RunCommand;
@@ -65,13 +67,16 @@ public class RunningDialog extends DialogFragment {
     @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        MaterialDialog.Builder builder = new MaterialDialog.Builder(getActivity());
-        builder.autoDismiss(false);
-        builder.progress(true, 0);
-        builder.content(mLastProgressString);
-        Dialog dialog = builder.build();
-        mTextView = (TextView) dialog.findViewById(com.afollestad.materialdialogs.R.id.md_content);
-        return dialog;
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        LayoutInflater inflater = getActivity().getLayoutInflater();
+
+        View view = inflater.inflate(R.layout.dialog_progress, null);
+        mTextView = view.findViewById(R.id.dialog_content);
+        mTextView.setText(mLastProgressString);
+
+        builder.setView(view);
+
+        return builder.create();
     }
 
     /**

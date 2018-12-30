@@ -24,6 +24,7 @@ import android.app.Dialog;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
+import android.support.v7.app.AlertDialog;
 import android.text.Html;
 import android.text.method.LinkMovementMethod;
 import android.text.util.Linkify;
@@ -31,7 +32,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.TextView;
 
-import com.afollestad.materialdialogs.MaterialDialog;
 import com.tortel.syslog.R;
 
 /**
@@ -55,21 +55,21 @@ public class AboutDialog extends DialogFragment {
     @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        MaterialDialog.Builder builder = new MaterialDialog.Builder(getActivity());
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 
         LayoutInflater inflater = getActivity().getLayoutInflater();
         View view = inflater.inflate(R.layout.about, null);
-        TextView text = (TextView) view.findViewById(R.id.text);
+        TextView text = view.findViewById(R.id.text);
         
         text.setText(Html.fromHtml(readRawTextFile(R.raw.about)));
         Linkify.addLinks(text, Linkify.ALL);
         text.setMovementMethod(LinkMovementMethod.getInstance());
 
-        builder.customView(view, false);
-        builder.title(R.string.about);
-        builder.positiveText(R.string.close);
+        builder.setView(view);
+        builder.setTitle(R.string.about);
+        builder.setPositiveButton(R.string.close, null);
         
-        return builder.build();
+        return builder.create();
     }
     
     private String readRawTextFile(int id) {
