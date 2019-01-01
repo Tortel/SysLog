@@ -152,22 +152,32 @@
         android:layout_width="fill_parent"
         android:padding="5dip"
         android:text="@string/optional_info" />
-    
-    <EditText
-        android:id="@+id/file_name"
-        android:layout_height="wrap_content"
-        android:layout_width="fill_parent"
-        android:padding="5dip"
-        android:maxLength="10"
-        android:hint="@string/file_name" />
 
-    <EditText
-        android:id="@+id/notes"
-        android:layout_height="wrap_content"
+    <com.google.android.material.textfield.TextInputLayout
         android:layout_width="match_parent"
-        android:padding="5dip"
-        android:inputType="textCapSentences|textAutoCorrect|textMultiLine"
-        android:hint="@string/notes" />
+        android:layout_height="wrap_content"
+        android:hint="@string/file_name">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/file_name"
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:maxLength="10" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/notes" >
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/notes"
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:inputType="textCapSentences|textAutoCorrect|textMultiLine" />
+
+    </com.google.android.material.textfield.TextInputLayout>
     
         <!-- Option to grep logs -->
     <LinearLayout
@@ -181,7 +191,7 @@
             android:layout_weight=".5"
             android:padding="5dip"
             android:text="@string/grep_prompt"
-            android:layout_gravity="left"
+            android:layout_gravity="start"
             />
         
         <Spinner 
@@ -192,15 +202,20 @@
             android:padding="5dip"
             android:entries="@array/grep_options"
             android:prompt="@string/grep_prompt"
-            android:layout_gravity="right"/>
+            android:layout_gravity="end"/>
     </LinearLayout>
-    
-    <EditText
-        android:id="@+id/grep_string"
-        android:layout_height="wrap_content"
+
+    <com.google.android.material.textfield.TextInputLayout
         android:layout_width="match_parent"
-        android:padding="5dip"
-        android:hint="@string/grep_hint" />
+        android:layout_height="wrap_content"
+        android:hint="@string/grep_hint"  >
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/grep_string"
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent" />
+
+    </com.google.android.material.textfield.TextInputLayout>
     
 </LinearLayout>
 </ScrollView>
