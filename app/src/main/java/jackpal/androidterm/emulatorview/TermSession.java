@@ -114,7 +114,11 @@ public class TermSession {
             public void run() {
                 try {
                     Shell.Builder builder = new Shell.Builder();
-                    builder.useSU();
+
+                    if (Shell.SU.available()) {
+                        builder.useSU();
+                    }
+
                     builder.setOnSTDOUTLineListener(new Shell.OnCommandLineListener() {
                         @Override
                         public void onCommandResult(int commandCode, int exitCode) {
