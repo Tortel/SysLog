@@ -62,8 +62,8 @@
     <string name="space_freed">Freed %.1f MB</string>
     
     <!-- Warnings/Errors -->
-    <string name="noroot">Warning: No root access. Logs may be incomplete or missing.</string>
-    <string name="noroot_jb">Warning: No root access. Without root, it is not possible to get any logs.</string>
+    <string name="noroot">Warning: No root access. Logs may be incomplete or missing
+        without <a href="https://github.com/Tortel/SysLog#enabling-log-access-via-adb-no-root-required">manually granting access to logs</a></string>
     <string name="error">Error saving logs. Check your SD card.</string>
     <string name="storage_err">The external storage is not writable, unable to save logs.</string>
     <string name="warn_modem">Note: Modem logs may contain personal information such as phone number or IMEI.</string>

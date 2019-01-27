@@ -334,10 +334,6 @@ public class MainFragment extends Fragment implements View.OnClickListener {
                     //Warn the user
                     TextView noRoot = getView().findViewById(R.id.warn_root);
                     noRoot.setVisibility(View.VISIBLE);
-                    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.JELLY_BEAN) {
-                        //JB and higher needs a different warning
-                        noRoot.setText(R.string.noroot_jb);
-                    }
                 }
 
                 enableLogButton(true);
