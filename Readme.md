@@ -3,24 +3,30 @@
 This is a simple application that records various log types, and compresses them, currently as a tar file.  
 The logs are saved under the primary external storage folders named by the date and time.  
 
-Some plans for improvement:
-* Improve root-less operation. (Useless on 4.1+ without root, but I may start lowering the min API level and checking it down to 2.3)
+## Enabling Log Access via ADB (No root required)
 
-Done:
-* Add an option to grep logs for a certain string
-* Better landscape layout
-* Make sure the SysLog/ dir has a .nomedia file
-* Handle rotation/keyboard
-* Use compatibility library or ABS to make app consistent for all devices/versions (Just because I have the action overflow forced on doesn't mean that the menu is always there)
-* Clean up the uncompressed log files (Option or pref)
-* Option to clear the past log files
-* A popup after the log capture for extra text to be appended to the end of the file/foldername...  or better yet, an extra text file included with the zip that you can enter some notes
-* Update the button text to say 'Checking for root' until its enabled
-* Switch to Chainfire's SU library
-* Add last_kmsg support
-* Readme/About dialog
-* Switch to Zip compression
-* Figure out when log files are done being written.
+To enable access to some logs (Logcat and Radio) to SysLog, you will need to grant the READ_LOGS permision using a computer with ADB.
+ADB is part of the [Android platform-tools](https://developer.android.com/studio/releases/platform-tools), and you need to enable ADB
+access on you device.
 
-### Note about Root Access:
-It may not be possible to get the logs without root access. On 4.2+, this is pretty darn useless without root. Should work, but may have issues with 4.1-
+From a command line with adb available, you can grant the READ_LOGS permission via the following command:
+
+```
+adb shell pm grant com.tortel.syslog android.permission.READ_LOGS
+```
+
+This command tells the phone's package manager to grant the READ_LOGS permission to SysLog.
+
+#### How exactly do I get adb working?
+
+There is a short guide on the Android developer site [here](https://developer.android.com/studio/run/device).
+More detailed guides can be found through a quick online search.
+
+#### Do I need a computer to do this?
+
+Yes. When you access a device over ADB, you have some privileged access. This can not be done on the device.
+
+## Note about Root Access
+
+Even with granting the READ_LOGS permission to the app via adb, it may still not be possible to get all logs without root access on Android 4.2 or higher.
+The only logs that should work after granting permisssions are logcat and radio logs - the rest may still be restricted.
