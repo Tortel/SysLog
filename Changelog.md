@@ -1,3 +1,17 @@
+v2.2.0 (January 26, 2019)
+* Updated dependencies
+* Added instructions for rootless operation
+
+v2.1.6 (August 30, 2018)
+* Fix crashes while in landscape
+
+v2.1.5 (July 18, 2018)
+* Added support for grabbing some pstore log files
+
+v2.1.4 (April 24, 2018)
+* Added common log type names
+* Adaptive icon
+
 v2.1.1 (July 14, 2017)
 * Fixed issues with Android 7
 
