@@ -103,7 +103,6 @@
         android:layout_width="wrap_content"
         android:gravity="center"
         android:padding="5dip"
-        android:autoLink="web"
         android:text="@string/noroot"
         android:visibility="gone"
         android:textStyle="bold|italic" />

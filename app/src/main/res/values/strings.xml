@@ -63,7 +63,7 @@
     
     <!-- Warnings/Errors -->
     <string name="noroot">Warning: No root access. Logs may be incomplete or missing
-        without <a href="https://github.com/Tortel/SysLog#enabling-log-access-via-adb-no-root-required">manually granting access to logs</a></string>
+        without <a href="https://github.com/Tortel/SysLog/blob/master/Readme.md#enabling-log-access-via-adb-no-root-required">manually granting access to logs</a></string>
     <string name="error">Error saving logs. Check your SD card.</string>
     <string name="storage_err">The external storage is not writable, unable to save logs.</string>
     <string name="warn_modem">Note: Modem logs may contain personal information such as phone number or IMEI.</string>

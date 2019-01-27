@@ -9,6 +9,8 @@ import android.preference.PreferenceManager;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import android.telephony.TelephonyManager;
+import android.text.method.LinkMovementMethod;
+import android.text.util.Linkify;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -333,6 +335,8 @@ public class MainFragment extends Fragment implements View.OnClickListener {
                     Log.d("Root not available");
                     //Warn the user
                     TextView noRoot = getView().findViewById(R.id.warn_root);
+                    Linkify.addLinks(noRoot, Linkify.ALL);
+                    noRoot.setMovementMethod(LinkMovementMethod.getInstance());
                     noRoot.setVisibility(View.VISIBLE);
                 }
 
