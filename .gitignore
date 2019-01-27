@@ -10,6 +10,7 @@ gen/
 .DS_Store
 /build
 /gradle
+/app/release
 
 #built application files
 *.apk
