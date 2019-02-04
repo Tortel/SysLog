@@ -3,6 +3,13 @@
 This is a simple application that records various log types, and compresses them, currently as a tar file.  
 The logs are saved under the primary external storage folders named by the date and time.  
 
+[<img src="https://play.google.com/intl/en_us/badges/images/generic/en-play-badge.png"
+     alt="Get it on Google Play"
+     height="80">](https://play.google.com/store/apps/details?id=com.tortel.syslog)
+[<img src="https://f-droid.org/badge/get-it-on.png"
+     alt="Get it on F-Droid"
+     height="80">](https://f-droid.org/packages/com.tortel.syslog/)
+
 ## Enabling Log Access via ADB (No root required)
 
 To enable access to some logs (Logcat and Radio) to SysLog, you will need to grant the READ_LOGS permision using a computer with ADB.
