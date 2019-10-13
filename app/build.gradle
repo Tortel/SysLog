@@ -17,13 +17,18 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
         }
     }
-    return void
+
+    compileOptions {
+        sourceCompatibility 1.8
+        targetCompatibility 1.8
+    }
+
 }
 
 dependencies {
     implementation 'com.google.android.material:material:1.0.0'
 
-    implementation 'pub.devrel:easypermissions:2.0.0'
+    implementation 'pub.devrel:easypermissions:3.0.0'
 
     implementation 'eu.chainfire:libsuperuser:1.0.0.+'
     implementation 'org.greenrobot:eventbus:3.0.0'
