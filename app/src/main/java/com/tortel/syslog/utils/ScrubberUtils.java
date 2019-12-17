@@ -75,18 +75,14 @@ public class ScrubberUtils {
     public static void scrubFile(Context context, File input, File output) throws IOException {
         long startScrubTime = System.currentTimeMillis();
 
-        ArrayList<String> extraFilters = new ArrayList<String>();
-        TelephonyManager tm = (TelephonyManager) context.
-                getSystemService(Context.TELEPHONY_SERVICE);
-        if (tm != null && tm.getDeviceId() != null) {
-            extraFilters.add(tm.getDeviceId());
-        }
+        ArrayList<String> extraFilters = new ArrayList<>();
         extraFilters.add(getSerialNumber());
-        String extraRegex = "";
+        // As of Android 10, you can no longer access the IMEI.
+        // To scrub the IMEI from the logs, just remove any 15 digit numbers
+        String extraRegex = "(\\d){15}";
         for (String regex : extraFilters) {
-            extraRegex += regex + "|";
+            extraRegex += "|" + regex;
         }
-        extraRegex = extraRegex.substring(0, extraRegex.length()-1);
         if (DEBUG) {
             Log.w(TAG, "extra regex: " + extraRegex);
         }

@@ -48,7 +48,7 @@ import pub.devrel.easypermissions.EasyPermissions;
 public class FragmentMainActivity extends AppCompatActivity implements EasyPermissions.PermissionCallbacks {
     public static final String[] REQUIRED_PERMISSIONS = {Manifest.permission.WRITE_EXTERNAL_STORAGE};
     public static final int REQUIRED_PERMISSIONS_REQUEST_CODE = 10;
-    public static final String[] SCRUB_PERMISSIONS = {Manifest.permission.READ_PHONE_STATE};
+    public static final String[] SCRUB_PERMISSIONS = {};
     public static final int SCRUB_PERMISSIONS_REQUEST_CODE = 11;
 
     @Override
