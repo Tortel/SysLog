@@ -30,6 +30,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.preference.PreferenceManager;
 import androidx.annotation.NonNull;
+import androidx.annotation.StringRes;
 import androidx.fragment.app.DialogFragment;
 import androidx.appcompat.app.AlertDialog;
 import android.view.LayoutInflater;
@@ -39,6 +40,10 @@ import android.widget.TextView;
 
 import com.tortel.syslog.R;
 import com.tortel.syslog.Result;
+import com.tortel.syslog.exception.CreateFolderException;
+import com.tortel.syslog.exception.LowSpaceException;
+import com.tortel.syslog.exception.NoFilesException;
+import com.tortel.syslog.exception.RunCommandException;
 import com.tortel.syslog.utils.Utils;
 
 /**
@@ -72,9 +77,9 @@ public class ExceptionDialog extends DialogFragment implements android.view.View
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        LayoutInflater inflator = getActivity().getLayoutInflater();
+        LayoutInflater inflater = getActivity().getLayoutInflater();
         
-        View view = inflator.inflate(R.layout.dialog_exception, null);
+        View view = inflater.inflate(R.layout.dialog_exception, null);
         stackTraceButton = view.findViewById(R.id.button_stacktrace);
         stackTraceButton.setOnClickListener(this);
         TextView reportNotice = view.findViewById(R.id.bugreport_notice);
@@ -83,13 +88,25 @@ public class ExceptionDialog extends DialogFragment implements android.view.View
             reportNotice.setVisibility(View.GONE);
         }
 
-        stackTraceView = (TextView) view.findViewById(R.id.exception_stacktrace);
+        stackTraceView = view.findViewById(R.id.exception_stacktrace);
         stackTraceView.setText(getStackTrace(result.getException()));
 
-        TextView messageText = (TextView) view.findViewById(R.id.exception_message);
-        int messageId = result.getMessage();
+        TextView messageText = view.findViewById(R.id.exception_message);
+        @StringRes int messageId = result.getMessage();
         if(messageId == 0){
             messageId = R.string.error;
+            if (result.getException() != null) {
+                Throwable e = result.getException();
+                if (e instanceof CreateFolderException) {
+                    messageId = R.string.exception_folder;
+                } else if (e instanceof LowSpaceException) {
+                    messageId = R.string.exception_space;
+                } else if (e instanceof NoFilesException) {
+                    messageId = R.string.exception_zip_nofiles;
+                } else if (e instanceof RunCommandException) {
+                    messageId = R.string.exception_commands;
+                }
+            }
         }
         messageText.setText(messageId);
         builder.setView(view);

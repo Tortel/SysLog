@@ -78,6 +78,12 @@ public class GrabLogThread implements Runnable {
             runCommand();
         } catch (Exception e) {
             Log.e("Exception while getting logs", e);
+            // Mark the thread as no longer running
+            isRunning = false;
+            // Post the result
+            mResult.setSuccess(false);
+            mResult.setException(e);
+            EventBus.getDefault().post(mResult);
         }
 
         Log.v("Done grabbing logs");

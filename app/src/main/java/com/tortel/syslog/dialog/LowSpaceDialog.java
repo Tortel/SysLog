@@ -77,7 +77,7 @@ public class LowSpaceDialog extends DialogFragment implements DialogInterface.On
         TextView messageText = view.findViewById(R.id.exception_message);
         LowSpaceException e = (LowSpaceException) result.getException();
         
-        messageText.setText(getActivity().getResources().getString(result.getMessage(),
+        messageText.setText(getActivity().getResources().getString(R.string.exception_space,
                 e.getFreeSpace()));
         
         builder.setView(view);

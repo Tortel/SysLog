@@ -19,6 +19,8 @@ package com.tortel.syslog;
 
 import android.os.Environment;
 
+import androidx.annotation.StringRes;
+
 import com.tortel.syslog.utils.Utils;
 
 /**
@@ -62,10 +64,11 @@ public class Result {
 		return exceptions;
 	}
 	
-	public void setMessage(int message){
+	public void setMessage(@StringRes int message){
 		this.message= message; 
 	}
 
+	@StringRes
 	public int getMessage(){
 		return message;
 	}

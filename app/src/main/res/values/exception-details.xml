@@ -30,7 +30,7 @@
 
     <!-- Error creating folder -->
     <string name="exception_folder">There was an exception while trying to create the folder to save all the logs.
-        Please double check that your storage has space, and is properly mounted.</string>
+        Please double check that your storage has space and is properly mounted.</string>
 
     <!-- Error running the commands -->
     <string name="exception_commands">There was an error while running the commands to get the logs. If you did not use root,
