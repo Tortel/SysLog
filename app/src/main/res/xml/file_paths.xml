@@ -18,5 +18,5 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 -->
 <paths xmlns:android="http://schemas.android.com/apk/res/android">
-    <external-path name="external_files" path="SysLog/" />
+    <external-path name="external_files" path="/" />
 </paths>

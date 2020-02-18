@@ -108,10 +108,10 @@ public class GrabLogThread implements Runnable {
             List<String> files = new LinkedList<>();
 
             // Create the directories
-            String path = Environment.getExternalStorageDirectory().getPath();
+            String path = mContext.getExternalFilesDir(null).getPath();
 
-            File nomedia = new File(path+"/SysLog/.nomedia");
-            path += "/SysLog/"+sdf.format(date)+"/";
+            File nomedia = new File(path+"/.nomedia");
+            path += "/" + sdf.format(date)+"/";
             File outPath = new File(path);
             // Check if this path already exists (Happens if you run this multiple times a minute
             if(outPath.exists()){
