@@ -110,7 +110,6 @@ public class GrabLogThread implements Runnable {
             // Create the directories
             String path = mContext.getExternalFilesDir(null).getPath();
 
-            File nomedia = new File(path+"/.nomedia");
             path += "/" + sdf.format(date)+"/";
             File outPath = new File(path);
             // Check if this path already exists (Happens if you run this multiple times a minute
@@ -127,15 +126,6 @@ public class GrabLogThread implements Runnable {
             // Make the directory
             if(!outPath.mkdirs() || !outPath.isDirectory()){
                 throw new CreateFolderException();
-            }
-
-            // Put a .nomedia file in the directory
-            if(!nomedia.exists()){
-                try {
-                    nomedia.createNewFile();
-                } catch (IOException e) {
-                    Log.e("Failed to create .nomedia file", e);
-                }
             }
 
             // Commands to dump the logs
