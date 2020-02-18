@@ -17,7 +17,6 @@
  */
 package com.tortel.syslog;
 
-import android.Manifest;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -46,7 +45,7 @@ import pub.devrel.easypermissions.EasyPermissions;
  * Main activity, fragment version
  */
 public class FragmentMainActivity extends AppCompatActivity implements EasyPermissions.PermissionCallbacks {
-    public static final String[] REQUIRED_PERMISSIONS = {Manifest.permission.WRITE_EXTERNAL_STORAGE};
+    public static final String[] REQUIRED_PERMISSIONS = {};
     public static final int REQUIRED_PERMISSIONS_REQUEST_CODE = 10;
     public static final String[] SCRUB_PERMISSIONS = {};
     public static final int SCRUB_PERMISSIONS_REQUEST_CODE = 11;
