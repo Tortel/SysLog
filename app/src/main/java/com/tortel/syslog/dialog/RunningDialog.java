@@ -105,8 +105,7 @@ public class RunningDialog extends DialogFragment {
         Log.v("Received Result via EventBus");
         try {
             if (result.success()) {
-                String msg = getResources().getString(R.string.save_path) + result.getShortPath();
-                Toast.makeText(getActivity(), msg, Toast.LENGTH_LONG).show();
+                Toast.makeText(getActivity(), R.string.collected_logs, Toast.LENGTH_LONG).show();
 
                 //Display a share intent
                 File zipFile = new File(result.getArchivePath());

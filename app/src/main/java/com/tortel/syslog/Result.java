@@ -38,13 +38,13 @@ public class Result {
 		this.success = success;
 	}
 	
-	   /**
+	/**
      * Returns if exception reporting should be disabled.
      * On Android 4.3+, you need to run it with root
      * @return
      */
     public boolean disableReporting(){
-        return !command.hasRoot() && Utils.isSeAndroid();
+        return !command.hasRoot();
     }
 	
 	public boolean success(){
@@ -88,10 +88,5 @@ public class Result {
     public void setArchivePath(String archivePath) {
         this.archivePath = archivePath;
     }
-    
-    public String getShortPath() {
-        return archivePath.substring(
-                Environment.getExternalStorageDirectory().getPath().length() + 1,
-                archivePath.lastIndexOf('/'));
-    }
+
 }

@@ -58,7 +58,7 @@
     <string name="done">Done!</string>
     <string name="checking_root">Checking root access&#8230;</string>
     <string name="close">Close</string>
-    <string name="save_path">Logs saved to sdcard/</string>
+    <string name="collected_logs">Collected logs</string>
     <string name="space_freed">Freed %.1f MB</string>
     
     <!-- Warnings/Errors -->
@@ -72,7 +72,6 @@
 	<string name="about">About</string>
     <string name="about_live">About Live Logcat</string>
 	<string name="faq">FAQ</string>
-	<string name="clean_uncompressed">Clean Uncompressed Logs</string>
 	<string name="clean_all">Clean All Saved Logs</string>
     <string name="clear_buffer">Clear logcat buffer</string>
 	<string name="menu_settings">Settings</string>

@@ -23,7 +23,7 @@ import java.util.zip.ZipOutputStream;
 
 import com.tortel.syslog.exception.LowSpaceException;
 import com.tortel.syslog.exception.NoFilesException;
-import com.tortel.syslog.utils.Utils;
+import com.tortel.syslog.utils.FileUtils;
 
 import android.util.Log;
 
@@ -88,7 +88,7 @@ public class ZipWriter {
         } catch (IOException e) {
             
             // Make sure that the IOException wasn't caused by running out of space
-            double freeSpace = Utils.getStorageFreeSpace();
+            double freeSpace = FileUtils.getStorageFreeSpace(outPath);
             if(freeSpace <= 1){
                 throw new LowSpaceException(freeSpace);
             }

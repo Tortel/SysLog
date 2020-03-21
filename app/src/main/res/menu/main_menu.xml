@@ -27,10 +27,6 @@
         android:title="@string/about_live"
         app:showAsAction="never" />
     <item
-        android:id="@+id/clean_uncompressed"
-        android:title="@string/clean_uncompressed"
-        app:showAsAction="never" />
-    <item
         android:id="@+id/clean_all"
         android:title="@string/clean_all"
         app:showAsAction="never" />

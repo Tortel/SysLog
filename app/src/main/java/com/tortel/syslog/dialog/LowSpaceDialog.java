@@ -82,8 +82,7 @@ public class LowSpaceDialog extends DialogFragment implements DialogInterface.On
         
         builder.setView(view);
         
-        builder.setPositiveButton(R.string.clean_uncompressed, this);
-        builder.setNeutralButton(R.string.clean_all, this);
+        builder.setPositiveButton(R.string.clean_all, this);
         
         builder.setTitle(R.string.error_dialog_title);
         
@@ -94,11 +93,6 @@ public class LowSpaceDialog extends DialogFragment implements DialogInterface.On
     public void onClick(DialogInterface dialog, int which) {
         switch(which){
         case DialogInterface.BUTTON_POSITIVE:
-            new Utils.CleanUncompressedTask(getActivity()).execute();
-            result = null;
-            this.dismiss();
-            return;
-        case DialogInterface.BUTTON_NEUTRAL:
             new Utils.CleanAllTask(getActivity()).execute();
             result = null;
             this.dismiss();

@@ -103,9 +103,6 @@ public class FragmentMainActivity extends AppCompatActivity implements EasyPermi
                 Intent intent = new Intent(this, LiveLogActivity.class);
                 startActivity(intent);
                 return true;
-            case R.id.clean_uncompressed:
-                new Utils.CleanUncompressedTask(getBaseContext()).execute();
-                return true;
             case R.id.clean_all:
                 new Utils.CleanAllTask(getBaseContext()).execute();
                 return true;

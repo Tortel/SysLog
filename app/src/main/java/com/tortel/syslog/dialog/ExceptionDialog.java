@@ -44,6 +44,7 @@ import com.tortel.syslog.exception.CreateFolderException;
 import com.tortel.syslog.exception.LowSpaceException;
 import com.tortel.syslog.exception.NoFilesException;
 import com.tortel.syslog.exception.RunCommandException;
+import com.tortel.syslog.utils.FileUtils;
 import com.tortel.syslog.utils.Utils;
 
 /**
@@ -163,9 +164,8 @@ public class ExceptionDialog extends DialogFragment implements android.view.View
         }
         body.append("Android version: "+android.os.Build.VERSION.SDK_INT+"\n");
         body.append("Kernel version: "+System.getProperty("os.version")+"\n");
-        body.append("Storage state: "+Environment.getExternalStorageState()+"\n");
-        body.append("Free space: "+Utils.getStorageFreeSpace()+"mb \n");
-        body.append("Storage path: "+Environment.getExternalStorageDirectory().getPath()+"\n");
+        body.append("Free space: "+ FileUtils.getStorageFreeSpace(getContext())+"mb \n");
+        body.append("Storage path: "+FileUtils.getRootLogDir(getContext()).getPath()+"\n");
         body.append("Using root: "+result.getCommand().hasRoot()+"\n");
         body.append(result.getCommand().getDebugString()+"\n");
         body.append("Stacktrace:\n");

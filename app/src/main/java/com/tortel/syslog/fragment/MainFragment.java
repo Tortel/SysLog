@@ -21,7 +21,6 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Environment;
 import android.preference.PreferenceManager;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -37,7 +36,6 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.tortel.syslog.FragmentMainActivity;
 import com.tortel.syslog.GrepOption;
@@ -86,7 +84,7 @@ public class MainFragment extends Fragment implements View.OnClickListener {
         eventLog = prefs.getBoolean(Prefs.KEY_EVENT, true);
         modemLog = prefs.getBoolean(Prefs.KEY_MODEM, true);
         lastKmsg = prefs.getBoolean(Prefs.KEY_LASTKMSG, true);
-        auditLog = prefs.getBoolean(Prefs.KEY_AUDIT, Utils.isSeAndroid());
+        auditLog = prefs.getBoolean(Prefs.KEY_AUDIT, true);
         scrubLog = prefs.getBoolean(Prefs.KEY_SCRUB, true);
         pstore = prefs.getBoolean(Prefs.KEY_PSTORE, true);
     }
@@ -125,13 +123,9 @@ public class MainFragment extends Fragment implements View.OnClickListener {
         box = getView().findViewById(R.id.audit_log);
         box.setChecked(auditLog);
         box.setOnClickListener(this);
-        // Hide the audit logs if the android version doesn't support selinux
-        if(!Utils.isSeAndroid()){
-            box.setVisibility(View.GONE);
-        }
 
         // Set the warning for modem logs
-        TextView view = (TextView) getView().findViewById(R.id.warnings);
+        TextView view = getView().findViewById(R.id.warnings);
         if(modemLog){
             view.setText(R.string.warn_modem);
             view.setVisibility(View.VISIBLE);
@@ -255,44 +249,39 @@ public class MainFragment extends Fragment implements View.OnClickListener {
                 }
             }
 
-            //Check for external storage
-            if(Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState())){
-                //Build the command
-                RunCommand command = new RunCommand();
+            //Build the command
+            RunCommand command = new RunCommand();
 
-                //Log flags
-                command.setKernelLog(kernelLog);
-                command.setLastKernelLog(lastKmsg);
-                command.setPstore(pstore);
-                command.setMainLog(mainLog);
-                command.setEventLog(eventLog);
-                command.setModemLog(modemLog);
-                command.setScrubEnabled(scrubLog);
-                command.setAuditLog(auditLog);
+            //Log flags
+            command.setKernelLog(kernelLog);
+            command.setLastKernelLog(lastKmsg);
+            command.setPstore(pstore);
+            command.setMainLog(mainLog);
+            command.setEventLog(eventLog);
+            command.setModemLog(modemLog);
+            command.setScrubEnabled(scrubLog);
+            command.setAuditLog(auditLog);
 
-                //Grep options
-                command.setGrepOption(GrepOption.fromString(grepSpinner.getSelectedItem().toString()));
-                command.setGrep(grepEditText.getText().toString());
+            //Grep options
+            command.setGrepOption(GrepOption.fromString(grepSpinner.getSelectedItem().toString()));
+            command.setGrep(grepEditText.getText().toString());
 
-                //Notes/text
-                command.setAppendText(fileEditText.getText().toString());
-                command.setNotes(notesEditText.getText().toString());
+            //Notes/text
+            command.setAppendText(fileEditText.getText().toString());
+            command.setNotes(notesEditText.getText().toString());
 
-                command.setRoot(root);
+            command.setRoot(root);
 
-                fileEditText.setText("");
-                notesEditText.setText("");
-                grepEditText.setText("");
+            fileEditText.setText("");
+            notesEditText.setText("");
+            grepEditText.setText("");
 
-                RunningDialog dialog = new RunningDialog();
-                Bundle args = new Bundle();
-                args.putParcelable(RunningDialog.COMMAND, command);
-                dialog.setArguments(args);
+            RunningDialog dialog = new RunningDialog();
+            Bundle args = new Bundle();
+            args.putParcelable(RunningDialog.COMMAND, command);
+            dialog.setArguments(args);
 
-                dialog.show(getFragmentManager(), "run");
-            } else {
-                Toast.makeText(getActivity(), R.string.storage_err, Toast.LENGTH_LONG).show();
-            }
+            dialog.show(getFragmentManager(), "run");
         }
     }
 

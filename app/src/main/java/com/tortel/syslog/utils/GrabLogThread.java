@@ -101,133 +101,121 @@ public class GrabLogThread implements Runnable {
     private void runCommand() throws CreateFolderException,
             RunCommandException, IOException, NoFilesException, LowSpaceException {
 
-        if (Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState())) {
-            //Check how much space is on the primary storage
-            double freeSpace = Utils.getStorageFreeSpace();
-            if(freeSpace < Utils.MIN_FREE_SPACE){
-                throw new LowSpaceException(freeSpace);
-            }
-
-            // Commands to execute
-            List<String> commands = new LinkedList<>();
-            // Where to write the command output
-            List<String> files = new LinkedList<>();
-
-            // Create the directories
-            String path = mContext.getExternalFilesDir(null).getPath();
-
-            path += "/" + sdf.format(date)+"/";
-            File outPath = new File(path);
-            // Check if this path already exists (Happens if you run this multiple times a minute
-            if(outPath.exists()){
-                // Append the seconds
-                path =  path.substring(0, path.length()-1) +"."+ Calendar.getInstance().get(Calendar.SECOND)+"/";
-                outPath = new File(path);
-                Log.v("Path already exists, added seconds");
-            }
-
-            finalPath = path;
-
-            Log.v("Path: "+path);
-            // Make the directory
-            if(!outPath.mkdirs() || !outPath.isDirectory()){
-                throw new CreateFolderException();
-            }
-
-            // Commands to dump the logs
-            if(mCommand.isMainLog()){
-                if(mCommand.grep() && mCommand.getGrepOption() == GrepOption.MAIN
-                        || mCommand.getGrepOption() == GrepOption.ALL){
-                    commands.add("logcat -v time -d | grep \""+mCommand.getGrep()+"\"");
-                } else {
-                    commands.add("logcat -v time -d");
-                }
-                files.add(outPath.getAbsolutePath()+"/logcat.log"+Utils.PRESCRUB);
-            }
-            if(mCommand.isEventLog()){
-                if(mCommand.grep() && mCommand.getGrepOption() == GrepOption.EVENT
-                        || mCommand.getGrepOption() == GrepOption.ALL){
-                    commands.add("logcat -b events -v time -d | grep \""+mCommand.getGrep()+"\"");
-                } else {
-                    commands.add("logcat -b events -v time -d");
-                }
-                files.add(outPath.getAbsolutePath()+"/event.log"+Utils.PRESCRUB);
-            }
-            if(mCommand.isKernelLog()){
-                if(mCommand.grep() && mCommand.getGrepOption() == GrepOption.KERNEL
-                        || mCommand.getGrepOption() == GrepOption.ALL){
-                    commands.add("dmesg | grep \""+mCommand.getGrep()+"\"");
-                } else {
-                    commands.add("dmesg");
-                }
-                files.add(outPath.getAbsolutePath()+"/dmesg.log"+Utils.PRESCRUB);
-            }
-            if(mCommand.isPstore()) {
-                if(mCommand.grep() && mCommand.getGrepOption() == GrepOption.KERNEL
-                        || mCommand.getGrepOption() == GrepOption.ALL){
-                    commands.add("cat " + Utils.PSTORE_CONSOLE + "| grep \"" + mCommand.getGrep() + "\"");
-                    commands.add("cat " + Utils.PSTORE_DEVINFO + "| grep \"" + mCommand.getGrep() + "\"");
-                } else {
-                    commands.add("cat " + Utils.PSTORE_CONSOLE);
-                    commands.add("cat " + Utils.PSTORE_DEVINFO);
-                }
-                files.add(outPath.getAbsolutePath() + "/pstore_console" + Utils.PRESCRUB);
-                files.add(outPath.getAbsolutePath() + "/pstore_devinfo" + Utils.PRESCRUB);
-            }
-            if(mCommand.isModemLog()){
-                if(mCommand.grep() && mCommand.getGrepOption() == GrepOption.MODEM
-                        || mCommand.getGrepOption() == GrepOption.ALL){
-                    commands.add("logcat -v time -b radio -d | grep \""+mCommand.getGrep()+"\"");
-                } else {
-                    commands.add("logcat -v time -b radio -d");
-                }
-                files.add(outPath.getAbsolutePath()+"/modem.log"+Utils.PRESCRUB);
-            }
-            if(mCommand.isLastKernelLog()){
-                if(mCommand.grep() && mCommand.getGrepOption() == GrepOption.LAST_KERNEL
-                        || mCommand.getGrepOption() == GrepOption.ALL){
-                    //Log should be run through grep
-                    commands.add("cat "+Utils.LAST_KMSG+" | grep \""+mCommand.getGrep()+"\"");
-                } else {
-                    //Try copying the last_kmsg over
-                    commands.add("cat "+Utils.LAST_KMSG);
-                }
-                files.add(outPath.getAbsolutePath()+"/last_kmsg.log"+Utils.PRESCRUB);
-            }
-            if(mCommand.isAuditLog()){
-                commands.add("cat "+Utils.AUDIT_LOG);
-                files.add(outPath.getAbsolutePath()+"/audit.log");
-                commands.add("cat "+Utils.AUDIT_OLD_LOG);
-                files.add(outPath.getAbsolutePath()+"/audit.old");
-            }
-
-            Shell.Builder builder = new Shell.Builder();
-
-            //Run the commands
-            if(mCommand.hasRoot()){
-                builder.useSU();
-            } else {
-                builder.useSH();
-            }
-
-            // Send an update
-            RunningDialog.ProgressUpdate update = new RunningDialog.ProgressUpdate();
-            update.messageResource = R.string.getting_logs;
-            EventBus.getDefault().post(update);
-
-            final Shell.Interactive shell = builder.open();
-            runComamnds(shell, commands, files);
-        } else {
-            //Default storage not accessible
-            mResult.setSuccess(false);
-            mResult.setMessage(R.string.storage_err);
-
-            Log.v("Storage error getting logs");
-            // Mark the thread as no longer running
-            isRunning = false;
-            // Post the result
-            EventBus.getDefault().post(mResult);
+        //Check how much space is on the primary storage
+        double freeSpace = FileUtils.getStorageFreeSpace(mContext);
+        if(freeSpace < FileUtils.MIN_FREE_SPACE){
+            throw new LowSpaceException(freeSpace);
         }
+
+        // Commands to execute
+        List<String> commands = new LinkedList<>();
+        // Where to write the command output
+        List<String> files = new LinkedList<>();
+
+        // Create the directories
+        String path = FileUtils.getRootLogDir(mContext).getPath();
+
+        path += "/" + sdf.format(date)+"/";
+        File outPath = new File(path);
+        // Check if this path already exists (Happens if you run this multiple times a minute
+        if(outPath.exists()){
+            // Append the seconds
+            path =  path.substring(0, path.length()-1) +"."+ Calendar.getInstance().get(Calendar.SECOND)+"/";
+            outPath = new File(path);
+            Log.v("Path already exists, added seconds");
+        }
+
+        finalPath = path;
+
+        Log.v("Path: "+path);
+        // Make the directory
+        if(!outPath.mkdirs() || !outPath.isDirectory()){
+            throw new CreateFolderException();
+        }
+
+        // Commands to dump the logs
+        if(mCommand.isMainLog()){
+            if(mCommand.grep() && mCommand.getGrepOption() == GrepOption.MAIN
+                    || mCommand.getGrepOption() == GrepOption.ALL){
+                commands.add("logcat -v time -d | grep \""+mCommand.getGrep()+"\"");
+            } else {
+                commands.add("logcat -v time -d");
+            }
+            files.add(outPath.getAbsolutePath()+"/logcat.log"+Utils.PRESCRUB);
+        }
+        if(mCommand.isEventLog()){
+            if(mCommand.grep() && mCommand.getGrepOption() == GrepOption.EVENT
+                    || mCommand.getGrepOption() == GrepOption.ALL){
+                commands.add("logcat -b events -v time -d | grep \""+mCommand.getGrep()+"\"");
+            } else {
+                commands.add("logcat -b events -v time -d");
+            }
+            files.add(outPath.getAbsolutePath()+"/event.log"+Utils.PRESCRUB);
+        }
+        if(mCommand.isKernelLog()){
+            if(mCommand.grep() && mCommand.getGrepOption() == GrepOption.KERNEL
+                    || mCommand.getGrepOption() == GrepOption.ALL){
+                commands.add("dmesg | grep \""+mCommand.getGrep()+"\"");
+            } else {
+                commands.add("dmesg");
+            }
+            files.add(outPath.getAbsolutePath()+"/dmesg.log"+Utils.PRESCRUB);
+        }
+        if(mCommand.isPstore()) {
+            if(mCommand.grep() && mCommand.getGrepOption() == GrepOption.KERNEL
+                    || mCommand.getGrepOption() == GrepOption.ALL){
+                commands.add("cat " + Utils.PSTORE_CONSOLE + "| grep \"" + mCommand.getGrep() + "\"");
+                commands.add("cat " + Utils.PSTORE_DEVINFO + "| grep \"" + mCommand.getGrep() + "\"");
+            } else {
+                commands.add("cat " + Utils.PSTORE_CONSOLE);
+                commands.add("cat " + Utils.PSTORE_DEVINFO);
+            }
+            files.add(outPath.getAbsolutePath() + "/pstore_console" + Utils.PRESCRUB);
+            files.add(outPath.getAbsolutePath() + "/pstore_devinfo" + Utils.PRESCRUB);
+        }
+        if(mCommand.isModemLog()){
+            if(mCommand.grep() && mCommand.getGrepOption() == GrepOption.MODEM
+                    || mCommand.getGrepOption() == GrepOption.ALL){
+                commands.add("logcat -v time -b radio -d | grep \""+mCommand.getGrep()+"\"");
+            } else {
+                commands.add("logcat -v time -b radio -d");
+            }
+            files.add(outPath.getAbsolutePath()+"/modem.log"+Utils.PRESCRUB);
+        }
+        if(mCommand.isLastKernelLog()){
+            if(mCommand.grep() && mCommand.getGrepOption() == GrepOption.LAST_KERNEL
+                    || mCommand.getGrepOption() == GrepOption.ALL){
+                //Log should be run through grep
+                commands.add("cat "+Utils.LAST_KMSG+" | grep \""+mCommand.getGrep()+"\"");
+            } else {
+                //Try copying the last_kmsg over
+                commands.add("cat "+Utils.LAST_KMSG);
+            }
+            files.add(outPath.getAbsolutePath()+"/last_kmsg.log"+Utils.PRESCRUB);
+        }
+        if(mCommand.isAuditLog()){
+            commands.add("cat "+Utils.AUDIT_LOG);
+            files.add(outPath.getAbsolutePath()+"/audit.log");
+            commands.add("cat "+Utils.AUDIT_OLD_LOG);
+            files.add(outPath.getAbsolutePath()+"/audit.old");
+        }
+
+        Shell.Builder builder = new Shell.Builder();
+
+        //Run the commands
+        if(mCommand.hasRoot()){
+            builder.useSU();
+        } else {
+            builder.useSH();
+        }
+
+        // Send an update
+        RunningDialog.ProgressUpdate update = new RunningDialog.ProgressUpdate();
+        update.messageResource = R.string.getting_logs;
+        EventBus.getDefault().post(update);
+
+        final Shell.Interactive shell = builder.open();
+        runComamnds(shell, commands, files);
     }
 
     /**

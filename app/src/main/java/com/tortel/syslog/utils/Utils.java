@@ -26,9 +26,6 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.os.AsyncTask;
-import android.os.Build;
-import android.os.Environment;
-import android.os.StatFs;
 import android.widget.Toast;
 
 import com.tortel.syslog.R;
@@ -49,35 +46,6 @@ public class Utils {
     public static final String PSTORE_DEVINFO = "/sys/fs/pstore/device*ramoops*";
 
     public static final String PRESCRUB = "-prescrub";
-    
-    private static final int MB_TO_BYTE = 1048576;
-    
-    /**
-     * Minimum amount of free space needed to not throw a LowSpaceException.
-     * This is based on the average size of my runs (~5.5MB)
-     */
-    public static final double MIN_FREE_SPACE = 6;
-    
-    /**
-     * Gets the free space of the primary storage, in MB
-     * @return the space
-     */
-    @SuppressWarnings("deprecation")
-    public static double getStorageFreeSpace(){
-        StatFs stat = new StatFs(Environment.getExternalStorageDirectory().getPath());
-        double sdAvailSize = (double)stat.getAvailableBlocks()
-                           * (double)stat.getBlockSize();
-        return Math.floor(sdAvailSize / MB_TO_BYTE);
-    }
-    
-    /**
-     * Returns true if the build is SELinux protected, which is 4.3+
-     * @return
-     */
-    public static boolean isSeAndroid(){
-        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2;
-    }
-
 
     /**
      * Runs the log file through the ScrubberUtils and removes the PRESCRUB extension
@@ -162,55 +130,18 @@ public class Utils {
 
         @Override
         protected Void doInBackground(Void... params) {
-            startingSpace = Utils.getStorageFreeSpace();
-            String path = Environment.getExternalStorageDirectory().getPath();
-            path += "/SysLog/*";
+            startingSpace = FileUtils.getStorageFreeSpace(context);
+            String path = FileUtils.getRootLogDir(context).getPath();
+            path += "/*";
             Shell.SH.run("rm -rf "+path);
-            endingSpace = Utils.getStorageFreeSpace();
+            endingSpace = FileUtils.getStorageFreeSpace(context);
             return null;
         }
 
         @Override
         protected void onPostExecute(Void param){
-            String spaceFreed = context.getResources().getString(R.string.space_freed,
-                    endingSpace - startingSpace);
-            
-            Toast.makeText(context, spaceFreed, Toast.LENGTH_SHORT).show();
-        }
-    }
-
-    /**
-     * Clean only the uncompressed logs
-     */
-    public static class CleanUncompressedTask extends AsyncTask<Void, Void, Void>{
-        private Context context;
-        private double startingSpace;
-        private double endingSpace;
-        
-        public CleanUncompressedTask(Context context){
-            this.context = context.getApplicationContext();
-        }
-
-        @Override
-        protected Void doInBackground(Void... params) {
-            startingSpace = Utils.getStorageFreeSpace();
-            String path = Environment.getExternalStorageDirectory().getPath();
-            path += "/SysLog/*/";
-            //All the log files end in .log, and there are also notes.txt files
-            String commands[] = new String[2];
-            commands[0] = "rm "+path+"*.log";
-            commands[1] = "rm "+path+"*.txt";
-            Shell.SH.run(commands);
-            endingSpace = Utils.getStorageFreeSpace();
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(Void param){
-            String spaceFreed = context.getResources().getString(R.string.space_freed,
-                    endingSpace - startingSpace);
-            
-            Toast.makeText(context, spaceFreed, Toast.LENGTH_SHORT).show();
+            Toast.makeText(context, context.getResources().getString(R.string.space_freed,
+                    endingSpace - startingSpace), Toast.LENGTH_SHORT).show();
         }
     }
 }
