@@ -9,7 +9,6 @@ gen/
 /.idea/libraries
 .DS_Store
 /build
-/gradle
 /app/release
 
 #built application files
@@ -29,11 +28,6 @@ gen/
 # files that end up being system specific
 .idea
 *.iml
-
-# this keeps wanting to update...
-gradle/wrapper/gradle-wrapper.properties
-/gradle/wrapper/gradle-wrapper.properties
-/gradle/wrapper/gradle-wrapper.properties
 
 # System specific stuff
 local.properties
