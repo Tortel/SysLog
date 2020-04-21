@@ -51,9 +51,7 @@ public class ZipWriter {
 	
     public void createZip() throws IOException, LowSpaceException {
         try {
-            for (int i = 0; i < files.length; i++) {
-                File cur = files[i];
-
+            for (File cur : files) {
                 // Make sure we aren't adding the zip into its self
                 if (cur.getName().endsWith(".zip")) {
                     continue;

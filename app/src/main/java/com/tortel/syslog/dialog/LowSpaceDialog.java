@@ -53,9 +53,6 @@ public class LowSpaceDialog extends DialogFragment implements DialogInterface.On
     
     private static Result result;
     
-    private Button stackTraceButton;
-    private TextView stackTraceView;
-    
     public void setResult(Result result){
         LowSpaceDialog.result = result;
     }
@@ -67,11 +64,11 @@ public class LowSpaceDialog extends DialogFragment implements DialogInterface.On
         LayoutInflater inflater = getActivity().getLayoutInflater();
         
         View view = inflater.inflate(R.layout.dialog_exception, null);
-        stackTraceButton = view.findViewById(R.id.button_stacktrace);
+        Button stackTraceButton = view.findViewById(R.id.button_stacktrace);
         stackTraceButton.setVisibility(View.GONE);
         view.findViewById(R.id.bugreport_notice).setVisibility(View.GONE);
 
-        stackTraceView = view.findViewById(R.id.exception_stacktrace);
+        TextView stackTraceView = view.findViewById(R.id.exception_stacktrace);
         stackTraceView.setVisibility(View.GONE);
 
         TextView messageText = view.findViewById(R.id.exception_message);
