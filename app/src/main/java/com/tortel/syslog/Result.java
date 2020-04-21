@@ -17,11 +17,7 @@
  */
 package com.tortel.syslog;
 
-import android.os.Environment;
-
 import androidx.annotation.StringRes;
-
-import com.tortel.syslog.utils.Utils;
 
 /**
  * A class to contain various information about the
@@ -32,7 +28,7 @@ public class Result {
 	private Throwable exceptions;
 	private int message;
 	private RunCommand command;
-	private String archivePath;
+	private String archiveName;
 	
 	public Result(boolean success){
 		this.success = success;
@@ -81,12 +77,12 @@ public class Result {
 		this.command = command;
 	}
 
-    public String getArchivePath() {
-        return archivePath;
+    public String getArchiveName() {
+        return archiveName;
     }
 
-    public void setArchivePath(String archivePath) {
-        this.archivePath = archivePath;
+    public void setArchiveName(String archiveName) {
+        this.archiveName = archiveName;
     }
 
 }

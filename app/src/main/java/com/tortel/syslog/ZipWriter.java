@@ -25,33 +25,34 @@ import com.tortel.syslog.exception.LowSpaceException;
 import com.tortel.syslog.exception.NoFilesException;
 import com.tortel.syslog.utils.FileUtils;
 
+import android.content.Context;
 import android.util.Log;
 
 public class ZipWriter {
-	private String outPath;
-	private ZipOutputStream zWriter;
-	private File[] files;
+	private ZipOutputStream mZipWriter;
+	private File[] mFiles;
+	private Context mContext;
 	
-	public ZipWriter(String path, String zName) throws FileNotFoundException, NoFilesException{
-		outPath = path;
-		
+	public ZipWriter(Context context, String logPath, String zipName) throws FileNotFoundException, NoFilesException {
+	    mContext = context;
 		//Get the folder
-		File outFolder = new File(outPath);
-		files = outFolder.listFiles();
-		if(files == null || files.length == 0){
+		File logDir = new File(logPath);
+		mFiles = logDir.listFiles();
+		if (mFiles == null || mFiles.length == 0) {
 			Log.e("SysLog", "Error - no files to zip.");
 			throw new NoFilesException();
 		}
-		for(File cur: files){
+		for(File cur: mFiles){
 			Log.v("SysLog", "File to be zipped: "+cur.getPath());
 		}
 		
-		zWriter = new ZipOutputStream(new FileOutputStream(outPath+zName));
+		mZipWriter = new ZipOutputStream(new FileOutputStream(FileUtils.getZipPath(context) +
+                "/" + zipName));
 	}
 	
     public void createZip() throws IOException, LowSpaceException {
         try {
-            for (File cur : files) {
+            for (File cur : mFiles) {
                 // Make sure we aren't adding the zip into its self
                 if (cur.getName().endsWith(".zip")) {
                     continue;
@@ -63,30 +64,30 @@ public class ZipWriter {
                 ZipEntry entry = new ZipEntry(cur.getName());
                 entry.setSize(cur.length());
 
-                zWriter.putNextEntry(entry);
+                mZipWriter.putNextEntry(entry);
 
                 int length;
                 byte[] buffer = new byte[10240];
 
                 while ((length = reader.read(buffer)) != -1) {
-                    zWriter.write(buffer, 0, length);
+                    mZipWriter.write(buffer, 0, length);
                 }
 
                 // Clean up
-                zWriter.closeEntry();
+                mZipWriter.closeEntry();
 
                 reader.close();
             }
 
             try {
-                zWriter.close();
+                mZipWriter.close();
             } catch (IOException e) {
                 e.printStackTrace();
             }
         } catch (IOException e) {
             
             // Make sure that the IOException wasn't caused by running out of space
-            double freeSpace = FileUtils.getStorageFreeSpace(outPath);
+            double freeSpace = FileUtils.getStorageFreeSpace(mContext);
             if(freeSpace <= 1){
                 throw new LowSpaceException(freeSpace);
             }

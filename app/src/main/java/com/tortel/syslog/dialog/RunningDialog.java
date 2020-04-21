@@ -18,6 +18,7 @@
 package com.tortel.syslog.dialog;
 
 import android.app.Dialog;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import androidx.annotation.NonNull;
@@ -105,18 +106,20 @@ public class RunningDialog extends DialogFragment {
         Log.v("Received Result via EventBus");
         try {
             if (result.success()) {
+                Context context = getContext();
                 Toast.makeText(getActivity(), R.string.collected_logs, Toast.LENGTH_LONG).show();
 
                 //Display a share intent
-                File zipFile = new File(result.getArchivePath());
+                File zipFile = new File(FileUtils.getZipPath(context) +
+                        "/" + result.getArchiveName());
 
                 Intent share = new Intent(android.content.Intent.ACTION_SEND);
                 share.setType("application/zip");
                 share.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-                share.putExtra(Intent.EXTRA_STREAM, FileProvider.getUriForFile(getActivity(),
+                share.putExtra(Intent.EXTRA_STREAM, FileProvider.getUriForFile(context,
                         "com.tortel.syslog.fileprovider", zipFile));
 
-                if (Utils.isHandlerAvailable(getActivity().getApplicationContext(), share)) {
+                if (Utils.isHandlerAvailable(context, share)) {
                     startActivity(share);
                 } else {
                     result.setMessage(R.string.exception_send);
@@ -143,7 +146,7 @@ public class RunningDialog extends DialogFragment {
             // Close the dialog
             dismiss();
         } catch(IllegalStateException e){
-            Log.v("Ignorning IllegalStateException - The user probably left the application, and we tried to show a dialog");
+            Log.v("Ignoring IllegalStateException - The user probably left the application, and we tried to show a dialog");
         }
     }
 

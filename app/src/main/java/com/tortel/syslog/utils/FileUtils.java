@@ -26,11 +26,12 @@ import java.io.File;
 
 public class FileUtils {
     private static final int MB_TO_BYTE = 1048576;
+    private static final String ZIP_DIR = "/compressed/";
 
     /**
      * Minimum amount of free space needed to not throw a LowSpaceException.
      */
-    public static final double MIN_FREE_SPACE = 10;
+    static final double MIN_FREE_SPACE = 10;
 
     /**
      * Gets the free space of the primary storage, in MB
@@ -54,9 +55,32 @@ public class FileUtils {
         return Math.floor(sdAvailSize / MB_TO_BYTE);
     }
 
+    /**
+     * Return the root log working directory.
+     * @return the working directory. This is a directory that will always exist
+     */
     public static @NonNull File getRootLogDir(Context context) {
         return context.getCacheDir();
     }
 
+    /**
+     * Get the directory with all of the compressed logs
+     * @return the compressed logs directory. This will always exist
+     */
+    public static @NonNull File getZipDir(Context context) {
+        File zipDir = new File(context.getCacheDir().getAbsolutePath() + ZIP_DIR);
+        // Make sure the directory exists
+        if (!zipDir.isDirectory()) {
+            zipDir.mkdir();
+        }
+        return zipDir;
+    }
+
+    /**
+     * Get the path to the directory with all of the compressed logs
+     */
+    public static @NonNull String getZipPath(Context context) {
+        return getZipDir(context).getAbsolutePath();
+    }
 
 }

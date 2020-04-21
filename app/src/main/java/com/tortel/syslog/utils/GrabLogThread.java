@@ -18,7 +18,6 @@
 package com.tortel.syslog.utils;
 
 import android.content.Context;
-import android.os.Environment;
 
 import com.tortel.syslog.GrepOption;
 import com.tortel.syslog.R;
@@ -56,7 +55,7 @@ public class GrabLogThread implements Runnable {
     private RunCommand mCommand;
     private Result mResult;
     private Context mContext;
-    private String finalPath;
+    private String workingPath;
     private SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd_HH.mm", Locale.US);
     private Date date = new Date();
 
@@ -113,97 +112,94 @@ public class GrabLogThread implements Runnable {
         List<String> files = new LinkedList<>();
 
         // Create the directories
-        String path = FileUtils.getRootLogDir(mContext).getPath();
+        workingPath = FileUtils.getRootLogDir(mContext).getPath();
 
-        path += "/" + sdf.format(date)+"/";
-        File outPath = new File(path);
+        workingPath += "/" + sdf.format(date)+"/";
+        File outDirectory = new File(workingPath);
         // Check if this path already exists (Happens if you run this multiple times a minute
-        if(outPath.exists()){
+        if(outDirectory.exists()){
             // Append the seconds
-            path =  path.substring(0, path.length()-1) +"."+ Calendar.getInstance().get(Calendar.SECOND)+"/";
-            outPath = new File(path);
+            workingPath =  workingPath.substring(0, workingPath.length()-1) +"."+ Calendar.getInstance().get(Calendar.SECOND)+"/";
+            outDirectory = new File(workingPath);
             Log.v("Path already exists, added seconds");
         }
 
-        finalPath = path;
-
-        Log.v("Path: "+path);
+        Log.v("Path: " + workingPath);
         // Make the directory
-        if(!outPath.mkdirs() || !outPath.isDirectory()){
+        if (!outDirectory.mkdirs() || !outDirectory.isDirectory()) {
             throw new CreateFolderException();
         }
 
         // Commands to dump the logs
-        if(mCommand.isMainLog()){
-            if(mCommand.grep() && mCommand.getGrepOption() == GrepOption.MAIN
-                    || mCommand.getGrepOption() == GrepOption.ALL){
-                commands.add("logcat -v time -d | grep \""+mCommand.getGrep()+"\"");
+        if (mCommand.isMainLog()) {
+            if (mCommand.grep() && mCommand.getGrepOption() == GrepOption.MAIN
+                    || mCommand.getGrepOption() == GrepOption.ALL) {
+                commands.add("logcat -v time -d | grep \"" + mCommand.getGrep() + "\"");
             } else {
                 commands.add("logcat -v time -d");
             }
-            files.add(outPath.getAbsolutePath()+"/logcat.log"+Utils.PRESCRUB);
+            files.add(workingPath + "/logcat.log" + Utils.PRESCRUB);
         }
-        if(mCommand.isEventLog()){
-            if(mCommand.grep() && mCommand.getGrepOption() == GrepOption.EVENT
-                    || mCommand.getGrepOption() == GrepOption.ALL){
-                commands.add("logcat -b events -v time -d | grep \""+mCommand.getGrep()+"\"");
+        if (mCommand.isEventLog()) {
+            if (mCommand.grep() && mCommand.getGrepOption() == GrepOption.EVENT
+                    || mCommand.getGrepOption() == GrepOption.ALL) {
+                commands.add("logcat -b events -v time -d | grep \"" + mCommand.getGrep() + "\"");
             } else {
                 commands.add("logcat -b events -v time -d");
             }
-            files.add(outPath.getAbsolutePath()+"/event.log"+Utils.PRESCRUB);
+            files.add(workingPath + "/event.log" + Utils.PRESCRUB);
         }
-        if(mCommand.isKernelLog()){
-            if(mCommand.grep() && mCommand.getGrepOption() == GrepOption.KERNEL
-                    || mCommand.getGrepOption() == GrepOption.ALL){
-                commands.add("dmesg | grep \""+mCommand.getGrep()+"\"");
+        if (mCommand.isKernelLog()) {
+            if (mCommand.grep() && mCommand.getGrepOption() == GrepOption.KERNEL
+                    || mCommand.getGrepOption() == GrepOption.ALL) {
+                commands.add("dmesg | grep \"" + mCommand.getGrep() + "\"");
             } else {
                 commands.add("dmesg");
             }
-            files.add(outPath.getAbsolutePath()+"/dmesg.log"+Utils.PRESCRUB);
+            files.add(workingPath + "/dmesg.log" + Utils.PRESCRUB);
         }
-        if(mCommand.isPstore()) {
-            if(mCommand.grep() && mCommand.getGrepOption() == GrepOption.KERNEL
-                    || mCommand.getGrepOption() == GrepOption.ALL){
+        if (mCommand.isPstore()) {
+            if (mCommand.grep() && mCommand.getGrepOption() == GrepOption.KERNEL
+                    || mCommand.getGrepOption() == GrepOption.ALL) {
                 commands.add("cat " + Utils.PSTORE_CONSOLE + "| grep \"" + mCommand.getGrep() + "\"");
                 commands.add("cat " + Utils.PSTORE_DEVINFO + "| grep \"" + mCommand.getGrep() + "\"");
             } else {
                 commands.add("cat " + Utils.PSTORE_CONSOLE);
                 commands.add("cat " + Utils.PSTORE_DEVINFO);
             }
-            files.add(outPath.getAbsolutePath() + "/pstore_console" + Utils.PRESCRUB);
-            files.add(outPath.getAbsolutePath() + "/pstore_devinfo" + Utils.PRESCRUB);
+            files.add(workingPath + "/pstore_console" + Utils.PRESCRUB);
+            files.add(workingPath + "/pstore_devinfo" + Utils.PRESCRUB);
         }
-        if(mCommand.isModemLog()){
-            if(mCommand.grep() && mCommand.getGrepOption() == GrepOption.MODEM
-                    || mCommand.getGrepOption() == GrepOption.ALL){
-                commands.add("logcat -v time -b radio -d | grep \""+mCommand.getGrep()+"\"");
+        if (mCommand.isModemLog()) {
+            if (mCommand.grep() && mCommand.getGrepOption() == GrepOption.MODEM
+                    || mCommand.getGrepOption() == GrepOption.ALL) {
+                commands.add("logcat -v time -b radio -d | grep \"" + mCommand.getGrep() + "\"");
             } else {
                 commands.add("logcat -v time -b radio -d");
             }
-            files.add(outPath.getAbsolutePath()+"/modem.log"+Utils.PRESCRUB);
+            files.add(workingPath + "/modem.log" + Utils.PRESCRUB);
         }
-        if(mCommand.isLastKernelLog()){
-            if(mCommand.grep() && mCommand.getGrepOption() == GrepOption.LAST_KERNEL
-                    || mCommand.getGrepOption() == GrepOption.ALL){
+        if (mCommand.isLastKernelLog()) {
+            if (mCommand.grep() && mCommand.getGrepOption() == GrepOption.LAST_KERNEL
+                    || mCommand.getGrepOption() == GrepOption.ALL) {
                 //Log should be run through grep
-                commands.add("cat "+Utils.LAST_KMSG+" | grep \""+mCommand.getGrep()+"\"");
+                commands.add("cat "+Utils.LAST_KMSG+" | grep \"" + mCommand.getGrep() + "\"");
             } else {
                 //Try copying the last_kmsg over
                 commands.add("cat "+Utils.LAST_KMSG);
             }
-            files.add(outPath.getAbsolutePath()+"/last_kmsg.log"+Utils.PRESCRUB);
+            files.add(workingPath + "/last_kmsg.log" + Utils.PRESCRUB);
         }
-        if(mCommand.isAuditLog()){
-            commands.add("cat "+Utils.AUDIT_LOG);
-            files.add(outPath.getAbsolutePath()+"/audit.log");
-            commands.add("cat "+Utils.AUDIT_OLD_LOG);
-            files.add(outPath.getAbsolutePath()+"/audit.old");
+        if (mCommand.isAuditLog()) {
+            commands.add("cat " + Utils.AUDIT_LOG);
+            files.add(workingPath + "/audit.log");
+            commands.add("cat " + Utils.AUDIT_OLD_LOG);
+            files.add(workingPath + "/audit.old");
         }
 
         Shell.Builder builder = new Shell.Builder();
-
         //Run the commands
-        if(mCommand.hasRoot()){
+        if (mCommand.hasRoot()) {
             builder.useSU();
         } else {
             builder.useSH();
@@ -215,7 +211,7 @@ public class GrabLogThread implements Runnable {
         EventBus.getDefault().post(update);
 
         final Shell.Interactive shell = builder.open();
-        runComamnds(shell, commands, files);
+        runCommands(shell, commands, files);
     }
 
     /**
@@ -223,7 +219,7 @@ public class GrabLogThread implements Runnable {
      * @param success
      */
     private void commandsComplete(boolean success) {
-        if(!success){
+        if (!success) {
             mResult.setSuccess(false);
             mResult.setMessage(R.string.error);
             postResult();
@@ -231,12 +227,12 @@ public class GrabLogThread implements Runnable {
         }
 
         // Scrub the files
-        Utils.scrubFiles(mContext, finalPath, !mCommand.isScrubEnabled());
+        Utils.scrubFiles(mContext, workingPath, !mCommand.isScrubEnabled());
 
         //If there are notes, write them to a notes file
         if (mCommand.getNotes() != null && mCommand.getNotes().length() > 0) {
             try {
-                File noteFile = new File(finalPath + "/notes.txt");
+                File noteFile = new File(workingPath + "/notes.txt");
                 FileWriter writer = new FileWriter(noteFile);
                 writer.write(mCommand.getNotes());
                 writer.close();
@@ -246,11 +242,11 @@ public class GrabLogThread implements Runnable {
         }
 
         // Append the users input into the zip
-        String archivePath;
+        String archiveName;
         if (mCommand.getAppendText().length() > 0) {
-            archivePath = sdf.format(date) + "-" + mCommand.getAppendText() + ".zip";
+            archiveName = sdf.format(date) + "-" + mCommand.getAppendText() + ".zip";
         } else {
-            archivePath = sdf.format(date) + ".zip";
+            archiveName = sdf.format(date) + ".zip";
         }
         try {
             // Send a progress update
@@ -258,9 +254,8 @@ public class GrabLogThread implements Runnable {
             update.messageResource = R.string.compressing_logs;
             EventBus.getDefault().post(update);
 
-            ZipWriter writer = new ZipWriter(finalPath, archivePath);
-            archivePath = finalPath + archivePath;
-            mResult.setArchivePath(archivePath);
+            ZipWriter writer = new ZipWriter(mContext, workingPath, archiveName);
+            mResult.setArchiveName(archiveName);
 
             writer.createZip();
             mResult.setSuccess(true);
@@ -290,7 +285,7 @@ public class GrabLogThread implements Runnable {
      * @param commands
      * @param outputFiles
      */
-    private void runComamnds(final Shell.Interactive shell, final List<String> commands, final List<String> outputFiles){
+    private void runCommands(final Shell.Interactive shell, final List<String> commands, final List<String> outputFiles){
         if(commands.size() == 0){
             commandsComplete(true);
             return;
@@ -310,7 +305,7 @@ public class GrabLogThread implements Runnable {
                     } catch(IOException e){
                         Log.e("Exception closing writer", e);
                     }
-                    runComamnds(shell, commands, outputFiles);
+                    runCommands(shell, commands, outputFiles);
                 }
 
                 @Override

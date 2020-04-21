@@ -88,7 +88,7 @@ public abstract class AbstractRawFileDialog extends DialogFragment {
     }
 
     private String readRawTextFile(@RawRes int id) {
-        InputStream inputStream = getActivity().getResources().openRawResource(id);
+        InputStream inputStream = getResources().openRawResource(id);
         InputStreamReader in = new InputStreamReader(inputStream);
         BufferedReader buf = new BufferedReader(in);
         String line;
