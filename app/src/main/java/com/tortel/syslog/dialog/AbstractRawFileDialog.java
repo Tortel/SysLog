@@ -72,7 +72,7 @@ public abstract class AbstractRawFileDialog extends DialogFragment {
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 
-        LayoutInflater inflater = getLayoutInflater();
+        LayoutInflater inflater = getActivity().getLayoutInflater();
         View view = inflater.inflate(R.layout.dialog_rawfile, null);
         TextView text = view.findViewById(R.id.text);
 
