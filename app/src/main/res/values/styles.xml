@@ -20,8 +20,10 @@
 <resources xmlns:android="http://schemas.android.com/apk/res/android">
     <style name="Theme.SysLog.Base" parent="Theme.MaterialComponents">
         <item name="colorPrimary">@color/primary</item>
-        <item name="colorPrimaryDark">@color/primary_dark</item>
-        <item name="colorAccent">@color/accent</item>
+        <item name="colorPrimaryVariant">@color/primary_dark</item>
+        <item name="colorSecondary">@color/accent</item>
+        <item name="colorSecondaryVariant">@color/accentVariant</item>
+        <item name="android:statusBarColor">@color/primary</item>
     </style>
 
     <style name="Theme.SysLog" parent="Theme.SysLog.Base">
