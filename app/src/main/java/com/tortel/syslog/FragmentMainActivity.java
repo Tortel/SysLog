@@ -24,10 +24,9 @@ import android.preference.PreferenceManager;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.FragmentManager;
 import androidx.appcompat.app.AppCompatActivity;
-import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 
+import com.google.android.material.appbar.MaterialToolbar;
 import com.tortel.syslog.dialog.AboutDialog;
 import com.tortel.syslog.dialog.AboutLogcatDialog;
 import com.tortel.syslog.dialog.ClearBufferDialog;
@@ -53,7 +52,42 @@ public class FragmentMainActivity extends AppCompatActivity implements EasyPermi
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.fragment_activity);
+        setContentView(R.layout.activity_main);
+
+        MaterialToolbar toolBar = findViewById(R.id.topAppBar);
+        toolBar.setOnMenuItemClickListener((MenuItem item) -> {
+            switch(item.getItemId()){
+                case R.id.live_logcat:
+                    Intent intent = new Intent(this, LiveLogActivity.class);
+                    startActivity(intent);
+                    return true;
+                case R.id.clean_all:
+                    new Utils.CleanAllTask(getBaseContext()).execute();
+                    return true;
+                case R.id.clear_buffer:
+                    // Check if we should just do it, or show the dialog
+                    SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+                    if(prefs.getBoolean(Prefs.KEY_NO_BUFFER_WARN, false)) {
+                        // Just run the task
+                        new Utils.ClearLogcatBufferTask(getApplicationContext()).execute();
+                    } else {
+                        // Show the dialog
+                        showClearBufferConfirmation();
+                    }
+                    return true;
+                case R.id.about:
+                    showAboutDialog();
+                    return true;
+                case R.id.about_live:
+                    showAboutLiveLogcatDialog();
+                    return true;
+                case R.id.faq:
+                    showFaqDialog();
+                    return true;
+                default:
+                    return super.onOptionsItemSelected(item);
+            }
+        });
 
         FragmentManager fragmentManager = getSupportFragmentManager();
         if(fragmentManager.findFragmentById(R.id.content_frame) == null){
@@ -87,48 +121,6 @@ public class FragmentMainActivity extends AppCompatActivity implements EasyPermi
             EasyPermissions.requestPermissions(this, getString(R.string.scrub_permission_detail), SCRUB_PERMISSIONS_REQUEST_CODE, SCRUB_PERMISSIONS);
         }
         return hasPermissions;
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu){
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.main_menu, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item){
-        switch(item.getItemId()){
-            case R.id.live_logcat:
-                Intent intent = new Intent(this, LiveLogActivity.class);
-                startActivity(intent);
-                return true;
-            case R.id.clean_all:
-                new Utils.CleanAllTask(getBaseContext()).execute();
-                return true;
-            case R.id.clear_buffer:
-                // Check if we should just do it, or show the dialog
-                SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-                if(prefs.getBoolean(Prefs.KEY_NO_BUFFER_WARN, false)) {
-                    // Just run the task
-                    new Utils.ClearLogcatBufferTask(getApplicationContext()).execute();
-                } else {
-                    // Show the dialog
-                    showClearBufferConfirmation();
-                }
-                return true;
-            case R.id.about:
-                showAboutDialog();
-                return true;
-            case R.id.about_live:
-                showAboutLiveLogcatDialog();
-                return true;
-            case R.id.faq:
-                showFaqDialog();
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
-        }
     }
 
     @Override

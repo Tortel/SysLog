@@ -18,14 +18,20 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 -->
 <resources xmlns:android="http://schemas.android.com/apk/res/android">
-    <style name="Theme.SysLog.Base" parent="Theme.MaterialComponents">
+    <style name="Theme.SysLog" parent="Theme.MaterialComponents.NoActionBar">
         <item name="colorPrimary">@color/primary</item>
         <item name="colorPrimaryVariant">@color/primary_dark</item>
+        <item name="colorOnPrimary">@android:color/white</item>
         <item name="colorSecondary">@color/accent</item>
         <item name="colorSecondaryVariant">@color/accentVariant</item>
-        <item name="android:statusBarColor">@color/primary</item>
+        <item name="android:statusBarColor">@color/primary_dark</item>
+
+        <item name="android:colorBackground">?attr/colorSurface</item>
+
+        <item name="textInputStyle">@style/Widget.App.TextInputLayout</item>
     </style>
 
-    <style name="Theme.SysLog" parent="Theme.SysLog.Base">
+    <style name="Widget.App.TextInputLayout" parent="Widget.Design.TextInputLayout">
+        <!-- Custom attrs -->
     </style>
 </resources>
