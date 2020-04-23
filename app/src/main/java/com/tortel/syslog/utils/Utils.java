@@ -25,8 +25,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
-import android.os.AsyncTask;
+import android.os.Handler;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
 
 import com.tortel.syslog.R;
 import com.tortel.syslog.dialog.RunningDialog;
@@ -40,27 +42,27 @@ import eu.chainfire.libsuperuser.Shell;
  */
 public class Utils {
     public static final String LAST_KMSG = "/proc/last_kmsg";
-    public static final String AUDIT_LOG = "/data/misc/audit/audit.log";
-    public static final String AUDIT_OLD_LOG = "/data/misc/audit/audit.old";
-    public static final String PSTORE_CONSOLE = "/sys/fs/pstore/console-ramoops*";
-    public static final String PSTORE_DEVINFO = "/sys/fs/pstore/device*ramoops*";
+    static final String AUDIT_LOG = "/data/misc/audit/audit.log";
+    static final String AUDIT_OLD_LOG = "/data/misc/audit/audit.old";
+    static final String PSTORE_CONSOLE = "/sys/fs/pstore/console-ramoops*";
+    static final String PSTORE_DEVINFO = "/sys/fs/pstore/device*ramoops*";
 
-    public static final String PRESCRUB = "-prescrub";
+    static final String PRESCRUB = "-prescrub";
 
     /**
      * Runs the log file through the ScrubberUtils and removes the PRESCRUB extension
-     * @param context
+     * @param context context
      * @param path where to look for files
      * @param disable flag to simply rename the files to their final names
      */
-    public static void scrubFiles(Context context, String path, boolean disable) {
+    static void scrubFiles(Context context, String path, boolean disable) {
         // Send a progress update
         RunningDialog.ProgressUpdate update = new RunningDialog.ProgressUpdate();
         update.messageResource = R.string.scrubbing_logs;
         EventBus.getDefault().post(update);
 
         File logFolder = new File(path);
-        File logFiles[] = logFolder.listFiles();
+        File[] logFiles = logFolder.listFiles();
         for(File file : logFiles){
             // Save it to a file without the PRESCRUB extension
             File outFile = new File(path + "/" + file.getName().replace(PRESCRUB, ""));
@@ -82,9 +84,6 @@ public class Utils {
 
     /**
      * Check if there is an app available to handle the provided intent
-     * @param ctx
-     * @param intent
-     * @return
      */
     public static boolean isHandlerAvailable(Context ctx, Intent intent) {
         final PackageManager mgr = ctx.getPackageManager();
@@ -94,54 +93,43 @@ public class Utils {
      }
 
     /**
-     * Task to clear the logcat buffer (logcat -c)
+     * Send a request to clear the logcat buffer (logcat -c)
      */
-    public static class ClearLogcatBufferTask extends AsyncTask<Void, Void, Void> {
-        private Context context;
+     public static void clearLogcatBuffer(@NonNull final Context context) {
+         (new Thread() {
+            @Override
+            public void run() {
+                if (Shell.SU.available()) {
+                    Shell.SU.run("logcat -c");
+                } else {
+                    Shell.SH.run("logcat -c");
+                }
+                Handler mainHandler = new Handler(context.getMainLooper());
+                mainHandler.post(() -> {
+                    Toast.makeText(context, R.string.buffer_cleared, Toast.LENGTH_SHORT).show();
+                });
+            }
+        }).start();
+     }
 
-        public ClearLogcatBufferTask(Context context){
-            this.context = context.getApplicationContext();
-        }
-
-        @Override
-        protected Void doInBackground(Void... params){
-            Shell.SU.run("logcat -c");
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(Void param){
-            Toast.makeText(context, R.string.buffer_cleared, Toast.LENGTH_SHORT).show();
-        }
-
-    }
-    
     /**
      * Clean all the saved log files
      */
-    public static class CleanAllTask extends AsyncTask<Void, Void, Void>{
-        private Context context;
-        private double startingSpace;
-        private double endingSpace;
-
-        public CleanAllTask(Context context){
-            this.context = context.getApplicationContext();
-        }
-
-        @Override
-        protected Void doInBackground(Void... params) {
-            startingSpace = FileUtils.getStorageFreeSpace(context);
-            String path = FileUtils.getRootLogDir(context).getPath();
-            path += "/*";
-            Shell.SH.run("rm -rf "+path);
-            endingSpace = FileUtils.getStorageFreeSpace(context);
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(Void param){
-            Toast.makeText(context, context.getResources().getString(R.string.space_freed,
-                    endingSpace - startingSpace), Toast.LENGTH_SHORT).show();
-        }
-    }
+     public static void cleanAll(@NonNull final Context context) {
+         (new Thread() {
+             @Override
+             public void run() {
+                 final double startingSpace = FileUtils.getStorageFreeSpace(context);
+                 String path = FileUtils.getRootLogDir(context).getPath();
+                 path += "/*";
+                 Shell.SH.run("rm -rf " + path);
+                 final double endingSpace = FileUtils.getStorageFreeSpace(context);
+                 Handler mainHandler = new Handler(context.getMainLooper());
+                 mainHandler.post(() -> {
+                     Toast.makeText(context, context.getResources().getString(R.string.space_freed,
+                             endingSpace - startingSpace), Toast.LENGTH_SHORT).show();
+                 });
+             }
+         }).start();
+     }
 }

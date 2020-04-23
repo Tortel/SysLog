@@ -90,7 +90,7 @@ public class LowSpaceDialog extends DialogFragment implements DialogInterface.On
     public void onClick(DialogInterface dialog, int which) {
         switch(which){
         case DialogInterface.BUTTON_POSITIVE:
-            new Utils.CleanAllTask(getActivity()).execute();
+            Utils.cleanAll(getActivity());
             result = null;
             this.dismiss();
             return;

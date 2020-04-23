@@ -62,14 +62,14 @@ public class FragmentMainActivity extends AppCompatActivity implements EasyPermi
                     startActivity(intent);
                     return true;
                 case R.id.clean_all:
-                    new Utils.CleanAllTask(getBaseContext()).execute();
+                    Utils.cleanAll(this);
                     return true;
                 case R.id.clear_buffer:
                     // Check if we should just do it, or show the dialog
                     SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
                     if(prefs.getBoolean(Prefs.KEY_NO_BUFFER_WARN, false)) {
                         // Just run the task
-                        new Utils.ClearLogcatBufferTask(getApplicationContext()).execute();
+                        Utils.cleanAll(this);
                     } else {
                         // Show the dialog
                         showClearBufferConfirmation();

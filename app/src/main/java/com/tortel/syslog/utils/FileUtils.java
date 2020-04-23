@@ -26,6 +26,7 @@ import java.io.File;
 
 public class FileUtils {
     private static final int MB_TO_BYTE = 1048576;
+    private static final String LOG_DIR = "/logs/";
     private static final String ZIP_DIR = "/compressed/";
 
     /**
@@ -39,19 +40,8 @@ public class FileUtils {
      */
     public static double getStorageFreeSpace(Context context){
         StatFs stat = new StatFs(getRootLogDir(context).getPath());
-        double sdAvailSize = (double)stat.getAvailableBlocks()
-                * (double)stat.getBlockSize();
-        return Math.floor(sdAvailSize / MB_TO_BYTE);
-    }
-
-    /**
-     * Gets the free space of the volume containing the specified path, in MB
-     * @return the space
-     */
-    public static double getStorageFreeSpace(String path){
-        StatFs stat = new StatFs(path);
-        double sdAvailSize = (double)stat.getAvailableBlocks()
-                * (double)stat.getBlockSize();
+        double sdAvailSize = (double)stat.getAvailableBlocksLong()
+                * (double)stat.getBlockSizeLong();
         return Math.floor(sdAvailSize / MB_TO_BYTE);
     }
 
@@ -60,14 +50,18 @@ public class FileUtils {
      * @return the working directory. This is a directory that will always exist
      */
     public static @NonNull File getRootLogDir(Context context) {
-        return context.getCacheDir();
+        File logDir = new File(context.getCacheDir().getAbsolutePath() + LOG_DIR);
+        if (!logDir.isDirectory()) {
+            logDir.mkdir();
+        }
+        return logDir;
     }
 
     /**
      * Get the directory with all of the compressed logs
      * @return the compressed logs directory. This will always exist
      */
-    public static @NonNull File getZipDir(Context context) {
+    static @NonNull File getZipDir(Context context) {
         File zipDir = new File(context.getCacheDir().getAbsolutePath() + ZIP_DIR);
         // Make sure the directory exists
         if (!zipDir.isDirectory()) {

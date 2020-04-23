@@ -81,7 +81,7 @@ public class ClearBufferDialog extends DialogFragment implements DialogInterface
                 editor.apply();
             }
             // Run the task to clear the buffer
-            new Utils.ClearLogcatBufferTask(getContext()).execute();
+            Utils.clearLogcatBuffer(getActivity());
         }
     }
 }

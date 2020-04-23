@@ -20,6 +20,8 @@ package com.tortel.syslog;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.appcompat.app.AppCompatActivity;
@@ -100,7 +102,6 @@ public class LiveLogActivity extends AppCompatActivity {
     }
 
     public static class LiveLogFragment extends Fragment {
-        private EmulatorView mEmulatorView;
         private TermSession mTermSession = new TermSession();
 
         @Override
@@ -112,18 +113,16 @@ public class LiveLogActivity extends AppCompatActivity {
         /**
          * Stop the logcat process
          */
-        public void stop(){
+        void stop(){
             mTermSession.stopLogcat();
             Toast.makeText(getActivity(), R.string.stopped_logcat, Toast.LENGTH_SHORT).show();
         }
 
         @Override
-        public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
             DisplayMetrics metrics = new DisplayMetrics();
             getActivity().getWindowManager().getDefaultDisplay().getMetrics(metrics);
-            mEmulatorView = new EmulatorView(getActivity().getBaseContext(), mTermSession, metrics);
-
-            return mEmulatorView;
+            return new EmulatorView(getActivity().getBaseContext(), mTermSession, metrics);
         }
 
         @Override
