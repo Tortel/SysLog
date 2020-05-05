@@ -19,8 +19,8 @@ package com.tortel.syslog.fragment;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
 import android.preference.PreferenceManager;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -163,13 +163,13 @@ public class MainFragment extends Fragment implements View.OnClickListener {
 
         // Check for root
         if(!root){
-            new CheckRootTask().execute();
+            checkRoot();
         } else {
             enableLogButton(true);
         }
 
         //Check for last_kmsg and modem
-        new CheckOptionsTask().execute();
+        checkOptions();
 
         //Set the checkboxes
         setCheckBoxes();
@@ -289,68 +289,76 @@ public class MainFragment extends Fragment implements View.OnClickListener {
      * Checks if options are available, such as last_kmsg or a radio.
      * If they are not available, disable the check boxes.
      */
-    private class CheckOptionsTask extends AsyncTask<Void, Void, Void> {
-        private boolean hasLastKmsg = false;
-        private boolean hasRadio = false;
-
-        @Override
-        protected Void doInBackground(Void... params) {
-            Log.d("Checking if last_kmsg and radio are available");
-            File lastKmsg = new File(Utils.LAST_KMSG);
-            hasLastKmsg = lastKmsg.exists();
-            try {
-                TelephonyManager manager = (TelephonyManager) getActivity().getSystemService(Context.TELEPHONY_SERVICE);
-                hasRadio = manager.getPhoneType() != TelephonyManager.PHONE_TYPE_NONE;
-            } catch (Exception e) {
-                // Default to true - most of the crashes here are on phones
-                hasRadio = true;
-            }
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(Void param){
-            if(!hasLastKmsg){
-                CheckBox lastKmsgBox = (CheckBox) getView().findViewById(R.id.last_kmsg);
-                lastKmsgBox.setChecked(false);
-                lastKmsgBox.setEnabled(false);
-                onClick(lastKmsgBox);
-            }
-            if(!hasRadio){
-                CheckBox modemCheckBox = (CheckBox) getView().findViewById(R.id.modem_log);
-                modemCheckBox.setChecked(false);
-                modemCheckBox.setEnabled(false);
-                onClick(modemCheckBox);
-            }
-        }
-    }
-
-    private class CheckRootTask extends AsyncTask<Void, Void, Boolean>{
-        @Override
-        protected Boolean doInBackground(Void... params) {
-            Log.d("Checking for root");
-            root = Shell.SU.available();
-            return root;
-        }
-
-        @Override
-        protected void onPostExecute(Boolean root){
-            try {
-                //Check for root access
-                if (!root) {
-                    Log.d("Root not available");
-                    //Warn the user
-                    TextView noRoot = getView().findViewById(R.id.warn_root);
-                    Linkify.addLinks(noRoot, Linkify.ALL);
-                    noRoot.setMovementMethod(LinkMovementMethod.getInstance());
-                    noRoot.setVisibility(View.VISIBLE);
+    private void checkOptions() {
+        final Context context = getContext();
+        (new Thread(){
+            @Override
+            public void run() {
+                final boolean hasLastKmsg ;
+                final boolean hasRadio;
+                boolean hasRadioTemp;
+                Log.d("Checking if last_kmsg and radio are available");
+                File lastKmsg = new File(Utils.LAST_KMSG);
+                hasLastKmsg = lastKmsg.exists();
+                try {
+                    TelephonyManager manager = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
+                    hasRadioTemp = manager.getPhoneType() != TelephonyManager.PHONE_TYPE_NONE;
+                } catch (Exception e) {
+                    // Default to true - most of the crashes here are on phones
+                    hasRadioTemp = true;
                 }
 
-                enableLogButton(true);
-            } catch (NullPointerException e) {
-                // Supress it
+                hasRadio = hasRadioTemp;
+                Handler mainHandler = new Handler(context.getMainLooper());
+                mainHandler.post(() -> {
+                    View view = getView();
+                    if (view != null) {
+                        if(!hasLastKmsg){
+                            CheckBox lastKmsgBox = getView().findViewById(R.id.last_kmsg);
+                            lastKmsgBox.setChecked(false);
+                            lastKmsgBox.setEnabled(false);
+                            onClick(lastKmsgBox);
+                        }
+                        if(!hasRadio){
+                            CheckBox modemCheckBox = getView().findViewById(R.id.modem_log);
+                            modemCheckBox.setChecked(false);
+                            modemCheckBox.setEnabled(false);
+                            onClick(modemCheckBox);
+                        }
+                    }
+                });
             }
-        }
+        }).start();
+    }
+
+    private void checkRoot() {
+        final Context context = getContext();
+        (new Thread() {
+
+            @Override
+            public void run() {
+                Log.d("Checking for root");
+                final boolean root = Shell.SU.available();
+                Handler mainHandler = new Handler(context.getMainLooper());
+                mainHandler.post(() -> {
+                    try {
+                        //Check for root access
+                        if (!root) {
+                            Log.d("Root not available");
+                            //Warn the user
+                            TextView noRoot = getView().findViewById(R.id.warn_root);
+                            Linkify.addLinks(noRoot, Linkify.ALL);
+                            noRoot.setMovementMethod(LinkMovementMethod.getInstance());
+                            noRoot.setVisibility(View.VISIBLE);
+                        }
+
+                        enableLogButton(true);
+                    } catch (NullPointerException e) {
+                        // Supress it
+                    }
+                });
+            }
+        }).start();
     }
 
 }
