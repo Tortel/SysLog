@@ -139,7 +139,7 @@ public class MainFragment extends Fragment implements View.OnClickListener {
             return;
         }
         Log.d("Enabling log button: "+flag);
-        Button button = (Button) getView().findViewById(R.id.take_log);
+        Button button = getView().findViewById(R.id.take_log);
         button.setEnabled(flag);
         button.setText(R.string.take_log);
     }
@@ -338,7 +338,7 @@ public class MainFragment extends Fragment implements View.OnClickListener {
             @Override
             public void run() {
                 Log.d("Checking for root");
-                final boolean root = Shell.SU.available();
+                root = Shell.SU.available();
                 Handler mainHandler = new Handler(context.getMainLooper());
                 mainHandler.post(() -> {
                     try {
