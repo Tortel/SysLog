@@ -61,7 +61,7 @@ public class FileUtils {
      * Get the directory with all of the compressed logs
      * @return the compressed logs directory. This will always exist
      */
-    static @NonNull File getZipDir(Context context) {
+    public static @NonNull File getZipDir(Context context) {
         File zipDir = new File(context.getCacheDir().getAbsolutePath() + ZIP_DIR);
         // Make sure the directory exists
         if (!zipDir.isDirectory()) {
