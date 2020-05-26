@@ -44,6 +44,9 @@
         <activity android:name=".LiveLogActivity"
             android:label="@string/live_logcat" />
 
+        <activity android:name=".LicenseActivity"
+            android:label="@string/licenses" />
+
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="com.tortel.syslog.fileprovider"

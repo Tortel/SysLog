@@ -50,9 +50,10 @@ public class FragmentMainActivity extends AppCompatActivity {
 
         MaterialToolbar toolBar = findViewById(R.id.topAppBar);
         toolBar.setOnMenuItemClickListener((MenuItem item) -> {
+            Intent intent;
             switch(item.getItemId()){
                 case R.id.live_logcat:
-                    Intent intent = new Intent(this, LiveLogActivity.class);
+                    intent = new Intent(this, LiveLogActivity.class);
                     startActivity(intent);
                     return true;
                 case R.id.clean_all:
@@ -78,6 +79,9 @@ public class FragmentMainActivity extends AppCompatActivity {
                 case R.id.faq:
                     showFaqDialog();
                     return true;
+                case R.id.license:
+                    intent = new Intent(this, LicenseActivity.class);
+                    startActivity(intent);
                 default:
                     return super.onOptionsItemSelected(item);
             }

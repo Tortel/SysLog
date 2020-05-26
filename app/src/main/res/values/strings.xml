@@ -99,4 +99,13 @@ Please enable root access and try again.</string>
 	<string name="oh_shit_message">You don\'t seem to have an email application installed. SysLog will now crash.
 	    If you have the option, please send a report through the force close dialog.</string>
 
+    <!-- License info strings -->
+    <string name="licenses">Third Party Licenses</string>
+    <string name="lib_androidx">AndroidX Support Libraries</string>
+    <string name="lib_material">Material Components Library</string>
+    <string name="lib_libsuperuser">libsuperuser</string>
+    <string name="lib_eventbus">EventBus</string>
+    <string name="lib_termview">Android-Terminal-Emulator</string>
+    <string name="lib_licenseview">LicenseView</string>
+
 </resources>
