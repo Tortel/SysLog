@@ -21,7 +21,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import androidx.annotation.NonNull;
 import androidx.fragment.app.FragmentManager;
 import androidx.appcompat.app.AppCompatActivity;
 import android.view.MenuItem;
@@ -39,16 +38,10 @@ import com.tortel.syslog.utils.Utils;
 
 import java.util.List;
 
-import pub.devrel.easypermissions.EasyPermissions;
-
 /**
  * Main activity, fragment version
  */
-public class FragmentMainActivity extends AppCompatActivity implements EasyPermissions.PermissionCallbacks {
-    public static final String[] REQUIRED_PERMISSIONS = {};
-    public static final int REQUIRED_PERMISSIONS_REQUEST_CODE = 10;
-    public static final String[] SCRUB_PERMISSIONS = {};
-    public static final int SCRUB_PERMISSIONS_REQUEST_CODE = 11;
+public class FragmentMainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -96,39 +89,6 @@ public class FragmentMainActivity extends AppCompatActivity implements EasyPermi
             MainFragment frag = new MainFragment();
             fragmentManager.beginTransaction().replace(R.id.content_frame, frag).commit();
         }
-
-        checkRequiredPermissions();
-    }
-
-    /**
-     * Check that we were granted runtime permissions
-     */
-    public boolean checkRequiredPermissions(){
-        // Check for permissions
-        boolean hasPermissions = EasyPermissions.hasPermissions(this, REQUIRED_PERMISSIONS);
-        if(!hasPermissions){
-            EasyPermissions.requestPermissions(this, getString(R.string.required_permission_detail), REQUIRED_PERMISSIONS_REQUEST_CODE, REQUIRED_PERMISSIONS);
-        }
-        return hasPermissions;
-    }
-
-    /**
-     * Check that we were granted the permissions needed to scrub the logs
-     */
-    public boolean checkScrubPermissions(){
-        // Check for permissions
-        boolean hasPermissions = EasyPermissions.hasPermissions(this, SCRUB_PERMISSIONS);
-        if(!hasPermissions){
-            EasyPermissions.requestPermissions(this, getString(R.string.scrub_permission_detail), SCRUB_PERMISSIONS_REQUEST_CODE, SCRUB_PERMISSIONS);
-        }
-        return hasPermissions;
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int resultCode, @NonNull String[] permissions, @NonNull int[] grantResults){
-        super.onRequestPermissionsResult(resultCode, permissions, grantResults);
-        // Pass everything to EasyPermissions
-        EasyPermissions.onRequestPermissionsResult(resultCode, permissions, grantResults, this);
     }
 
     /**
@@ -161,15 +121,5 @@ public class FragmentMainActivity extends AppCompatActivity implements EasyPermi
     private void showFaqDialog(){
         FaqDialog dialog = new FaqDialog();
         dialog.show(getSupportFragmentManager(), "faq");
-    }
-
-    @Override
-    public void onPermissionsGranted(int requestCode, @NonNull List<String> perms) {
-
-    }
-
-    @Override
-    public void onPermissionsDenied(int requestCode, @NonNull List<String> perms) {
-
     }
 }
