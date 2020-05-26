@@ -32,6 +32,7 @@ import com.tortel.syslog.dialog.AboutLogcatDialog;
 import com.tortel.syslog.dialog.ClearBufferDialog;
 import com.tortel.syslog.dialog.FaqDialog;
 import com.tortel.syslog.fragment.MainFragment;
+import com.tortel.syslog.utils.FileUtils;
 import com.tortel.syslog.utils.Log;
 import com.tortel.syslog.utils.Prefs;
 import com.tortel.syslog.utils.Utils;
@@ -62,14 +63,14 @@ public class FragmentMainActivity extends AppCompatActivity implements EasyPermi
                     startActivity(intent);
                     return true;
                 case R.id.clean_all:
-                    Utils.cleanAll(this);
+                    FileUtils.cleanAllLogs(this);
                     return true;
                 case R.id.clear_buffer:
                     // Check if we should just do it, or show the dialog
                     SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
                     if(prefs.getBoolean(Prefs.KEY_NO_BUFFER_WARN, false)) {
                         // Just run the task
-                        Utils.cleanAll(this);
+                        Utils.clearLogcatBuffer(this);
                     } else {
                         // Show the dialog
                         showClearBufferConfirmation();

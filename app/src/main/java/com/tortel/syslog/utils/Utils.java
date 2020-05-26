@@ -112,24 +112,4 @@ public class Utils {
         }).start();
      }
 
-    /**
-     * Clean all the saved log files
-     */
-     public static void cleanAll(@NonNull final Context context) {
-         (new Thread() {
-             @Override
-             public void run() {
-                 final double startingSpace = FileUtils.getStorageFreeSpace(context);
-                 String path = FileUtils.getRootLogDir(context).getPath();
-                 path += "/*";
-                 Shell.SH.run("rm -rf " + path);
-                 final double endingSpace = FileUtils.getStorageFreeSpace(context);
-                 Handler mainHandler = new Handler(context.getMainLooper());
-                 mainHandler.post(() -> {
-                     Toast.makeText(context, context.getResources().getString(R.string.space_freed,
-                             endingSpace - startingSpace), Toast.LENGTH_SHORT).show();
-                 });
-             }
-         }).start();
-     }
 }

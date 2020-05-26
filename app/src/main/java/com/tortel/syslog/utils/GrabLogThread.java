@@ -27,8 +27,6 @@ import com.tortel.syslog.ZipWriter;
 import com.tortel.syslog.dialog.RunningDialog;
 import com.tortel.syslog.exception.CreateFolderException;
 import com.tortel.syslog.exception.LowSpaceException;
-import com.tortel.syslog.exception.NoFilesException;
-import com.tortel.syslog.exception.RunCommandException;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -77,12 +75,13 @@ public class GrabLogThread implements Runnable {
             runCommand();
         } catch (Exception e) {
             Log.e("Exception while getting logs", e);
-            // Mark the thread as no longer running
-            isRunning = false;
             // Post the result
             mResult.setSuccess(false);
             mResult.setException(e);
             EventBus.getDefault().post(mResult);
+        } finally {
+            // Mark the thread as no longer running
+            isRunning = false;
         }
 
         Log.v("Done grabbing logs");
@@ -90,15 +89,8 @@ public class GrabLogThread implements Runnable {
 
     /**
      * Runs the {@link com.tortel.syslog.RunCommand} contained within the {@link com.tortel.syslog.Result} passed in.<br />
-     * On an error
-     * @throws CreateFolderException
-     * @throws RunCommandException
-     * @throws IOException
-     * @throws NoFilesException
-     * @throws LowSpaceException
      */
-    private void runCommand() throws CreateFolderException,
-            RunCommandException, IOException, NoFilesException, LowSpaceException {
+    private void runCommand() throws CreateFolderException, LowSpaceException {
 
         //Check how much space is on the primary storage
         double freeSpace = FileUtils.getStorageFreeSpace(mContext);
@@ -216,7 +208,6 @@ public class GrabLogThread implements Runnable {
 
     /**
      * Called when the commands are complete
-     * @param success
      */
     private void commandsComplete(boolean success) {
         if (!success) {
@@ -272,8 +263,6 @@ public class GrabLogThread implements Runnable {
      */
     private void postResult(){
         Log.v("Done getting logs");
-        // Mark the thread as no longer running
-        isRunning = false;
 
         // Post the result
         EventBus.getDefault().post(mResult);
@@ -281,9 +270,6 @@ public class GrabLogThread implements Runnable {
 
     /**
      * Run the commands provided, and write the output to the path provided
-     * @param shell
-     * @param commands
-     * @param outputFiles
      */
     private void runCommands(final Shell.Interactive shell, final List<String> commands, final List<String> outputFiles){
         if(commands.size() == 0){
@@ -327,7 +313,6 @@ public class GrabLogThread implements Runnable {
 
     /**
      * Check if a thread is currently running
-     * @return
      */
     public static boolean isRunning(){
         return isRunning;

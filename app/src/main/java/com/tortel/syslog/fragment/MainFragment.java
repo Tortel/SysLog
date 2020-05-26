@@ -42,6 +42,8 @@ import com.tortel.syslog.GrepOption;
 import com.tortel.syslog.R;
 import com.tortel.syslog.RunCommand;
 import com.tortel.syslog.dialog.RunningDialog;
+import com.tortel.syslog.utils.FileUtils;
+import com.tortel.syslog.utils.GrabLogThread;
 import com.tortel.syslog.utils.Log;
 import com.tortel.syslog.utils.Prefs;
 import com.tortel.syslog.utils.Utils;
@@ -74,6 +76,11 @@ public class MainFragment extends Fragment implements View.OnClickListener {
         super.onCreate(savedInstanceState);
         setRetainInstance(true);
         loadSettings();
+
+        if (savedInstanceState == null && !GrabLogThread.isRunning()) {
+            // Clean all uncompressed logs
+            FileUtils.cleanAllUncompressed(getContext());
+        }
     }
 
     private void loadSettings(){

@@ -30,7 +30,7 @@ import android.widget.TextView;
 
 import com.tortel.syslog.R;
 import com.tortel.syslog.Result;
-import com.tortel.syslog.utils.Utils;
+import com.tortel.syslog.utils.FileUtils;
 import com.tortel.syslog.exception.LowSpaceException;
 
 /**
@@ -90,7 +90,7 @@ public class LowSpaceDialog extends DialogFragment implements DialogInterface.On
     public void onClick(DialogInterface dialog, int which) {
         switch(which){
         case DialogInterface.BUTTON_POSITIVE:
-            Utils.cleanAll(getActivity());
+            FileUtils.cleanAllLogs(getActivity());
             result = null;
             this.dismiss();
             return;

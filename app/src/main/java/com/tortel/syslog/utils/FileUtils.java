@@ -18,11 +18,17 @@
 package com.tortel.syslog.utils;
 
 import android.content.Context;
+import android.os.Handler;
 import android.os.StatFs;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 
+import com.tortel.syslog.R;
+
 import java.io.File;
+
+import eu.chainfire.libsuperuser.Shell;
 
 public class FileUtils {
     private static final int MB_TO_BYTE = 1048576;
@@ -33,6 +39,41 @@ public class FileUtils {
      * Minimum amount of free space needed to not throw a LowSpaceException.
      */
     static final double MIN_FREE_SPACE = 10;
+
+    /**
+     * Clean all the saved log files, both uncompressed and compressed
+     */
+    public static void cleanAllLogs(@NonNull final Context context) {
+        (new Thread() {
+            @Override
+            public void run() {
+                final double startingSpace = getStorageFreeSpace(context);
+                String path = getStorageDir(context).getPath();
+                path += "/*";
+                Shell.SH.run("rm -rf " + path);
+                final double endingSpace = getStorageFreeSpace(context);
+                Handler mainHandler = new Handler(context.getMainLooper());
+                mainHandler.post(() -> {
+                    Toast.makeText(context, context.getResources().getString(R.string.space_freed,
+                            endingSpace - startingSpace), Toast.LENGTH_SHORT).show();
+                });
+            }
+        }).start();
+    }
+
+    /**
+     * Clean all uncompressed log files
+     */
+    public static void cleanAllUncompressed(@NonNull final Context context) {
+        (new Thread() {
+            @Override
+            public void run() {
+                String path = getRootLogDir(context).getPath();
+                path += "/*";
+                Shell.SH.run("rm -rf " + path);
+            }
+        }).start();
+    }
 
     /**
      * Gets the free space of the primary storage, in MB
@@ -46,11 +87,18 @@ public class FileUtils {
     }
 
     /**
+     * Get the main directory where we keep all logs
+     */
+    private static File getStorageDir(Context context) {
+        return context.getCacheDir();
+    }
+
+    /**
      * Return the root log working directory.
      * @return the working directory. This is a directory that will always exist
      */
     public static @NonNull File getRootLogDir(Context context) {
-        File logDir = new File(context.getCacheDir().getAbsolutePath() + LOG_DIR);
+        File logDir = new File(getStorageDir(context).getAbsolutePath() + LOG_DIR);
         if (!logDir.isDirectory()) {
             logDir.mkdir();
         }
@@ -62,7 +110,7 @@ public class FileUtils {
      * @return the compressed logs directory. This will always exist
      */
     public static @NonNull File getZipDir(Context context) {
-        File zipDir = new File(context.getCacheDir().getAbsolutePath() + ZIP_DIR);
+        File zipDir = new File(getStorageDir(context).getAbsolutePath() + ZIP_DIR);
         // Make sure the directory exists
         if (!zipDir.isDirectory()) {
             zipDir.mkdir();
