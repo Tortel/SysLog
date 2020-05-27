@@ -7,8 +7,8 @@ android {
         applicationId "com.tortel.syslog"
         minSdkVersion 21
         targetSdkVersion 29
-        versionCode 34
-        versionName "2.4.0"
+        versionCode 35
+        versionName "2.4.1"
     }
 
     buildTypes {
