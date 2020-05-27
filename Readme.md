@@ -1,7 +1,9 @@
 # SysLog
 
-This is a simple application that records various log types, and compresses them, currently as a tar file.  
-The logs are saved under the primary external storage folders named by the date and time.  
+This is a simple application that records various log types, and compresses them as a zip file.
+The logs are saved in the application's private cache directory named by the date and time.
+
+You can access the zip files through the system document picker - Select the SysLog app to view collected log zips.
 
 [<img src="https://play.google.com/intl/en_us/badges/images/generic/en-play-badge.png"
      alt="Get it on Google Play"
@@ -26,8 +28,9 @@ This command tells the phone's package manager to grant the READ_LOGS permission
 
 #### How exactly do I get adb working?
 
-There is a short guide on the Android developer site [here](https://developer.android.com/studio/run/device).
-More detailed guides can be found through a quick online search.
+There is a detailed guide from [XDA-Developers](https://www.xda-developers.com/what-is-adb/) for information on what ADB is, and how to set it up.
+
+There is also some official documentation [here](https://developer.android.com/studio/run/device).
 
 #### Do I need a computer to do this?
 
@@ -35,5 +38,5 @@ Yes. When you access a device over ADB, you have some privileged access. This ca
 
 ## Note about Root Access
 
-Even with granting the READ_LOGS permission to the app via adb, it may still not be possible to get all logs without root access on Android 4.2 or higher.
+Even with granting the READ_LOGS permission to the app via adb, it may still not be possible to get all logs without root access.
 The only logs that should work after granting permisssions are logcat and radio logs - the rest may still be restricted.
