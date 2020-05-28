@@ -1,3 +1,21 @@
+v2.4.1 (May 27, 2020)
+* Updated FAQs and About text
+
+v2.4.0 (May 27, 2020)
+* Darker theme
+* Change log storage to application's cache directory
+* Remove no longer used permissions
+* Logs collected can now be attached in other apps - select the SysLog app from the document picker to view collected log files
+
+v2.3.0 (February 17, 2020)
+* Dark theme
+* Fixes for Android 10
+* Improve error handling
+
+v2.2.1 (October 13, 2019)
+* Updated dependencies
+* Updated to API 29 per Play Store guidelines
+
 v2.2.0 (January 26, 2019)
 * Updated dependencies
 * Added instructions for rootless operation
