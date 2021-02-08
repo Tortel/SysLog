@@ -31,16 +31,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
-import android.widget.Button;
 import android.widget.CheckBox;
-import android.widget.EditText;
-import android.widget.Spinner;
-import android.widget.TextView;
 
-import com.tortel.syslog.FragmentMainActivity;
 import com.tortel.syslog.GrepOption;
 import com.tortel.syslog.R;
 import com.tortel.syslog.RunCommand;
+import com.tortel.syslog.databinding.MainBinding;
 import com.tortel.syslog.dialog.RunningDialog;
 import com.tortel.syslog.utils.FileUtils;
 import com.tortel.syslog.utils.GrabLogThread;
@@ -66,10 +62,7 @@ public class MainFragment extends Fragment implements View.OnClickListener {
     private boolean scrubLog;
 
     private boolean root;
-    private EditText fileEditText;
-    private EditText notesEditText;
-    private EditText grepEditText;
-    private Spinner grepSpinner;
+    private MainBinding binding;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -83,7 +76,7 @@ public class MainFragment extends Fragment implements View.OnClickListener {
         }
     }
 
-    private void loadSettings(){
+    private void loadSettings() {
         Log.d("Loading settings");
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity().getApplicationContext());
         kernelLog = prefs.getBoolean(Prefs.KEY_KERNEL, true);
@@ -99,69 +92,70 @@ public class MainFragment extends Fragment implements View.OnClickListener {
     /**
      * Sets the checkboxes according to what the user selected.
      */
-    private void setCheckBoxes(){
-        // prevent NPEs
-        if(getView() == null){
+    private void setCheckBoxes() {
+        // Prevent NPEs
+        if (binding == null) {
             return;
         }
         Log.d("Setting the checkboxes");
 
-        CheckBox box = getView().findViewById(R.id.main_log);
-        box.setChecked(mainLog);
-        box.setOnClickListener(this);
-        box = getView().findViewById(R.id.event_log);
-        box.setChecked(eventLog);
-        box.setOnClickListener(this);
-        box = getView().findViewById(R.id.modem_log);
-        box.setChecked(modemLog);
-        box.setOnClickListener(this);
-        box = getView().findViewById(R.id.kernel_log);
-        box.setChecked(kernelLog);
-        box.setOnClickListener(this);
-        box = getView().findViewById(R.id.last_kmsg);
-        box.setChecked(lastKmsg);
-        box.setOnClickListener(this);
-        box = getView().findViewById(R.id.pstore);
-        box.setChecked(pstore);
-        box.setOnClickListener(this);
-        box = getView().findViewById(R.id.scrub_logs);
-        box.setChecked(scrubLog);
-        box.setOnClickListener(this);
-        box = getView().findViewById(R.id.audit_log);
-        box.setChecked(auditLog);
-        box.setOnClickListener(this);
+        binding.mainLog.setChecked(mainLog);
+        binding.mainLog.setOnClickListener(this);
+
+        binding.eventLog.setChecked(eventLog);
+        binding.eventLog.setOnClickListener(this);
+
+        binding.modemLog.setChecked(modemLog);
+        binding.modemLog.setOnClickListener(this);
+
+        binding.kernelLog.setChecked(kernelLog);
+        binding.kernelLog.setOnClickListener(this);
+
+        binding.lastKmsg.setChecked(lastKmsg);
+        binding.lastKmsg.setOnClickListener(this);
+
+        binding.pstore.setChecked(pstore);
+        binding.pstore.setOnClickListener(this);
+
+        binding.scrubLogs.setChecked(scrubLog);
+        binding.scrubLogs.setOnClickListener(this);
+
+        binding.auditLog.setChecked(auditLog);
+        binding.auditLog.setOnClickListener(this);
 
         // Set the warning for modem logs
-        TextView view = getView().findViewById(R.id.warnings);
-        if(modemLog){
-            view.setText(R.string.warn_modem);
-            view.setVisibility(View.VISIBLE);
+        if (modemLog) {
+            binding.warnings.setText(R.string.warn_modem);
+            binding.warnings.setVisibility(View.VISIBLE);
         } else {
-            view.setVisibility(View.GONE);
+            binding.warnings.setVisibility(View.GONE);
         }
     }
 
-    private void enableLogButton(boolean flag){
-        if(getView() == null){
+    private void enableLogButton(boolean flag) {
+        if (binding == null)  {
             return;
         }
         Log.d("Enabling log button: "+flag);
-        Button button = getView().findViewById(R.id.take_log);
-        button.setEnabled(flag);
-        button.setText(R.string.take_log);
+
+        binding.takeLog.setEnabled(flag);
+        binding.takeLog.setText(R.string.take_log);
     }
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.main, container, false);
-        view.findViewById(R.id.take_log).setOnClickListener(this);
+        binding = MainBinding.inflate(inflater, container, false);
+        binding.takeLog.setOnClickListener(this);
 
-        fileEditText = view.findViewById(R.id.file_name);
-        notesEditText = view.findViewById(R.id.notes);
-        grepEditText = view.findViewById(R.id.grep_string);
-        grepSpinner = view.findViewById(R.id.grep_log);
+        return binding.getRoot();
+    }
 
-        return view;
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+
+        // Clear the binding
+        binding = null;
     }
 
     @Override
@@ -169,7 +163,7 @@ public class MainFragment extends Fragment implements View.OnClickListener {
         super.onViewCreated(view, savedInstanceState);
 
         // Check for root
-        if(!root){
+        if (!root) {
             checkRoot();
         } else {
             enableLogButton(true);
@@ -192,60 +186,50 @@ public class MainFragment extends Fragment implements View.OnClickListener {
             SharedPreferences.Editor prefs = PreferenceManager
                     .getDefaultSharedPreferences(getActivity()).edit();
 
-            switch (box.getId()) {
-                case R.id.kernel_log:
-                    kernelLog = box.isChecked();
-                    prefs.putBoolean(Prefs.KEY_KERNEL, kernelLog);
-                    break;
-                case R.id.last_kmsg:
-                    lastKmsg = box.isChecked();
-                    prefs.putBoolean(Prefs.KEY_LASTKMSG, lastKmsg);
-                    break;
-                case R.id.pstore:
-                    pstore = box.isChecked();
-                    prefs.putBoolean(Prefs.KEY_PSTORE, pstore);
-                    break;
-                case R.id.main_log:
-                    mainLog = box.isChecked();
-                    prefs.putBoolean(Prefs.KEY_MAIN, mainLog);
-                    break;
-                case R.id.event_log:
-                    eventLog = box.isChecked();
-                    prefs.putBoolean(Prefs.KEY_EVENT, eventLog);
-                    break;
-                case R.id.modem_log:
-                    modemLog = box.isChecked();
-                    prefs.putBoolean(Prefs.KEY_MODEM, modemLog);
-                    // Set the warning for modem logs
-                    TextView view = getView().findViewById(R.id.warnings);
-                    if (modemLog) {
-                        view.setText(R.string.warn_modem);
-                        view.setVisibility(View.VISIBLE);
-                    } else {
-                        view.setVisibility(View.GONE);
-                    }
-                    break;
-                case R.id.audit_log:
-                    auditLog = box.isChecked();
-                    prefs.putBoolean(Prefs.KEY_AUDIT, auditLog);
-                    break;
-                case R.id.scrub_logs:
-                    scrubLog = box.isChecked();
-                    prefs.putBoolean(Prefs.KEY_SCRUB, scrubLog);
-                    break;
+            if (box.getId() == R.id.kernel_log) {
+                kernelLog = box.isChecked();
+                prefs.putBoolean(Prefs.KEY_KERNEL, kernelLog);
+            } else if (box.getId() == R.id.last_kmsg) {
+                lastKmsg = box.isChecked();
+                prefs.putBoolean(Prefs.KEY_LASTKMSG, lastKmsg);
+            } else if (box.getId() == R.id.pstore) {
+                pstore = box.isChecked();
+                prefs.putBoolean(Prefs.KEY_PSTORE, pstore);
+            } else if (box.getId() == R.id.main_log) {
+                mainLog = box.isChecked();
+                prefs.putBoolean(Prefs.KEY_MAIN, mainLog);
+            } else if (box.getId() == R.id.event_log) {
+                eventLog = box.isChecked();
+                prefs.putBoolean(Prefs.KEY_EVENT, eventLog);
+            } else if (box.getId() == R.id.modem_log) {
+                modemLog = box.isChecked();
+                prefs.putBoolean(Prefs.KEY_MODEM, modemLog);
+                // Set the warning for modem logs
+                if (modemLog) {
+                    binding.warnings.setText(R.string.warn_modem);
+                    binding.warnings.setVisibility(View.VISIBLE);
+                } else {
+                    binding.warnings.setVisibility(View.GONE);
+                }
+            } else if (box.getId() == R.id.audit_log) {
+                auditLog = box.isChecked();
+                prefs.putBoolean(Prefs.KEY_AUDIT, auditLog);
+            } else if (box.getId() == R.id.scrub_logs) {
+                scrubLog = box.isChecked();
+                prefs.putBoolean(Prefs.KEY_SCRUB, scrubLog);
             }
 
-            //Make sure that at least one type is selected
+            // Make sure that at least one type is selected
             enableLogButton(mainLog || eventLog || lastKmsg
                     || modemLog || kernelLog || auditLog);
 
-            //Save the settings
+            // Save the settings
             prefs.apply();
         } else if(v.getId() == R.id.take_log) {
-            //Build the command
+            // Build the command
             RunCommand command = new RunCommand();
 
-            //Log flags
+            // Log flags
             command.setKernelLog(kernelLog);
             command.setLastKernelLog(lastKmsg);
             command.setPstore(pstore);
@@ -255,19 +239,19 @@ public class MainFragment extends Fragment implements View.OnClickListener {
             command.setScrubEnabled(scrubLog);
             command.setAuditLog(auditLog);
 
-            //Grep options
-            command.setGrepOption(GrepOption.fromString(grepSpinner.getSelectedItem().toString()));
-            command.setGrep(grepEditText.getText().toString());
+            // Grep options
+            command.setGrepOption(GrepOption.fromString(binding.grepLog.getSelectedItem().toString()));
+            command.setGrep(binding.grepString.getText().toString());
 
-            //Notes/text
-            command.setAppendText(fileEditText.getText().toString());
-            command.setNotes(notesEditText.getText().toString());
+            // Notes/text
+            command.setAppendText(binding.fileName.getText().toString());
+            command.setNotes(binding.notes.getText().toString());
 
             command.setRoot(root);
 
-            fileEditText.setText("");
-            notesEditText.setText("");
-            grepEditText.setText("");
+            binding.fileName.setText("");
+            binding.notes.setText("");
+            binding.grepString.setText("");
 
             RunningDialog dialog = new RunningDialog();
             Bundle args = new Bundle();
@@ -304,19 +288,16 @@ public class MainFragment extends Fragment implements View.OnClickListener {
                 hasRadio = hasRadioTemp;
                 Handler mainHandler = new Handler(context.getMainLooper());
                 mainHandler.post(() -> {
-                    View view = getView();
-                    if (view != null) {
-                        if(!hasLastKmsg){
-                            CheckBox lastKmsgBox = getView().findViewById(R.id.last_kmsg);
-                            lastKmsgBox.setChecked(false);
-                            lastKmsgBox.setEnabled(false);
-                            onClick(lastKmsgBox);
+                    if (binding != null) {
+                        if (!hasLastKmsg) {
+                            binding.lastKmsg.setChecked(false);
+                            binding.lastKmsg.setEnabled(false);
+                            onClick(binding.lastKmsg);
                         }
-                        if(!hasRadio){
-                            CheckBox modemCheckBox = getView().findViewById(R.id.modem_log);
-                            modemCheckBox.setChecked(false);
-                            modemCheckBox.setEnabled(false);
-                            onClick(modemCheckBox);
+                        if (!hasRadio) {
+                            binding.modemLog.setChecked(false);
+                            binding.modemLog.setEnabled(false);
+                            onClick(binding.modemLog);
                         }
                     }
                 });
@@ -338,11 +319,10 @@ public class MainFragment extends Fragment implements View.OnClickListener {
                         //Check for root access
                         if (!root) {
                             Log.d("Root not available");
-                            //Warn the user
-                            TextView noRoot = getView().findViewById(R.id.warn_root);
-                            Linkify.addLinks(noRoot, Linkify.ALL);
-                            noRoot.setMovementMethod(LinkMovementMethod.getInstance());
-                            noRoot.setVisibility(View.VISIBLE);
+                            // Warn the user
+                            Linkify.addLinks(binding.warnRoot, Linkify.ALL);
+                            binding.warnRoot.setMovementMethod(LinkMovementMethod.getInstance());
+                            binding.warnRoot.setVisibility(View.VISIBLE);
                         }
 
                         enableLogButton(true);
