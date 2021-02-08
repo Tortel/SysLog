@@ -32,7 +32,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
-import com.google.android.material.appbar.MaterialToolbar;
+import com.tortel.syslog.databinding.ActivityLogcatBinding;
 import com.tortel.syslog.dialog.AboutLogcatDialog;
 import com.tortel.syslog.utils.Prefs;
 
@@ -47,27 +47,26 @@ public class LiveLogActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_logcat);
+        ActivityLogcatBinding binding = ActivityLogcatBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
 
-        MaterialToolbar toolbar = findViewById(R.id.topAppBar);
-        toolbar.setOnMenuItemClickListener((MenuItem item) -> {
-            switch (item.getItemId()){
-                case android.R.id.home:
-                    finish();
-                    return true;
-                case R.id.stop_logcat:
-                    LiveLogFragment fragment = getFragment();
-                    if(fragment != null) {
-                        fragment.stop();
-                    }
-                    return true;
-                case R.id.restart_logcat:
-                    restartLogcatFragment();
-                    return true;
+        binding.toolbar.setOnMenuItemClickListener((MenuItem item) -> {
+            if (item.getItemId() == android.R.id.home) {
+                finish();
+                return true;
+            } else if (item.getItemId() == R.id.stop_logcat) {
+                LiveLogFragment fragment = getFragment();
+                if(fragment != null) {
+                    fragment.stop();
+                }
+                return true;
+            } else if (item.getItemId() == R.id.restart_logcat) {
+                restartLogcatFragment();
+                return true;
             }
             return super.onOptionsItemSelected(item);
         });
-        toolbar.setNavigationOnClickListener((View v) -> {
+        binding.toolbar.setNavigationOnClickListener((View v) -> {
             this.finish();
         });
 
@@ -102,7 +101,7 @@ public class LiveLogActivity extends AppCompatActivity {
     }
 
     public static class LiveLogFragment extends Fragment {
-        private TermSession mTermSession = new TermSession();
+        private final TermSession mTermSession = new TermSession();
 
         @Override
         public void onCreate(Bundle savedInstanceState) {

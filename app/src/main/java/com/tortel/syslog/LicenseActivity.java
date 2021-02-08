@@ -24,9 +24,8 @@ import android.view.View;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.google.android.material.appbar.MaterialToolbar;
 import com.pcchin.licenseview.LicenseType;
-import com.pcchin.licenseview.LicenseView;
+import com.tortel.syslog.databinding.ActivityLicenseBinding;
 
 /**
  * Activity that displays the licenses for 3rd party libraries
@@ -36,29 +35,28 @@ public class LicenseActivity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_license);
+        ActivityLicenseBinding binding = ActivityLicenseBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
 
-        MaterialToolbar toolbar = findViewById(R.id.topAppBar);
-        toolbar.setOnMenuItemClickListener((MenuItem item) -> {
+        binding.toolbar.setOnMenuItemClickListener((MenuItem item) -> {
             if (item.getItemId() == android.R.id.home) {
                 finish();
                 return true;
             }
             return super.onOptionsItemSelected(item);
         });
-        toolbar.setNavigationOnClickListener((View v) -> {
+        binding.toolbar.setNavigationOnClickListener((View v) -> {
             this.finish();
         });
 
-        LicenseView licenseView = findViewById(R.id.license_view);
-        licenseView.setAlertDialogStyle(R.style.Theme_AppCompat_Dialog_Alert);
+        binding.licenseView.setAlertDialogStyle(R.style.Theme_AppCompat_Dialog_Alert);
 
         // Add all the deps
-        licenseView.addLicense(getString(R.string.lib_androidx), LicenseType.APACHE_2);
-        licenseView.addLicense(getString(R.string.lib_material), LicenseType.APACHE_2);
-        licenseView.addLicense(getString(R.string.lib_libsuperuser), LicenseType.APACHE_2);
-        licenseView.addLicense(getString(R.string.lib_termview), LicenseType.APACHE_2);
-        licenseView.addLicense(getString(R.string.lib_licenseview), LicenseType.APACHE_2);
+        binding.licenseView.addLicense(getString(R.string.lib_androidx), LicenseType.APACHE_2);
+        binding.licenseView.addLicense(getString(R.string.lib_material), LicenseType.APACHE_2);
+        binding.licenseView.addLicense(getString(R.string.lib_libsuperuser), LicenseType.APACHE_2);
+        binding.licenseView.addLicense(getString(R.string.lib_termview), LicenseType.APACHE_2);
+        binding.licenseView.addLicense(getString(R.string.lib_licenseview), LicenseType.APACHE_2);
     }
 
 }

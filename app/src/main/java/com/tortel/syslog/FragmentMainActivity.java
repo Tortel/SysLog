@@ -25,7 +25,7 @@ import androidx.fragment.app.FragmentManager;
 import androidx.appcompat.app.AppCompatActivity;
 import android.view.MenuItem;
 
-import com.google.android.material.appbar.MaterialToolbar;
+import com.tortel.syslog.databinding.ActivityMainBinding;
 import com.tortel.syslog.dialog.AboutDialog;
 import com.tortel.syslog.dialog.AboutLogcatDialog;
 import com.tortel.syslog.dialog.ClearBufferDialog;
@@ -36,8 +36,6 @@ import com.tortel.syslog.utils.Log;
 import com.tortel.syslog.utils.Prefs;
 import com.tortel.syslog.utils.Utils;
 
-import java.util.List;
-
 /**
  * Main activity, fragment version
  */
@@ -46,45 +44,40 @@ public class FragmentMainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        ActivityMainBinding binding = ActivityMainBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
 
-        MaterialToolbar toolBar = findViewById(R.id.topAppBar);
-        toolBar.setOnMenuItemClickListener((MenuItem item) -> {
-            Intent intent;
-            switch(item.getItemId()){
-                case R.id.live_logcat:
-                    intent = new Intent(this, LiveLogActivity.class);
-                    startActivity(intent);
-                    return true;
-                case R.id.clean_all:
-                    FileUtils.cleanAllLogs(this);
-                    return true;
-                case R.id.clear_buffer:
-                    // Check if we should just do it, or show the dialog
-                    SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-                    if(prefs.getBoolean(Prefs.KEY_NO_BUFFER_WARN, false)) {
-                        // Just run the task
-                        Utils.clearLogcatBuffer(this);
-                    } else {
-                        // Show the dialog
-                        showClearBufferConfirmation();
-                    }
-                    return true;
-                case R.id.about:
-                    showAboutDialog();
-                    return true;
-                case R.id.about_live:
-                    showAboutLiveLogcatDialog();
-                    return true;
-                case R.id.faq:
-                    showFaqDialog();
-                    return true;
-                case R.id.license:
-                    intent = new Intent(this, LicenseActivity.class);
-                    startActivity(intent);
-                default:
-                    return super.onOptionsItemSelected(item);
+        binding.toolbar.setOnMenuItemClickListener((MenuItem item) -> {
+            if (item.getItemId() == R.id.live_logcat) {
+                startActivity(new Intent(this, LiveLogActivity.class));
+                return true;
+            } else if (item.getItemId() == R.id.clean_all) {
+                FileUtils.cleanAllLogs(this);
+                return true;
+            } else if (item.getItemId() == R.id.clear_buffer) {
+                // Check if we should just do it, or show the dialog
+                SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+                if (prefs.getBoolean(Prefs.KEY_NO_BUFFER_WARN, false)) {
+                    // Just run the task
+                    Utils.clearLogcatBuffer(this);
+                } else {
+                    // Show the dialog
+                    showClearBufferConfirmation();
+                }
+                return true;
+            } else if (item.getItemId() == R.id.about) {
+                showAboutDialog();
+                return true;
+            } else if (item.getItemId() == R.id.about_live) {
+                showAboutLiveLogcatDialog();
+                return true;
+            } else if (item.getItemId() == R.id.faq) {
+                showFaqDialog();
+                return true;
+            } else if (item.getItemId() == R.id.license) {
+                startActivity(new Intent(this, LicenseActivity.class));
             }
+            return super.onOptionsItemSelected(item);
         });
 
         FragmentManager fragmentManager = getSupportFragmentManager();
