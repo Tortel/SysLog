@@ -40,8 +40,9 @@ public class OhShitDialog extends DialogFragment {
 
     @Override
     public void onDestroyView() {
-        if (getDialog() != null && getRetainInstance())
+        if (getDialog() != null && getRetainInstance()) {
             getDialog().setDismissMessage(null);
+        }
         super.onDestroyView();
     }
     
@@ -55,11 +56,8 @@ public class OhShitDialog extends DialogFragment {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setMessage(R.string.oh_shit_message);
         builder.setTitle(R.string.oh_shit_title);
-        builder.setPositiveButton(R.string.close, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                throw new RuntimeException(exception);
-            }
+        builder.setPositiveButton(R.string.close, (dialogInterface, i) -> {
+            throw new RuntimeException(exception);
         });
 
         return builder.create();

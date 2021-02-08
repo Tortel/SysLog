@@ -19,12 +19,13 @@ package com.tortel.syslog;
 
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.preference.PreferenceManager;
+
 import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -71,13 +72,13 @@ public class LiveLogActivity extends AppCompatActivity {
         });
 
         FragmentManager fragMan = getSupportFragmentManager();
-        if(fragMan.findFragmentById(R.id.content_frame) == null){
+        if (fragMan.findFragmentById(R.id.content_frame) == null) {
             restartLogcatFragment();
         }
 
         // Check to show the about dialog
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        if(!prefs.getBoolean(Prefs.KEY_LIVE_LOGCAT_ABOUT, false)){
+        if (!prefs.getBoolean(Prefs.KEY_LIVE_LOGCAT_ABOUT, false)) {
             AboutLogcatDialog dialog = new AboutLogcatDialog();
             dialog.show(getSupportFragmentManager(), "logcat_about");
 

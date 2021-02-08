@@ -24,11 +24,8 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.os.Bundle;
-import android.os.Environment;
-import android.preference.PreferenceManager;
 import androidx.annotation.NonNull;
 import androidx.annotation.StringRes;
 import androidx.fragment.app.DialogFragment;
@@ -69,8 +66,9 @@ public class ExceptionDialog extends DialogFragment implements android.view.View
 
     @Override
     public void onDestroyView() {
-        if (getDialog() != null && getRetainInstance())
+        if (getDialog() != null && getRetainInstance()) {
             getDialog().setDismissMessage(null);
+        }
         super.onDestroyView();
     }
     
@@ -84,7 +82,7 @@ public class ExceptionDialog extends DialogFragment implements android.view.View
         stackTraceButton = view.findViewById(R.id.button_stacktrace);
         stackTraceButton.setOnClickListener(this);
         TextView reportNotice = view.findViewById(R.id.bugreport_notice);
-        if(result.getException() == null){
+        if (result.getException() == null) {
             stackTraceButton.setVisibility(View.GONE);
             reportNotice.setVisibility(View.GONE);
         }
@@ -94,7 +92,7 @@ public class ExceptionDialog extends DialogFragment implements android.view.View
 
         TextView messageText = view.findViewById(R.id.exception_message);
         @StringRes int messageId = result.getMessage();
-        if(messageId == 0){
+        if (messageId == 0) {
             messageId = R.string.error;
             if (result.getException() != null) {
                 Throwable e = result.getException();
@@ -111,9 +109,9 @@ public class ExceptionDialog extends DialogFragment implements android.view.View
         }
         messageText.setText(messageId);
         builder.setView(view);
-        //Skip the bugreport button if there is no stack trace or if 4.3+ without root
-        if(result.getException() != null){
-            if(result.disableReporting()){
+        // Skip the bugreport button if there is no stack trace or if 4.3+ without root
+        if (result.getException() != null) {
+            if (result.disableReporting()) {
                 reportNotice.setText(R.string.bugreport_disabled);
             } else {
                 builder.setPositiveButton(R.string.send_bugreport, this);
@@ -128,7 +126,7 @@ public class ExceptionDialog extends DialogFragment implements android.view.View
 
     @Override
     public void onClick(View v) {
-        //Hide the stacktrace button, show the stacktrace
+        // Hide the stacktrace button, show the stacktrace
         stackTraceButton.setVisibility(View.GONE);
         stackTraceView.setVisibility(View.VISIBLE);
     }
@@ -139,7 +137,7 @@ public class ExceptionDialog extends DialogFragment implements android.view.View
         intent.putExtra(Intent.EXTRA_SUBJECT, "SysLog bug report");
         intent.setType("plain/text");
         intent.putExtra(Intent.EXTRA_TEXT, getEmailReportBody());
-        if(!Utils.isHandlerAvailable(getActivity(), intent)){
+        if (!Utils.isHandlerAvailable(getActivity(), intent)) {
             OhShitDialog dialog = new OhShitDialog();
             dialog.setException(result.getException());
             dialog.show(getActivity().getSupportFragmentManager(), "ohshit");
@@ -149,18 +147,18 @@ public class ExceptionDialog extends DialogFragment implements android.view.View
         return intent;
     }
     
-    private String getEmailReportBody(){
+    @NonNull
+    private String getEmailReportBody() {
         Context context = getActivity();
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         StringBuilder body = new StringBuilder();
         
         body.append("Device model: "+android.os.Build.MODEL+"\n");
-        try{
+        try {
             PackageInfo manager = context.getPackageManager()
                     .getPackageInfo(context.getPackageName(), 0);
             body.append("SysLog version: "+manager.versionCode+"\n");
-        } catch(Exception e){
-            //Should not happen
+        } catch (Exception e) {
+            // Should not happen
         }
         body.append("Android version: "+android.os.Build.VERSION.SDK_INT+"\n");
         body.append("Kernel version: "+System.getProperty("os.version")+"\n");
@@ -175,8 +173,8 @@ public class ExceptionDialog extends DialogFragment implements android.view.View
         return body.toString();
     }
     
-    private String getStackTrace(Throwable t){
-        if(t == null){
+    private String getStackTrace(Throwable t) {
+        if (t == null) {
             return "";
         }
         StringWriter sw = new StringWriter();
@@ -190,7 +188,7 @@ public class ExceptionDialog extends DialogFragment implements android.view.View
     public void onClick(DialogInterface dialogInterface, int which) {
         if (which == DialogInterface.BUTTON_POSITIVE) {
             Intent intent = getEmailIntent();
-            if(intent != null){
+            if (intent != null) {
                 getActivity().startActivity(intent);
             }
         } else {

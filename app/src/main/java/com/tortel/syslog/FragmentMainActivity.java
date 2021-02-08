@@ -20,9 +20,10 @@ package com.tortel.syslog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import androidx.fragment.app.FragmentManager;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.preference.PreferenceManager;
+
 import android.view.MenuItem;
 
 import com.tortel.syslog.databinding.ActivityMainBinding;
