@@ -11,6 +11,10 @@ android {
         versionName "2.4.1"
     }
 
+    buildFeatures {
+        viewBinding true
+    }
+
     buildTypes {
         release {
             minifyEnabled false
