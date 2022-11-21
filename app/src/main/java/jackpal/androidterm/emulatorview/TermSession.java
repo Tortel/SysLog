@@ -18,11 +18,6 @@ package jackpal.androidterm.emulatorview;
 
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.nio.ByteBuffer;
-import java.nio.CharBuffer;
-import java.nio.charset.Charset;
-import java.nio.charset.CharsetEncoder;
-import java.nio.charset.CodingErrorAction;
 
 import android.os.Handler;
 import android.os.Message;
@@ -30,6 +25,7 @@ import android.os.Message;
 import com.tortel.syslog.utils.Log;
 
 import eu.chainfire.libsuperuser.Shell;
+import eu.chainfire.libsuperuser.StreamGobbler;
 
 /**
  * A terminal session, consisting of a VT100 terminal emulator and its
@@ -119,12 +115,7 @@ public class TermSession {
                         builder.useSU();
                     }
 
-                    builder.setOnSTDOUTLineListener(new Shell.OnCommandLineListener() {
-                        @Override
-                        public void onCommandResult(int commandCode, int exitCode) {
-                            sendLine("Logcat process ended.");
-                        }
-
+                    builder.setOnSTDOUTLineListener(new StreamGobbler.OnLineListener() {
                         @Override
                         public void onLine(String line) {
                             sendLine(line);

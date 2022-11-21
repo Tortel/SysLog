@@ -19,6 +19,8 @@ package com.tortel.syslog.utils;
 
 import android.content.Context;
 
+import androidx.annotation.NonNull;
+
 import com.tortel.syslog.GrepOption;
 import com.tortel.syslog.R;
 import com.tortel.syslog.Result;
@@ -282,26 +284,33 @@ public class GrabLogThread implements Runnable {
             File outputFile = new File(outputFileName);
             final BufferedWriter output = new BufferedWriter(new FileWriter(outputFile));
 
-            shell.addCommand(command, 0, new Shell.OnCommandLineListener() {
+            shell.addCommand(command, 0, new Shell.OnCommandResultListener2() {
                 @Override
-                public void onCommandResult(int commandCode, int exitCode) {
-                    try{
+                public void onCommandResult(int commandCode, int exitCode,
+                                            @NonNull List<String> STDOUT,
+                                            @NonNull List<String> STDERR) {
+                    for (String line : STDOUT) {
+                        try {
+                            output.write(line + "\n");
+                        } catch (IOException e) {
+                            Log.e("Exception writing line", e);
+                        }
+                    }
+                    for (String line : STDERR) {
+                        try {
+                            output.write(line + "\n");
+                        } catch (IOException e) {
+                            Log.e("Exception writing line", e);
+                        }
+                    }
+
+                    try {
                         output.flush();
                         output.close();
-                    } catch(IOException e){
+                    } catch (IOException e) {
                         Log.e("Exception closing writer", e);
                     }
                     runCommands(shell, commands, outputFiles);
-                }
-
-                @Override
-                public void onLine(String line) {
-                    try {
-                        // Make sure to include a newline
-                        output.write(line+"\n");
-                    } catch (IOException e) {
-                        Log.e("Exception writing line", e);
-                    }
                 }
             });
 
