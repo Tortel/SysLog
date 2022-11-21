@@ -18,8 +18,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 -->
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    package="com.tortel.syslog" >
+    xmlns:tools="http://schemas.android.com/tools">
 
     <uses-permission android:name="android.permission.READ_LOGS"
         tools:ignore="ProtectedPermissions" />
@@ -32,20 +31,20 @@
         tools:ignore="GoogleAppIndexingWarning">
         <activity
             android:name="com.tortel.syslog.FragmentMainActivity"
-            android:label="@string/app_name" >
+            android:exported="true">
             <intent-filter>
-                <action android:name="android.intent.action.MAIN" >
-                </action>
-                <category android:name="android.intent.category.LAUNCHER" >
-                </category>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
 
         <activity android:name=".LiveLogActivity"
-            android:label="@string/live_logcat" />
+            android:label="@string/live_logcat"
+            android:exported="false" />
 
         <activity android:name=".LicenseActivity"
-            android:label="@string/licenses" />
+            android:label="@string/licenses"
+            android:exported="false" />
 
         <provider
             android:name="androidx.core.content.FileProvider"
