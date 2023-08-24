@@ -57,6 +57,7 @@ public class LicenseActivity extends AppCompatActivity {
         binding.licenseView.addLicense(getString(R.string.lib_libsuperuser), LicenseType.APACHE_2);
         binding.licenseView.addLicense(getString(R.string.lib_termview), LicenseType.APACHE_2);
         binding.licenseView.addLicense(getString(R.string.lib_licenseview), LicenseType.APACHE_2);
+        binding.licenseView.addLicense(getString(R.string.lib_eventbus), LicenseType.APACHE_2);
     }
 
 }
