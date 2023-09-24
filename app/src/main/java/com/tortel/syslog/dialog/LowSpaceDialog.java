@@ -64,19 +64,17 @@ public class LowSpaceDialog {
 
         builder.setView(view);
 
-        builder.setPositiveButton(R.string.clean_all, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                switch(which){
-                    case DialogInterface.BUTTON_POSITIVE:
-                        FileUtils.cleanAllLogs(activity);
-                        result = null;
-                        dialog.dismiss();
-                        return;
-                    case DialogInterface.BUTTON_NEGATIVE:
-                        //Clear the static variable
-                        result = null;
-                        dialog.dismiss();
+        builder.setPositiveButton(R.string.clean_all, (dialog, which) -> {
+            switch (which) {
+                case DialogInterface.BUTTON_POSITIVE -> {
+                    FileUtils.cleanAllLogs(activity);
+                    result = null;
+                    dialog.dismiss();
+                }
+                case DialogInterface.BUTTON_NEGATIVE -> {
+                    //Clear the static variable
+                    result = null;
+                    dialog.dismiss();
                 }
             }
         });
