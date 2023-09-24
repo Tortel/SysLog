@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="Theme.SysLog" parent="Theme.Material3.DynamicColors.DayNight">
+        <item name="android:fontFamily">@font/product_sans</item>
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:windowLightStatusBar">false</item>
+        <item name="android:navigationBarColor">@android:color/transparent</item>
+
+        <item name="android:colorBackground">?attr/colorSurface</item>
+
+        <item name="textInputStyle">@style/Widget.App.TextInputLayout</item>
+    </style>
+</resources>
