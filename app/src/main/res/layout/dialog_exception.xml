@@ -38,10 +38,10 @@
         android:textStyle="italic"
         android:textSize="12sp" />
 
-    <View
+    <com.google.android.material.divider.MaterialDivider
         android:layout_width="match_parent"
-        android:layout_height="2dip"
-        android:background="@color/divider" />
+        android:layout_height="wrap_content"
+        android:layout_margin="2dp"/>
 
     <Button
         android:id="@+id/button_stacktrace"
