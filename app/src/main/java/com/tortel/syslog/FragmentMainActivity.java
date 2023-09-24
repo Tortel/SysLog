@@ -101,8 +101,9 @@ public class FragmentMainActivity extends AppCompatActivity {
      * Shows the About dialog box
      */
     private void showAboutDialog(){
-        AboutDialog dialog = new AboutDialog();
-        dialog.show(getSupportFragmentManager(), "about");
+        AboutDialog dialog = new AboutDialog(this);
+        dialog.getDialog().show();
+        // dialog.show(getSupportFragmentManager(), "about");
     }
 
     /**

@@ -21,10 +21,6 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
-import androidx.annotation.NonNull;
-import androidx.fragment.app.Fragment;
-import androidx.preference.PreferenceManager;
-
 import android.telephony.TelephonyManager;
 import android.text.method.LinkMovementMethod;
 import android.text.util.Linkify;
@@ -34,6 +30,12 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.CheckBox;
 
+import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
+import androidx.preference.PreferenceManager;
+
+import com.google.android.material.button.MaterialButton;
+import com.google.android.material.checkbox.MaterialCheckBox;
 import com.tortel.syslog.GrepOption;
 import com.tortel.syslog.R;
 import com.tortel.syslog.RunCommand;
@@ -100,35 +102,37 @@ public class MainFragment extends Fragment implements View.OnClickListener {
         }
         Log.d("Setting the checkboxes");
 
-        binding.mainLog.setChecked(mainLog);
+        ((MaterialCheckBox)binding.mainLog).setChecked(mainLog);
         binding.mainLog.setOnClickListener(this);
 
-        binding.eventLog.setChecked(eventLog);
+        ((MaterialCheckBox)binding.eventLog).setChecked(eventLog);
         binding.eventLog.setOnClickListener(this);
 
-        binding.modemLog.setChecked(modemLog);
+        ((MaterialCheckBox)binding.modemLog).setChecked(modemLog);
         binding.modemLog.setOnClickListener(this);
 
-        binding.kernelLog.setChecked(kernelLog);
+        ((MaterialCheckBox)binding.kernelLog).setChecked(kernelLog);
         binding.kernelLog.setOnClickListener(this);
 
-        binding.lastKmsg.setChecked(lastKmsg);
+        ((MaterialCheckBox)binding.lastKmsg).setChecked(lastKmsg);
         binding.lastKmsg.setOnClickListener(this);
 
-        binding.pstore.setChecked(pstore);
+        ((MaterialCheckBox)binding.pstore).setChecked(pstore);
         binding.pstore.setOnClickListener(this);
 
-        binding.scrubLogs.setChecked(scrubLog);
+        ((MaterialCheckBox)binding.scrubLogs).setChecked(scrubLog);
         binding.scrubLogs.setOnClickListener(this);
 
-        binding.auditLog.setChecked(auditLog);
+        ((MaterialCheckBox)binding.auditLog).setChecked(auditLog);
         binding.auditLog.setOnClickListener(this);
 
         // Set the warning for modem logs
         if (modemLog) {
             binding.warnings.setText(R.string.warn_modem);
+            binding.warningsCardView.setVisibility(View.VISIBLE);
             binding.warnings.setVisibility(View.VISIBLE);
         } else {
+            binding.warningsCardView.setVisibility(View.GONE);
             binding.warnings.setVisibility(View.GONE);
         }
     }
@@ -140,7 +144,8 @@ public class MainFragment extends Fragment implements View.OnClickListener {
         Log.d("Enabling log button: "+flag);
 
         binding.takeLog.setEnabled(flag);
-        binding.takeLog.setText(R.string.take_log);
+        MaterialButton takeLog = (MaterialButton) binding.takeLog;
+        takeLog.setText(getString(R.string.take_log));
     }
 
     @Override
@@ -291,12 +296,12 @@ public class MainFragment extends Fragment implements View.OnClickListener {
                 mainHandler.post(() -> {
                     if (binding != null) {
                         if (!hasLastKmsg) {
-                            binding.lastKmsg.setChecked(false);
+                            ((MaterialCheckBox)binding.lastKmsg).setChecked(false);
                             binding.lastKmsg.setEnabled(false);
                             onClick(binding.lastKmsg);
                         }
                         if (!hasRadio) {
-                            binding.modemLog.setChecked(false);
+                            ((MaterialCheckBox)binding.modemLog).setChecked(false);
                             binding.modemLog.setEnabled(false);
                             onClick(binding.modemLog);
                         }
@@ -323,6 +328,7 @@ public class MainFragment extends Fragment implements View.OnClickListener {
                             // Warn the user
                             Linkify.addLinks(binding.warnRoot, Linkify.ALL);
                             binding.warnRoot.setMovementMethod(LinkMovementMethod.getInstance());
+                            binding.warningsCardView.setVisibility(View.VISIBLE);
                             binding.warnRoot.setVisibility(View.VISIBLE);
                         }
 

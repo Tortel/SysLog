@@ -23,13 +23,13 @@
     <item
         android:id="@+id/stop_logcat"
         android:title="@string/show_live_logcat"
-        android:icon="@drawable/ic_clear_white_36dp"
+        android:icon="@drawable/round_clear_24"
         app:showAsAction="always" />
 
     <item
         android:id="@+id/restart_logcat"
         android:title="@string/show_live_logcat"
-        android:icon="@drawable/ic_autorenew_white_36dp"
+        android:icon="@drawable/round_autorenew_24"
         app:showAsAction="always" />
 
 </menu>

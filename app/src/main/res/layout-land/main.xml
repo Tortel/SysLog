@@ -137,11 +137,13 @@
         android:layout_width="fill_parent"
         android:text="@string/scrub_log"
         android:onClick="logChange"/>
-    
+
     <Button
+        style="@style/Widget.Material3.Button"
         android:id="@+id/take_log"
         android:layout_height="wrap_content"
         android:layout_width="fill_parent"
+        android:layout_marginHorizontal="16dp"
         android:padding="5dip"
         android:text="@string/checking_root"
         android:onClick="startLog"

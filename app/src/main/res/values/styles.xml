@@ -18,13 +18,17 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 -->
 <resources xmlns:android="http://schemas.android.com/apk/res/android">
-    <style name="Theme.SysLog" parent="Theme.MaterialComponents.NoActionBar">
+    <style name="Theme.SysLog" parent="Theme.Material3.DynamicColors.DayNight">
+        <item name="android:fontFamily">@font/product_sans</item>
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:navigationBarColor">@android:color/transparent</item>
         <item name="colorPrimary">@color/primary</item>
         <item name="colorPrimaryVariant">@color/primary_dark</item>
         <item name="colorOnPrimary">@android:color/white</item>
         <item name="colorSecondary">@color/accent</item>
         <item name="colorSecondaryVariant">@color/accentVariant</item>
-        <item name="android:statusBarColor">@color/primary_dark</item>
 
         <item name="android:colorBackground">?attr/colorSurface</item>
 
