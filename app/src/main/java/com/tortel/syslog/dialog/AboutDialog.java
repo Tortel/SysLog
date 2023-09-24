@@ -33,7 +33,7 @@ import com.tortel.syslog.R;
  */
 public class AboutDialog {
 
-    MaterialAlertDialogBuilder builder;
+    private final MaterialAlertDialogBuilder builder;
     private final static String htmlStr =
             "<html>" +
             "<body>" +

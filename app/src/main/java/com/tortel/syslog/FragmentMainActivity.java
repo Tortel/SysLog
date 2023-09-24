@@ -93,8 +93,8 @@ public class FragmentMainActivity extends AppCompatActivity {
      * Show a dialog warning about clearing the buffer
      */
     private void showClearBufferConfirmation(){
-        ClearBufferDialog dialog = new ClearBufferDialog();
-        dialog.show(getSupportFragmentManager(), "buffer");
+        ClearBufferDialog dialog = new ClearBufferDialog(this);
+        dialog.getDialog().show();
     }
 
     /**
@@ -110,15 +110,15 @@ public class FragmentMainActivity extends AppCompatActivity {
      * Shows the About dialog box
      */
     private void showAboutLiveLogcatDialog(){
-        AboutLogcatDialog dialog = new AboutLogcatDialog();
-        dialog.show(getSupportFragmentManager(), "about_logcat");
+        AboutLogcatDialog dialog = new AboutLogcatDialog(this);
+        dialog.getDialog().show();
     }
 
     /**
      * Shows the FAQ dialog box
      */
     private void showFaqDialog(){
-        FaqDialog dialog = new FaqDialog();
-        dialog.show(getSupportFragmentManager(), "faq");
+        FaqDialog dialog = new FaqDialog(this);
+        dialog.getDialog().show();
     }
 }

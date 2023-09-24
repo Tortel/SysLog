@@ -17,6 +17,7 @@
  */
 package com.tortel.syslog.dialog;
 
+import android.app.Activity;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
@@ -24,42 +25,30 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.DialogFragment;
 import androidx.appcompat.app.AlertDialog;
 
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.tortel.syslog.R;
 
 /**
  * Well, shit dialog. Called if the send email intent fails.
  */
-public class OhShitDialog extends DialogFragment {
+public class OhShitDialog {
     private static Throwable exception;
+    private final MaterialAlertDialogBuilder builder;
 
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setRetainInstance(true);
+    public OhShitDialog(Activity activity) {
+        builder = new MaterialAlertDialogBuilder(activity);
+        builder.setMessage(R.string.oh_shit_message);
+        builder.setTitle(R.string.oh_shit_title);
+        builder.setNegativeButton(activity.getString(R.string.close), (dialog, which) -> {
+            throw new RuntimeException(exception);
+        });
     }
 
-    @Override
-    public void onDestroyView() {
-        if (getDialog() != null && getRetainInstance()) {
-            getDialog().setDismissMessage(null);
-        }
-        super.onDestroyView();
-    }
-    
     public void setException(Throwable exception){
         OhShitDialog.exception = exception;
     }
 
-    @NonNull
-    @Override
-    public Dialog onCreateDialog(Bundle savedInstanceState) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        builder.setMessage(R.string.oh_shit_message);
-        builder.setTitle(R.string.oh_shit_title);
-        builder.setPositiveButton(R.string.close, (dialogInterface, i) -> {
-            throw new RuntimeException(exception);
-        });
-
+    public AlertDialog getDialog() {
         return builder.create();
     }
 }

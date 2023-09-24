@@ -134,9 +134,9 @@ public class RunningDialog extends DialogFragment {
             } else {
                 if (result.getException() instanceof LowSpaceException) {
                     //Show the low space dialog
-                    LowSpaceDialog dialog = new LowSpaceDialog();
+                    LowSpaceDialog dialog = new LowSpaceDialog(getActivity());
                     dialog.setResult(result);
-                    dialog.show(getFragmentManager(), "exceptionDialog");
+                    dialog.getDialog().show();
                 } else {
                     //Show the error dialog
                     ExceptionDialog dialog = new ExceptionDialog();

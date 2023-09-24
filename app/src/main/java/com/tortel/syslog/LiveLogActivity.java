@@ -79,8 +79,8 @@ public class LiveLogActivity extends AppCompatActivity {
         // Check to show the about dialog
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         if (!prefs.getBoolean(Prefs.KEY_LIVE_LOGCAT_ABOUT, false)) {
-            AboutLogcatDialog dialog = new AboutLogcatDialog();
-            dialog.show(getSupportFragmentManager(), "logcat_about");
+            AboutLogcatDialog dialog = new AboutLogcatDialog(this);
+            dialog.getDialog().show();
 
             // Save the preference
             prefs.edit().putBoolean(Prefs.KEY_LIVE_LOGCAT_ABOUT, true).apply();

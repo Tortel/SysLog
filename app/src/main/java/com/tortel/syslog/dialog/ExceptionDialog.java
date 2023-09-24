@@ -138,9 +138,9 @@ public class ExceptionDialog extends DialogFragment implements android.view.View
         intent.setType("plain/text");
         intent.putExtra(Intent.EXTRA_TEXT, getEmailReportBody());
         if (!Utils.isHandlerAvailable(getActivity(), intent)) {
-            OhShitDialog dialog = new OhShitDialog();
+            OhShitDialog dialog = new OhShitDialog(getActivity());
             dialog.setException(result.getException());
-            dialog.show(getActivity().getSupportFragmentManager(), "ohshit");
+            dialog.getDialog().show();
             this.dismiss();
             return null;
         }

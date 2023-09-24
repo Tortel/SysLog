@@ -17,17 +17,19 @@
  */
 package com.tortel.syslog.dialog;
 
-import android.app.AlertDialog;
+import android.app.Activity;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.DialogFragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.tortel.syslog.R;
 import com.tortel.syslog.Result;
 import com.tortel.syslog.utils.FileUtils;
@@ -36,33 +38,16 @@ import com.tortel.syslog.exception.LowSpaceException;
 /**
  * Dialog for low space
  */
-public class LowSpaceDialog extends DialogFragment implements DialogInterface.OnClickListener {
+public class LowSpaceDialog {
 
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setRetainInstance(true);
-    }
-
-    @Override
-    public void onDestroyView() {
-        if (getDialog() != null && getRetainInstance())
-            getDialog().setDismissMessage(null);
-        super.onDestroyView();
-    }
-    
+    private final MaterialAlertDialogBuilder builder;
     private static Result result;
-    
-    public void setResult(Result result){
-        LowSpaceDialog.result = result;
-    }
-    
-    @NonNull
-    @Override
-    public Dialog onCreateDialog(Bundle savedInstanceState) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        LayoutInflater inflater = getActivity().getLayoutInflater();
-        
+
+    public LowSpaceDialog(Activity activity) {
+        builder = new MaterialAlertDialogBuilder(activity);
+
+        LayoutInflater inflater = activity.getLayoutInflater();
+
         View view = inflater.inflate(R.layout.dialog_exception, null);
         Button stackTraceButton = view.findViewById(R.id.button_stacktrace);
         stackTraceButton.setVisibility(View.GONE);
@@ -73,32 +58,35 @@ public class LowSpaceDialog extends DialogFragment implements DialogInterface.On
 
         TextView messageText = view.findViewById(R.id.exception_message);
         LowSpaceException e = (LowSpaceException) result.getException();
-        
-        messageText.setText(getActivity().getResources().getString(R.string.exception_space,
-                e.getFreeSpace()));
-        
-        builder.setView(view);
-        
-        builder.setPositiveButton(R.string.clean_all, this);
-        
-        builder.setTitle(R.string.error_dialog_title);
-        
-        return builder.create();
-    }
 
-    @Override
-    public void onClick(DialogInterface dialog, int which) {
-        switch(which){
-        case DialogInterface.BUTTON_POSITIVE:
-            FileUtils.cleanAllLogs(getActivity());
-            result = null;
-            this.dismiss();
-            return;
-        case DialogInterface.BUTTON_NEGATIVE:
-            //Clear the static variable
-            result = null;
-            this.dismiss();
-            return;
-        }
+        messageText.setText(activity.getResources().getString(R.string.exception_space,
+                e.getFreeSpace()));
+
+        builder.setView(view);
+
+        builder.setPositiveButton(R.string.clean_all, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                switch(which){
+                    case DialogInterface.BUTTON_POSITIVE:
+                        FileUtils.cleanAllLogs(activity);
+                        result = null;
+                        dialog.dismiss();
+                        return;
+                    case DialogInterface.BUTTON_NEGATIVE:
+                        //Clear the static variable
+                        result = null;
+                        dialog.dismiss();
+                }
+            }
+        });
+
+        builder.setTitle(R.string.error_dialog_title);
+    }
+    public void setResult(Result result){
+        LowSpaceDialog.result = result;
+    }
+    public AlertDialog getDialog() {
+        return builder.create();
     }
 }

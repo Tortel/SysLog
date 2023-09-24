@@ -17,22 +17,45 @@
  */
 package com.tortel.syslog.dialog;
 
+import android.app.Activity;
+import android.os.Build;
+import android.text.Html;
+
+import androidx.appcompat.app.AlertDialog;
+
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.tortel.syslog.R;
 
 
 /**
  * Shows the about live logcat dialog
  */
-public class AboutLogcatDialog extends AbstractRawFileDialog {
+public class AboutLogcatDialog {
 
-    @Override
-    int getContentRes() {
-        return R.raw.logcat;
+    private final MaterialAlertDialogBuilder builder;
+    private static final String htmlStr =
+            "<html>" +
+                    "<body>" +
+                        "The live logcat view will show you the current logcat output from your device." +
+                    "<br /><br />" +
+                        "You can stop and restart the output with the buttons in the action bar." +
+                    "</body>" +
+            "</html>";
+
+    public AboutLogcatDialog(Activity activity) {
+        // Show material you dialog
+        builder = new MaterialAlertDialogBuilder(activity);
+        builder.setTitle(activity.getString(R.string.about_live));
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            builder.setMessage(Html.fromHtml(htmlStr, Html.FROM_HTML_MODE_LEGACY));
+        } else {
+            // No need for additional flag in fromHtml method if below Nougat
+            builder.setMessage(Html.fromHtml(htmlStr));
+        }
+        builder.setNegativeButton("Close", (dialog, which) -> dialog.dismiss());
     }
 
-    @Override
-    int getTitleRes() {
-        return R.string.about_live;
+    public AlertDialog getDialog() {
+        return builder.create();
     }
-
 }

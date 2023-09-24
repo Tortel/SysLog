@@ -18,24 +18,24 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="5dip" >
+    android:orientation="vertical"
+    android:padding="16dp">
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/clear_buffer_warning"
-        android:padding="5dip" />
+        android:padding="5dip"
+        android:text="@string/clear_buffer_warning" />
 
     <CheckBox
         android:id="@+id/dont_show_again"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:padding="5dip"
         android:text="@string/dont_show_again"
         android:textAppearance="@style/TextAppearance.AppCompat.Small"
-        android:textStyle="italic"
-        android:padding="5dip" />
+        android:textStyle="italic" />
 
 </LinearLayout>
