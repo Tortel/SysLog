@@ -34,7 +34,7 @@
             app:navigationIcon="@drawable/ic_arrow_back_24dp"
             app:title="@string/live_logcat"
             app:menu="@menu/logcat_menu"
-            style="@style/Widget.Material3.Toolbar"
+            android:theme="?attr/actionBarPopupTheme"
             />
 
     </com.google.android.material.appbar.AppBarLayout>
