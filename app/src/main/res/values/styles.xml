@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
  * SysLog - A simple logging tool
- * Copyright (C) 2013-2020 Scott Warner <Tortel1210@gmail.com>
+ * Copyright (C) 2013-2023 Scott Warner <Tortel1210@gmail.com>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -18,12 +18,14 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 -->
 <resources xmlns:android="http://schemas.android.com/apk/res/android">
-    <style name="Theme.SysLog" parent="Theme.Material3.DynamicColors.DayNight">
+
+    <style name="Theme.Base" parent="Theme.Material3.DynamicColors.DayNight">
         <item name="android:fontFamily">@font/product_sans</item>
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
         <item name="android:statusBarColor">@android:color/transparent</item>
         <item name="android:navigationBarColor">@android:color/transparent</item>
+
         <item name="colorPrimary">@color/primary</item>
         <item name="colorPrimaryVariant">@color/primary_dark</item>
         <item name="colorOnPrimary">@android:color/white</item>
@@ -33,9 +35,21 @@
         <item name="android:colorBackground">?attr/colorSurface</item>
 
         <item name="textInputStyle">@style/Widget.App.TextInputLayout</item>
+
+        <item name="actionBarPopupTheme">@style/Theme.SysLog.PopupOverlay</item>
+    </style>
+
+    <style name="Theme.SysLog" parent="Theme.Base">
+        <item name="android:windowLightStatusBar">true</item>
     </style>
 
     <style name="Widget.App.TextInputLayout" parent="Widget.Design.TextInputLayout">
         <!-- Custom attrs -->
     </style>
+
+    <style name="Theme.SysLog.PopupOverlay" parent="Theme.Base">
+        <item name="iconTint">@android:color/primary_text_light</item>
+        <item name="navigationIconTint">@android:color/primary_text_light</item>
+    </style>
+
 </resources>
