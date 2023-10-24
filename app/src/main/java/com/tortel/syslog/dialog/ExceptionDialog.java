@@ -35,6 +35,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.tortel.syslog.R;
 import com.tortel.syslog.Result;
 import com.tortel.syslog.exception.CreateFolderException;
@@ -75,7 +76,7 @@ public class ExceptionDialog extends DialogFragment implements android.view.View
     @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        AlertDialog.Builder builder = new MaterialAlertDialogBuilder(getActivity());
         LayoutInflater inflater = getActivity().getLayoutInflater();
         
         View view = inflater.inflate(R.layout.dialog_exception, null);

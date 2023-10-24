@@ -18,17 +18,11 @@
 package com.tortel.syslog.dialog;
 
 import android.app.Activity;
-import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
-import android.os.Build;
-import android.os.Bundle;
 import android.preference.PreferenceManager;
-import androidx.annotation.NonNull;
-import androidx.fragment.app.DialogFragment;
 import androidx.appcompat.app.AlertDialog;
 
-import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.CheckBox;
