@@ -34,7 +34,7 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.tortel.syslog.databinding.ActivityLogcatBinding;
-import com.tortel.syslog.dialog.AboutLogcatDialog;
+import com.tortel.syslog.dialog.AppDialogs;
 import com.tortel.syslog.utils.Prefs;
 
 import jackpal.androidterm.emulatorview.EmulatorView;
@@ -79,8 +79,7 @@ public class LiveLogActivity extends AppCompatActivity {
         // Check to show the about dialog
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         if (!prefs.getBoolean(Prefs.KEY_LIVE_LOGCAT_ABOUT, false)) {
-            AboutLogcatDialog dialog = new AboutLogcatDialog(this);
-            dialog.getDialog().show();
+            AppDialogs.showAboutLiveLogcatDialog(this);
 
             // Save the preference
             prefs.edit().putBoolean(Prefs.KEY_LIVE_LOGCAT_ABOUT, true).apply();

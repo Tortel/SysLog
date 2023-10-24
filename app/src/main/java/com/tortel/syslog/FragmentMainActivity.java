@@ -20,6 +20,7 @@ package com.tortel.syslog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+
 import androidx.fragment.app.FragmentManager;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.preference.PreferenceManager;
@@ -27,10 +28,8 @@ import androidx.preference.PreferenceManager;
 import android.view.MenuItem;
 
 import com.tortel.syslog.databinding.ActivityMainBinding;
-import com.tortel.syslog.dialog.AboutDialog;
-import com.tortel.syslog.dialog.AboutLogcatDialog;
+import com.tortel.syslog.dialog.AppDialogs;
 import com.tortel.syslog.dialog.ClearBufferDialog;
-import com.tortel.syslog.dialog.FaqDialog;
 import com.tortel.syslog.fragment.MainFragment;
 import com.tortel.syslog.utils.FileUtils;
 import com.tortel.syslog.utils.Log;
@@ -101,24 +100,20 @@ public class FragmentMainActivity extends AppCompatActivity {
      * Shows the About dialog box
      */
     private void showAboutDialog(){
-        AboutDialog dialog = new AboutDialog(this);
-        dialog.getDialog().show();
-        // dialog.show(getSupportFragmentManager(), "about");
+        AppDialogs.showAboutDialog(this);
     }
 
     /**
      * Shows the About dialog box
      */
     private void showAboutLiveLogcatDialog(){
-        AboutLogcatDialog dialog = new AboutLogcatDialog(this);
-        dialog.getDialog().show();
+        AppDialogs.showAboutLiveLogcatDialog(this);
     }
 
     /**
      * Shows the FAQ dialog box
      */
     private void showFaqDialog(){
-        FaqDialog dialog = new FaqDialog(this);
-        dialog.getDialog().show();
+        AppDialogs.showFaqDialog(this);
     }
 }
