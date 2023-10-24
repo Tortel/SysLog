@@ -33,24 +33,16 @@ import com.tortel.syslog.R;
 public class AboutLogcatDialog {
 
     private final MaterialAlertDialogBuilder builder;
-    private static final String htmlStr =
-            "<html>" +
-                    "<body>" +
-                        "The live logcat view will show you the current logcat output from your device." +
-                    "<br /><br />" +
-                        "You can stop and restart the output with the buttons in the action bar." +
-                    "</body>" +
-            "</html>";
 
     public AboutLogcatDialog(Activity activity) {
         // Show material you dialog
         builder = new MaterialAlertDialogBuilder(activity);
         builder.setTitle(activity.getString(R.string.about_live));
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            builder.setMessage(Html.fromHtml(htmlStr, Html.FROM_HTML_MODE_LEGACY));
+            builder.setMessage(Html.fromHtml(activity.getString(R.string.dialog_livelog_content), Html.FROM_HTML_MODE_LEGACY));
         } else {
             // No need for additional flag in fromHtml method if below Nougat
-            builder.setMessage(Html.fromHtml(htmlStr));
+            builder.setMessage(Html.fromHtml(activity.getString(R.string.dialog_livelog_content)));
         }
         builder.setNegativeButton("Close", (dialog, which) -> dialog.dismiss());
     }

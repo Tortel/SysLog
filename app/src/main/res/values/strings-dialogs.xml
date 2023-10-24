@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+ * SysLog - A simple logging tool
+ * Copyright (C) 2013-2020 Scott Warner <Tortel1210@gmail.com>
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+-->
+<resources>
+    <string name="dialog_about_content">
+<![CDATA[<html>
+<body>
+    <p>
+        This is a simple application that takes the system logs via dmesg and logcat,
+        and saves them, compresses them, and lets you upload/email them.
+    </p>
+    <p>
+        Root access is <b>required</b> for access to all logs, but logcat and radio log access can
+        be <a href="https://github.com/Tortel/SysLog/blob/master/Readme.md#enabling-log-access-via-adb-no-root-required">manually granted</a>.
+    </p>
+    <p>
+        This app is open source, and licensed under GPLv2. You can view the source on
+        <a href="http://github.com/Tortel/Syslog">GitHub</a>
+    </p>
+    <p>
+        <a href="https://github.com/Tortel/SysLog/blob/master/Privacy.md">Privacy Policy</a>
+    </p>
+</body>
+</html>]]>
+    </string>
+
+    <string name="dialog_livelog_content">
+<![CDATA[<html>
+    <body>
+    The live logcat view will show you the current logcat output from your device.
+    <br /><br />
+    You can stop and restart the output with the buttons in the action bar.
+    </body>
+</html>
+]]>
+    </string>
+
+
+    <string name="dialog_faq_content">
+<![CDATA[<html>
+<body>
+    <h4>Why does SysLog request root access?</h4>
+    <p>
+    Starting with Android 4.1, the system logs were restricted to system applications only.<br />
+    You can <a href="https://github.com/Tortel/SysLog/blob/master/Readme.md#enabling-log-access-via-adb-no-root-required">manually enable access</a> to some logs using adb though.
+    </p>
+    <h4>Where are the files saved?</h4>
+    <p>
+        The files are saved in the application\'s cache, so no other apps can access them. You can attach them in other applications through the system document picker -
+        select the SysLog application and you can pick a compressed log file.
+    </p>
+    <h4>Why is the last kernel log grayed out?</h4>
+    <p>
+    Your device\'s kernel needs to support the last log feature, and SysLog checks for the \'/proc/last_kmsg\' file at start.
+    Even if your kernel supports the feature, it may only save the log during a kernel crash. Check for more details with
+    the maintainer of the kernel/ROM you use.
+    </p>
+    <h4>What is Grep?</h4>
+    <p>
+    Grep is a Unix utility to match lines based on regular expressions. If you are not familiar with it, I would not
+    recommend using it. For more details, check the
+    <a href="http://www.gnu.org/software/grep/manual/grep.html">help page</a>.
+    </p>
+    <h4>What information gets scrubbed?</h4>
+    <p>
+        The scrubber uses a set of regular expressions to scrub out email addresses, phone numbers, URLs, IP addresses,
+        serial number, and some basic phone and user information. For more details, you can view
+        <a href="https://github.com/Tortel/SysLog/blob/master/app/src/main/java/com/tortel/syslog/utils/ScrubberUtils.java">the source</a>.
+    </p>
+</body>
+</html>]]>
+    </string>
+</resources>
