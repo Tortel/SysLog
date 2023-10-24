@@ -1,5 +1,5 @@
 /* SysLog - A simple logging tool
- * Copyright (C) 2020  Scott Warner <Tortel1210@gmail.com>
+ * Copyright (C) 2020-2023  Scott Warner <Tortel1210@gmail.com>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
