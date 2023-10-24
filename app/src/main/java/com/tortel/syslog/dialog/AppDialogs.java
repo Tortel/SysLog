@@ -29,6 +29,7 @@ import androidx.appcompat.app.AlertDialog;
 
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.tortel.syslog.R;
+import com.tortel.syslog.utils.Log;
 
 /**
  * Class to easily show various informational dialogs
@@ -37,7 +38,7 @@ public class AppDialogs {
 
     /**
      * Show a dialog with the provided title and body. Everything will be HTML formatted and linkified
-     * @param context context
+     * @param context application context
      * @param title the title resource ID
      * @param content the content resource ID
      */
@@ -54,13 +55,19 @@ public class AppDialogs {
 
         AlertDialog dialog = builder.create();
         dialog.show();
-        ((TextView) dialog.findViewById(android.R.id.message))
-                .setMovementMethod(LinkMovementMethod.getInstance());
+
+        try {
+            // Make any links clickable
+            ((TextView) dialog.findViewById(android.R.id.message))
+                    .setMovementMethod(LinkMovementMethod.getInstance());
+        } catch (Exception e) {
+            Log.w("Exception linkifing the dialog, ignoring", e);
+        }
     }
 
     /**
      * Show the About dialog
-     * @param context
+     * @param context application context
      */
     public static void showAboutDialog(@NonNull Context context) {
         showDialog(context, R.string.about, R.string.dialog_about_content);
@@ -68,7 +75,7 @@ public class AppDialogs {
 
     /**
      * Show the FAQ dialog
-     * @param context
+     * @param context application context
      */
     public static void showFaqDialog(@NonNull Context context) {
         showDialog(context, R.string.faq, R.string.dialog_faq_content);
@@ -76,7 +83,7 @@ public class AppDialogs {
 
     /**
      * Show the About Live Logcat dialog
-     * @param context
+     * @param context application context
      */
     public static void showAboutLiveLogcatDialog(@NonNull Context context) {
         showDialog(context, R.string.about_live, R.string.dialog_livelog_content);
