@@ -1,3 +1,7 @@
+v2.4.2 (Aug 25, 2023)
+* Target Android 14
+* Update dependencies and build tools
+
 v2.4.1 (May 27, 2020)
 * Updated FAQs and About text
 
