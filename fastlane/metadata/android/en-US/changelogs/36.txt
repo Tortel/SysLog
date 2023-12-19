@@ -1,0 +1,2 @@
+• Target Android 14
+• Update dependencies and build tools
