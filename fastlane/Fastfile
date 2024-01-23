@@ -9,6 +9,7 @@
 #
 #     https://docs.fastlane.tools/plugins/available-plugins
 #
+require 'date'
 
 # Uncomment the line if you want fastlane to automatically update itself
 # update_fastlane
@@ -20,22 +21,119 @@ KEYSTORE_PASS = ENV["APP_KEYSTORE_PASS"]
 KEY_ALIAS = ENV["APP_KEY_ALIAS"]
 KEY_PASSWORD = ENV["APP_KEY_PASSWORD"]
 
+GH_API_TOKEN = ENV["APP_GITHUB_TOKEN"]
+
+CHANGELOG_FILE = "../Changelog.md"
+CHANGELOG_TMP_FILE = "../Changelog.tmp"
+
+def git_changelog()
+  changelog_from_git_commits(
+    between: [last_git_tag, "HEAD"],
+    pretty: "- %s",
+    date_format: "short",
+    match_lightweight_tag: false,
+    merge_commit_filtering: "exclude_merges"
+  ) || []
+end
+
+def update_changelog(version, version_code, new_changes)
+  # Read the old changes out
+
+  datestamp = DateTime.now.strftime("%B %d, %Y")
+
+  # And write everything back
+  File.open(CHANGELOG_TMP_FILE, 'w') {|f|
+    f.puts("Version #{version}  - #{datestamp}\n")
+    f.puts(new_changes)
+    f.puts("\n")
+    File.foreach(CHANGELOG_FILE) do |line|
+      f.puts line
+    end
+  }
+
+  File.delete(CHANGELOG_FILE)
+  File.rename(CHANGELOG_TMP_FILE, CHANGELOG_FILE)
+
+  # Also write it to metadata
+  File.open("metadata/android/en-US/changelogs/#{version_code}.txt", 'w') { |f|
+    f.puts("Version #{version}  - #{datestamp}\n")
+    char_count = 0
+    new_changes.each_line do |line|
+      if char_count < 350
+        f.puts(line)
+        char_count += line.length
+      end
+    end
+    f.puts("See https://github.com/Tortel/SysLog/blob/master/Changelog.md for full changelog")
+  }
+end
+
 platform :android do
 
   desc "Build a new release and upload it to Play/Github"
-  lane :release do
+  lane :release do | params |
 
-    # Build it all
-    gradle(
-      task: "clean assembleRelease",
-      properties: {
-        "android.injected.signing.store.file" => KEYSTORE,
-        "android.injected.signing.store.password" => KEYSTORE_PASS,
-        "android.injected.signing.key.alias" => KEY_ALIAS,
-        "android.injected.signing.key.password" => KEY_PASSWORD,
-      },
-      print_command: false
-    )
-    #upload_to_play_store
+    begin
+
+      if !params[:version]
+        puts "Version name is required".red
+        UI.user_error!("Version name is required".red)
+      end
+
+      version = params[:version]
+
+      # Increment the build number
+      version_code = android_set_version_code
+      # Set the version name
+      android_set_version_name(version_name: version)
+
+      # Get the changelog
+      changes = git_changelog
+
+      # Write changelogs
+      update_changelog(version, version_code, changes)
+
+      git_add(path: "fastlane/metadata/android/en-US/changelogs/*.txt", shell_escape: false)
+      # Commit the version changes
+      git_commit(
+        path: ["Changelog.md", "app/build.gradle", "fastlane/metadata/android/en-US/changelogs/*.txt"],
+        message: "Bump version to v" + version
+      )
+
+      # Tag it
+      add_git_tag(tag: "v" + version)
+
+      # Push it all
+      push_to_git_remote
+
+      # Build it all
+      gradle(
+        task: "clean assembleRelease",
+        properties: {
+          "android.injected.signing.store.file" => KEYSTORE,
+          "android.injected.signing.store.password" => KEYSTORE_PASS,
+          "android.injected.signing.key.alias" => KEY_ALIAS,
+          "android.injected.signing.key.password" => KEY_PASSWORD,
+        },
+        print_command: false
+      )
+
+      # Create Github release
+      set_github_release(
+        repository_name: "Tortel/SysLog",
+        api_token: GH_API_TOKEN,
+        name: "Version " + version,
+        tag_name: "v" + version,
+        description: changes,
+        upload_assets: ["app/build/outputs/apk/release/app-release.apk"]
+      )
+
+      # Upload it to the play store
+      upload_to_play_store
+
+    rescue => exception
+      puts "Exception"
+      puts exception
+    end
   end
 end
