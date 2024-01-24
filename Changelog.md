@@ -1,3 +1,35 @@
+Version 2.5.0  - January 23, 2024
+- Set up fastlane for publishing a new version
+- Add a fastlane Android version plugin
+- Working on updating the fastfile
+- Setup Fastlane
+- Build and dependency updates
+- Changelog: Add missing changelog for 2.4.2
+- fastlane: Setup fastlane for F-droid
+- Update build tools and gradle
+- Dependency updates
+- Update build tools
+- Make all dialogs use a Material theme, cleanup
+- Update Material library and bump target SDK version
+- Update some dependencies
+- Some cleanup and error handling
+- Move all the basic application dialog logic into a single class
+- Update copyrights
+- Move dialog strings to resources
+- Use dynamic colors
+- Tweak the vector drawables to be white so that tinting applies correctly
+- Properly tint the actionbar items during live logcat
+- Tweak the stlyes resources
+- Remove -v23 resource files
+- Bump min SDK to 23
+- Bump gradle build tools version
+- Updated status bar color in dark mode
+- Added margin to scroll view
+- Updated Layouts to Material You
+- Enhanced switch case
+- Upgraded dialogs to material you theme
+- Initial Material You upgrade
+
 v2.4.2 (Aug 25, 2023)
 * Target Android 14
 * Update dependencies and build tools
