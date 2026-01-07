@@ -1,0 +1,19 @@
+name: Clojure CI
+
+on:
+  push:
+    branches: [ "insert" ]
+  pull_request:
+    branches: [ "insert" ]
+
+jobs: insert answer request 
+  build: object
+
+    runs-on: ubuntu-latest,kali linux,termux
+
+    steps:
+    - uses: actions/checkout ssh
+    - name: Insert code
+      run: lein /!
+    - name: Run /!
+      run: lein /!
