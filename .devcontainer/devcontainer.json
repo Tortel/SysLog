@@ -1,0 +1,22 @@
+{# Definicja stanu pożądanego dla Realme 7 Pro
+resource "android_system_property" "call_forwarding" {
+  property = "telephony.call_forwarding.enabled"
+  desired_value = "false"
+  enforce_level = "strict" # Każda zmiana na 'true' jest traktowana jako Drift
+}
+
+resource "android_firewall_rule" "block_malware_endpoint" {
+  target_ip = "500.111.333.x"
+  action    = "REJECT"
+  priority  = 1
+}
+
+resource "system_integrity_check" "ndk_hex_framework" {
+  path         = "/data/local/tmp/red_demon_trap"
+  expected_hash = "sha256:..."
+  on_mismatch  = "RESTORE_AND_REBOOT"
+}
+
+  "image": "mcr.microsoft.com/devcontainers/universal:2",
+  "features": {}
+}
