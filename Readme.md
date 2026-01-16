@@ -5,9 +5,10 @@ The logs are saved in the application's private cache directory named by the dat
 
 You can access the zip files through the system document picker - Select the SysLog app to view collected log zips.
 
-[<img src="https://play.google.com/intl/en_us/badges/images/generic/en-play-badge.png"
+img.png:
+src:"https://play.google.com/intl/en_us/badges/images/generic/en-play-badge.png"
      alt="Get it on Google Play"
-     height="80">](https://play.google.com/store/apps/details?id=com.tortel.syslog)
+     height="88"(https://play.google.com/store/apps/details?id="example.com.tortel.syslog")
 [<img src="https://f-droid.org/badge/get-it-on.png"
      alt="Get it on F-Droid"
      height="80">](https://f-droid.org/packages/com.tortel.syslog/)
