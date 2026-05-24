@@ -17,12 +17,13 @@
  */
 package com.tortel.syslog.fragment;
 
+import android.Manifest;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.telephony.TelephonyManager;
-import android.text.Editable;
 import android.text.method.LinkMovementMethod;
 import android.text.util.Linkify;
 import android.view.LayoutInflater;
@@ -32,11 +33,11 @@ import android.view.WindowManager;
 import android.widget.CheckBox;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.preference.PreferenceManager;
 
 import com.google.android.material.button.MaterialButton;
-import com.google.android.material.checkbox.MaterialCheckBox;
 import com.google.android.material.textfield.TextInputEditText;
 import com.tortel.syslog.GrepOption;
 import com.tortel.syslog.R;
@@ -67,6 +68,7 @@ public class MainFragment extends Fragment implements View.OnClickListener {
     private boolean scrubLog;
 
     private boolean root;
+    private boolean hasReadLogs;
     private MainBinding binding;
 
     @Override
@@ -140,10 +142,10 @@ public class MainFragment extends Fragment implements View.OnClickListener {
     }
 
     private void enableLogButton(boolean flag) {
-        if (binding == null)  {
+        if (binding == null) {
             return;
         }
-        Log.d("Enabling log button: "+flag);
+        Log.d("Enabling log button: " + flag);
 
         binding.takeLog.setEnabled(flag);
         MaterialButton takeLog = (MaterialButton) binding.takeLog;
@@ -172,15 +174,15 @@ public class MainFragment extends Fragment implements View.OnClickListener {
 
         // Check for root
         if (!root) {
-            checkRoot();
+            checkAccess();
         } else {
             enableLogButton(true);
         }
 
-        //Check for last_kmsg and modem
+        // Check for last_kmsg and modem
         checkOptions();
 
-        //Set the checkboxes
+        // Set the checkboxes
         setCheckBoxes();
 
         // Hide the keyboard on open
@@ -191,6 +193,7 @@ public class MainFragment extends Fragment implements View.OnClickListener {
 
     /**
      * Wraper to get the text value from an edittext with null checks
+     *
      * @param input edit text
      * @return the text content or an empty string
      */
@@ -200,7 +203,7 @@ public class MainFragment extends Fragment implements View.OnClickListener {
 
     @Override
     public void onClick(View v) {
-        if(v instanceof CheckBox box) {
+        if (v instanceof CheckBox box) {
             SharedPreferences.Editor prefs = PreferenceManager
                     .getDefaultSharedPreferences(requireContext()).edit();
 
@@ -243,7 +246,7 @@ public class MainFragment extends Fragment implements View.OnClickListener {
 
             // Save the settings
             prefs.apply();
-        } else if(v.getId() == R.id.take_log) {
+        } else if (v.getId() == R.id.take_log) {
             // Build the command
             RunCommand command = new RunCommand();
 
@@ -286,10 +289,10 @@ public class MainFragment extends Fragment implements View.OnClickListener {
      */
     private void checkOptions() {
         final Context context = requireContext();
-        (new Thread(){
+        (new Thread() {
             @Override
             public void run() {
-                final boolean hasLastKmsg ;
+                final boolean hasLastKmsg;
                 final boolean hasRadio;
                 boolean hasRadioTemp;
                 Log.d("Checking if last_kmsg and radio are available");
@@ -323,7 +326,7 @@ public class MainFragment extends Fragment implements View.OnClickListener {
         }).start();
     }
 
-    private void checkRoot() {
+    private void checkAccess() {
         final Context context = requireContext();
         (new Thread() {
 
@@ -331,12 +334,16 @@ public class MainFragment extends Fragment implements View.OnClickListener {
             public void run() {
                 Log.d("Checking for root");
                 root = Shell.SU.available();
+
+                hasReadLogs = ContextCompat.checkSelfPermission(context,
+                        Manifest.permission.READ_LOGS) == PackageManager.PERMISSION_GRANTED;
+
                 Handler mainHandler = new Handler(context.getMainLooper());
                 mainHandler.post(() -> {
                     try {
-                        //Check for root access
-                        if (!root) {
-                            Log.d("Root not available");
+                        // Check for root access or READ_LOGS permission
+                        if (!root && !hasReadLogs) {
+                            Log.d("Root not available and READ_LOGS permission not granted");
                             // Warn the user
                             Linkify.addLinks(binding.warnRoot, Linkify.ALL);
                             binding.warnRoot.setMovementMethod(LinkMovementMethod.getInstance());
