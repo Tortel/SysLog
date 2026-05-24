@@ -22,6 +22,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.telephony.TelephonyManager;
+import android.text.Editable;
 import android.text.method.LinkMovementMethod;
 import android.text.util.Linkify;
 import android.view.LayoutInflater;
@@ -36,6 +37,7 @@ import androidx.preference.PreferenceManager;
 
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.checkbox.MaterialCheckBox;
+import com.google.android.material.textfield.TextInputEditText;
 import com.tortel.syslog.GrepOption;
 import com.tortel.syslog.R;
 import com.tortel.syslog.RunCommand;
@@ -75,13 +77,13 @@ public class MainFragment extends Fragment implements View.OnClickListener {
 
         if (savedInstanceState == null && !GrabLogThread.isRunning()) {
             // Clean all uncompressed logs
-            FileUtils.cleanAllUncompressed(getContext());
+            FileUtils.cleanAllUncompressed(requireContext());
         }
     }
 
     private void loadSettings() {
         Log.d("Loading settings");
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity().getApplicationContext());
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(requireContext());
         kernelLog = prefs.getBoolean(Prefs.KEY_KERNEL, true);
         mainLog = prefs.getBoolean(Prefs.KEY_MAIN, true);
         eventLog = prefs.getBoolean(Prefs.KEY_EVENT, true);
@@ -102,28 +104,28 @@ public class MainFragment extends Fragment implements View.OnClickListener {
         }
         Log.d("Setting the checkboxes");
 
-        ((MaterialCheckBox)binding.mainLog).setChecked(mainLog);
+        binding.mainLog.setChecked(mainLog);
         binding.mainLog.setOnClickListener(this);
 
-        ((MaterialCheckBox)binding.eventLog).setChecked(eventLog);
+        binding.eventLog.setChecked(eventLog);
         binding.eventLog.setOnClickListener(this);
 
-        ((MaterialCheckBox)binding.modemLog).setChecked(modemLog);
+        binding.modemLog.setChecked(modemLog);
         binding.modemLog.setOnClickListener(this);
 
-        ((MaterialCheckBox)binding.kernelLog).setChecked(kernelLog);
+        binding.kernelLog.setChecked(kernelLog);
         binding.kernelLog.setOnClickListener(this);
 
-        ((MaterialCheckBox)binding.lastKmsg).setChecked(lastKmsg);
+        binding.lastKmsg.setChecked(lastKmsg);
         binding.lastKmsg.setOnClickListener(this);
 
-        ((MaterialCheckBox)binding.pstore).setChecked(pstore);
+        binding.pstore.setChecked(pstore);
         binding.pstore.setOnClickListener(this);
 
-        ((MaterialCheckBox)binding.scrubLogs).setChecked(scrubLog);
+        binding.scrubLogs.setChecked(scrubLog);
         binding.scrubLogs.setOnClickListener(this);
 
-        ((MaterialCheckBox)binding.auditLog).setChecked(auditLog);
+        binding.auditLog.setChecked(auditLog);
         binding.auditLog.setOnClickListener(this);
 
         // Set the warning for modem logs
@@ -181,16 +183,26 @@ public class MainFragment extends Fragment implements View.OnClickListener {
         //Set the checkboxes
         setCheckBoxes();
 
-        //Hide the keyboard on open
-        getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
+        // Hide the keyboard on open
+        if (getActivity() != null) {
+            getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
+        }
+    }
+
+    /**
+     * Wraper to get the text value from an edittext with null checks
+     * @param input edit text
+     * @return the text content or an empty string
+     */
+    private String getText(TextInputEditText input) {
+        return input.getText() != null ? input.getText().toString() : "";
     }
 
     @Override
     public void onClick(View v) {
-        if(v instanceof CheckBox) {
-            CheckBox box = (CheckBox) v;
+        if(v instanceof CheckBox box) {
             SharedPreferences.Editor prefs = PreferenceManager
-                    .getDefaultSharedPreferences(getActivity()).edit();
+                    .getDefaultSharedPreferences(requireContext()).edit();
 
             if (box.getId() == R.id.kernel_log) {
                 kernelLog = box.isChecked();
@@ -247,11 +259,11 @@ public class MainFragment extends Fragment implements View.OnClickListener {
 
             // Grep options
             command.setGrepOption(GrepOption.fromString(binding.grepLog.getSelectedItem().toString()));
-            command.setGrep(binding.grepString.getText().toString());
+            command.setGrep(getText(binding.grepString));
 
             // Notes/text
-            command.setAppendText(binding.fileName.getText().toString());
-            command.setNotes(binding.notes.getText().toString());
+            command.setAppendText(getText(binding.fileName));
+            command.setNotes(getText(binding.notes));
 
             command.setRoot(root);
 
@@ -264,7 +276,7 @@ public class MainFragment extends Fragment implements View.OnClickListener {
             args.putParcelable(RunningDialog.COMMAND, command);
             dialog.setArguments(args);
 
-            dialog.show(getFragmentManager(), "run");
+            dialog.show(getParentFragmentManager(), "run");
         }
     }
 
@@ -273,7 +285,7 @@ public class MainFragment extends Fragment implements View.OnClickListener {
      * If they are not available, disable the check boxes.
      */
     private void checkOptions() {
-        final Context context = getContext();
+        final Context context = requireContext();
         (new Thread(){
             @Override
             public void run() {
@@ -296,12 +308,12 @@ public class MainFragment extends Fragment implements View.OnClickListener {
                 mainHandler.post(() -> {
                     if (binding != null) {
                         if (!hasLastKmsg) {
-                            ((MaterialCheckBox)binding.lastKmsg).setChecked(false);
+                            binding.lastKmsg.setChecked(false);
                             binding.lastKmsg.setEnabled(false);
                             onClick(binding.lastKmsg);
                         }
                         if (!hasRadio) {
-                            ((MaterialCheckBox)binding.modemLog).setChecked(false);
+                            binding.modemLog.setChecked(false);
                             binding.modemLog.setEnabled(false);
                             onClick(binding.modemLog);
                         }
@@ -312,7 +324,7 @@ public class MainFragment extends Fragment implements View.OnClickListener {
     }
 
     private void checkRoot() {
-        final Context context = getContext();
+        final Context context = requireContext();
         (new Thread() {
 
             @Override
@@ -334,7 +346,7 @@ public class MainFragment extends Fragment implements View.OnClickListener {
 
                         enableLogButton(true);
                     } catch (NullPointerException e) {
-                        // Supress it
+                        // Suppress it
                     }
                 });
             }

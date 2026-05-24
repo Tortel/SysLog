@@ -134,8 +134,8 @@ public class LiveLogActivity extends AppCompatActivity {
         @Override
         public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
             DisplayMetrics metrics = new DisplayMetrics();
-            getActivity().getWindowManager().getDefaultDisplay().getMetrics(metrics);
-            return new EmulatorView(getActivity().getBaseContext(), mTermSession, metrics);
+            requireActivity().getWindowManager().getDefaultDisplay().getMetrics(metrics);
+            return new EmulatorView(requireContext(), mTermSession, metrics);
         }
 
         @Override
