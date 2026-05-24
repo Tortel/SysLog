@@ -10,6 +10,7 @@ gen/
 .DS_Store
 /build
 /app/release
+.vscode/
 
 #built application files
 *.apk

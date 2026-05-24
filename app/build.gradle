@@ -1,7 +1,5 @@
 plugins {
     id 'com.android.application'
-    id 'kotlin-android'
-    id 'kotlin-kapt'
 }
 
 android {
@@ -35,9 +33,7 @@ android {
 }
 
 dependencies {
-    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
-
-    implementation 'com.google.android.material:material:1.11.0'
+    implementation 'com.google.android.material:material:1.14.0'
     //noinspection KtxExtensionAvailable
     implementation 'androidx.preference:preference:1.2.1'
 
