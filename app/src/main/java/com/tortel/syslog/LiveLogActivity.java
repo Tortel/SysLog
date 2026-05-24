@@ -21,6 +21,8 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.appcompat.app.AppCompatActivity;
@@ -50,6 +52,18 @@ public class LiveLogActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         ActivityLogcatBinding binding = ActivityLogcatBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+
+        // Apply the insets listener
+        ViewCompat.setOnApplyWindowInsetsListener(binding.rootView, (view, windowInsets) -> {
+            // Get the heights of the system bars (status bar, navigation bar, etc.)
+            androidx.core.graphics.Insets insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars());
+            // Apply the insets as padding to the view
+            // This pushes the content of the view inwards so it doesn't overlap the system bars
+            view.setPadding(insets.left, insets.top, insets.right, insets.bottom);
+            // Return CONSUMED if you don't want the insets to be passed down to child views
+            // Or return windowInsets if you want children to also have a chance to handle them.
+            return WindowInsetsCompat.CONSUMED;
+        });
 
         binding.toolbar.setOnMenuItemClickListener((MenuItem item) -> {
             if (item.getItemId() == android.R.id.home) {
