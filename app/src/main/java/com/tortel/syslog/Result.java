@@ -27,6 +27,7 @@ public class Result {
 	private boolean success;
 	private Throwable exceptions;
 	private int message;
+	private String stingmessage;
 	private RunCommand command;
 	private String archiveName;
 	
@@ -59,9 +60,13 @@ public class Result {
 	public Throwable getException(){
 		return exceptions;
 	}
-	
+
 	public void setMessage(@StringRes int message){
-		this.message= message; 
+		this.message= message;
+	}
+
+	public void setStringMessage(String message) {
+		this.stingmessage = message;
 	}
 
 	@StringRes

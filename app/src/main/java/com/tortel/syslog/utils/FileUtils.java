@@ -18,6 +18,8 @@
 package com.tortel.syslog.utils;
 
 import android.content.Context;
+import android.os.Environment;
+import android.os.Build;
 import android.os.Handler;
 import android.os.StatFs;
 import android.widget.Toast;
@@ -26,6 +28,9 @@ import androidx.annotation.NonNull;
 
 import com.tortel.syslog.R;
 
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.File;
 
 import eu.chainfire.libsuperuser.Shell;
@@ -48,17 +53,49 @@ public class FileUtils {
             @Override
             public void run() {
                 final double startingSpace = getStorageFreeSpace(context);
-                String path = getStorageDir(context).getPath();
+                String path = getRootLogDir(context).getAbsolutePath();  // Use getRootLogDir instead of getStorageDir
                 path += "/*";
                 Shell.SH.run("rm -rf " + path);
                 final double endingSpace = getStorageFreeSpace(context);
                 Handler mainHandler = new Handler(context.getMainLooper());
+                String finalPath = path;
                 mainHandler.post(() -> {
-                    Toast.makeText(context, context.getResources().getString(R.string.space_freed,
-                            endingSpace - startingSpace), Toast.LENGTH_SHORT).show();
+                    // Calculate the space freed
+                    double spaceFreed = endingSpace - startingSpace;
+                    // Format the message for space freed
+                    String formattedMessage = String.format(context.getResources().getString(R.string.space_freed), spaceFreed);
+                    // Combine the space freed message with the storage path
+                    String message = formattedMessage + ", logs stored at: " + finalPath;
+                    // Display the Toast message
+                    Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
                 });
             }
         }).start();
+    }
+
+    /**
+     * Copy a file from source to destination
+     *
+     * @param sourceFile the source file
+     * @param destFile the destination file
+     * @throws IOException if an error occurs during copying
+     */
+    public static void copyFile(File sourceFile, File destFile) throws IOException {
+        if (!destFile.exists()) {
+            destFile.createNewFile(); // Create destination file if it doesn't exist
+        }
+
+        try (FileInputStream fis = new FileInputStream(sourceFile);
+             FileOutputStream fos = new FileOutputStream(destFile)) {
+
+            byte[] buffer = new byte[1024];
+            int length;
+
+            // Read from source and write to destination
+            while ((length = fis.read(buffer)) > 0) {
+                fos.write(buffer, 0, length);
+            }
+        }
     }
 
     /**
@@ -98,11 +135,22 @@ public class FileUtils {
      * @return the working directory. This is a directory that will always exist
      */
     public static @NonNull File getRootLogDir(Context context) {
-        File logDir = new File(getStorageDir(context).getAbsolutePath() + LOG_DIR);
-        if (!logDir.isDirectory()) {
-            logDir.mkdir();
+        // For Android 11 and above, use public directory in scoped storage
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            // Define the path inside Downloads directory
+            File publicDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), "Syslogs/Logs");
+            if (!publicDir.exists()) {
+                publicDir.mkdirs();  // Create the directory if it doesn't exist
+            }
+            return publicDir;
+        } else {
+            // For Android 10 and below, use traditional external storage access
+            File publicDir = new File(Environment.getExternalStorageDirectory(), "Syslogs/Logs");
+            if (!publicDir.exists()) {
+                publicDir.mkdirs();  // Create the directory if it doesn't exist
+            }
+            return publicDir;
         }
-        return logDir;
     }
 
     /**

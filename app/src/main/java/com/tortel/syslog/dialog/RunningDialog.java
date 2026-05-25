@@ -21,6 +21,8 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Environment;
+import android.os.Build;
 import androidx.annotation.NonNull;
 import androidx.annotation.StringRes;
 import androidx.fragment.app.DialogFragment;
@@ -115,17 +117,21 @@ public class RunningDialog extends DialogFragment {
                 File zipFile = new File(FileUtils.getZipPath(context) +
                         "/" + result.getArchiveName());
 
+                // Create the share intent
                 Intent share = new Intent(android.content.Intent.ACTION_SEND);
                 share.setType("application/zip");
                 share.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
                 share.putExtra(Intent.EXTRA_STREAM, FileProvider.getUriForFile(context,
                         "com.tortel.syslog.fileprovider", zipFile));
 
+                // Check if a handler is available to share the file
                 if (Utils.isHandlerAvailable(context, share)) {
                     startActivity(share);
                 } else {
+                    // No app can handle the share intent - Save the file to storage instead
                     result.setMessage(R.string.exception_send);
                     result.setException(null);
+                    saveLogsToStorage(zipFile);
 
                     //Show the error dialog. It will have stacktrace/bugreport disabled
                     ExceptionDialog dialog = new ExceptionDialog();
@@ -149,6 +155,41 @@ public class RunningDialog extends DialogFragment {
             dismiss();
         } catch(IllegalStateException e){
             Log.v("Ignoring IllegalStateException - The user probably left the application, and we tried to show a dialog");
+        }
+    }
+
+    /**
+     * Saves logs to storage when sharing fails
+     */
+    private void saveLogsToStorage(File zipFile) {
+        try {
+            // For Android 11 and above, use the appropriate location for public external storage
+            File saveDirectory;
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                // For Android 10 and above, access the 'Downloads' folder or create 'SysLogs' folder there
+                saveDirectory = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), "SysLogs");
+            } else {
+                // For Android 9 and below, you can use external storage directories directly
+                saveDirectory = new File(Environment.getExternalStorageDirectory(), "SysLogs");
+            }
+
+            // Create the directory if it doesn't exist
+            if (!saveDirectory.exists()) {
+                saveDirectory.mkdirs();
+            }
+
+            // Create a new file in the save directory
+            File savedLogFile = new File(saveDirectory, zipFile.getName());
+
+            // Copy the zipFile to the save directory
+            FileUtils.copyFile(zipFile, savedLogFile);
+
+            // Notify the user with the correct path
+            Toast.makeText(getActivity(), "Logs saved to: " + savedLogFile.getAbsolutePath(), Toast.LENGTH_LONG).show();
+        } catch (Exception e) {
+            Toast.makeText(getActivity(), "Failed to save logs: " + e.getMessage(), Toast.LENGTH_LONG).show();
+            e.printStackTrace();
         }
     }
 

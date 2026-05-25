@@ -40,8 +40,8 @@
     <string name="exception_unknown">There was an unknown exception while running. Please submit a bug report, and include the SU implementation you use.</string>
 
     <!-- No send intent available -->
-    <string name="exception_send">There was no application available to send a zip file. The logs have been saved, but please install or enable
-        an email application or cloud storage application to easily send the file.</string>
+    <string name="exception_send">There was no application available to send a zip file. The logs have been saved at Downloads Folder, 
+        but please install or enable an email application or cloud storage application to easily send the file.</string>
         
     <!-- Low space on primary storage -->
     <string name="exception_space">Your primary storage does not have enough free space. You currently have %.1f MB free. SysLog can try to free space by cleaning old log files.</string>
