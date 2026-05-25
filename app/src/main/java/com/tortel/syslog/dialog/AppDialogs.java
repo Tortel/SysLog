@@ -51,7 +51,7 @@ public class AppDialogs {
             // No need for additional flag in fromHtml method if below Nougat
             builder.setMessage(Html.fromHtml(context.getString(content)));
         }
-        builder.setNegativeButton("Close", (dialog, which) -> dialog.dismiss());
+        builder.setNegativeButton(context.getString(R.string.close), (dialog, which) -> dialog.dismiss());
 
         AlertDialog dialog = builder.create();
         dialog.show();

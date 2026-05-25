@@ -61,7 +61,7 @@ public class ClearBufferDialog {
                 Utils.clearLogcatBuffer(activity);
             }
         });
-        builder.setNegativeButton("Close", (dialog, which) -> dialog.dismiss());
+        builder.setNegativeButton(activity.getString(R.string.close), (dialog, which) -> dialog.dismiss());
     }
 
     public AlertDialog getDialog() {

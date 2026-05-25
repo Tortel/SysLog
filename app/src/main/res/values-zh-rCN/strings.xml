@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">SysLog</string>
+    <string name="exception_zip">压缩日志文件时发生错误.\n\t    这可能由存储空间不足、读取日志文件出错甚至权限问题引发.\n\t    先去看看存储空间情况再回来试试吧.</string>
+    <string name="exception_zip_nofiles">没有可供压缩的日志文件. 这可能是由于没有\n        root权限或者获取日志的命令失败. 如果你在授予了SysLog root 权限的情况下运行, \n        请提交BUG报告</string>
+    <string name="exception_folder">尝试创建文件夹并存储日志时出错.\n        请确认存储空间满并且正确挂载.</string>
+    <string name="exception_commands">尝试获取日志时失败. 如果你没有授予Root权限,\n        请给予SysLog Root权限并重新启动软件. 若已授予, 请提交一份注明了所使用的SU方案的BUG报告.</string>
+    <string name="exception_unknown">运行出错. 请提交一份注明了所使用的SU方案的BUG报告.</string>
+    <string name="exception_send">没有可以用于发送zip文件的软件. 日志已保存，请安装或者解冻电子邮件或者云存储软件\n        以便发送文件</string>
+    <string name="exception_space">主存储空间不足. 目前剩余 %.1f MB. SysLog会尝试删除旧日志释放空间</string>
+    <string name="dialog_about_content">"\n<![CDATA[<html>
+<body>
+    <p>
+        这是一个通过 dmesg 和 logcat 获得和存储系统日志的简易软件,
+        并且允许你通过电子邮件或云存储将其发送
+    </p>
+    <p>
+        需要 <b>Root权限</b> 访问全部日志, 但logcat 和 radio log访问权限可以通过 <a href="https://github.com/Tortel/SysLog/blob/master/Readme.md#enabling-log-access-via-adb-no-root-required">手动授予</a>.
+    </p>
+    <p>
+        本软件开源并且使用GPLv2协议. 欲获取源码可前往
+        <a href="http://github.com/Tortel/Syslog">GitHub</a>
+    </p>
+    <p>
+        <a href="https://github.com/Tortel/SysLog/blob/master/Privacy.md">隐私政策</a>
+    </p>
+</body>
+</html>]]>\n    "</string>
+    <string name="dialog_livelog_content">"\n<![CDATA[<html>
+    <body>
+    实时logcat会显示目前设备的实时日志输出.
+    <br /><br />
+    你可以通过右上角的按钮实现日志输出的暂停和重新开始
+    </body>
+</html>
+]]>\n    "</string>
+    <string name="dialog_faq_content">"\n<![CDATA[<html>
+<body>
+    <h4>为什么SysLog需要root权限?</h4>
+    <p>
+    自Android 4.1起, 系统日志仅限于系统软件能够访问.<br />
+    你可以按照 <a href="https://github.com/Tortel/SysLog/blob/master/Readme.md#enabling-log-access-via-adb-no-root-required">此链接</a> 的引导手动获得访问部分日志的权限.
+    </p>
+    <h4>文件都会存在娜?</h4>
+    <p>
+        文件会存放在软件的缓存空间, 所以这对于其他软件来说是不可见的. 你可以通过系统自带的文件选取器让别的软件使用SysLog产生的文件
+        选择左栏的SysLog并选取一个压缩包即可.
+    </p>
+    <h4>为什么“重启前内核日志”功能用不了?</h4>
+    <p>
+    这需要你使用的内核有相关的功能支持, 并且SysLog会在启动时尝试读取\'/proc/last_kmsg\'文件.
+    即便内核支持该功能, 也很有可能仅限于内核崩溃时. 你可以去问问你所使用的Rom的维护者了解详情
+    </p>
+    <h4>Grep是什么?</h4>
+    <p>
+    Grep是一个基于正则表达式寻找内容的Unix工具. 在你不熟悉的情况下我不建议你使用它
+    请参阅
+    <a href="http://www.gnu.org/software/grep/manual/grep.html">GNU grep帮助页</a>.
+    </p>
+    <h4>哪些信息会被删除?</h4>
+    <p>
+        本软件会使用一系列正则表达式删除日志中的电子邮件地址、手机号、网址、IP地址、序列号
+        以及一些其他的用户基本信息. 欲知详情, 可参阅
+        <a href="https://github.com/Tortel/SysLog/blob/master/app/src/main/java/com/tortel/syslog/utils/ScrubberUtils.java">SysLog源码</a>.
+    </p>
+</body>
+</html>]]>\n    "</string>
+    <string name="desc">本软件会帮助你便捷地保存、压缩并发送系统日志</string>
+    <string name="log_select">选择日志类型</string>
+    <string name="main_log">主日志 (logcat)</string>
+    <string name="event_log">事件日志 (Event)</string>
+    <string name="kernel_log">内核日志 (dmesg)</string>
+    <string name="last_kmsg">重启前内核日志 (last_kmsg)</string>
+    <string name="pstore">PStore控制台</string>
+    <string name="modem_log">基带日志</string>
+    <string name="take_log">抓日志</string>
+    <string name="audit_log">查看日志</string>
+    <string name="scrub_log">从日志中消除隐私信息</string>
+    <string name="optional_info">额外信息:</string>
+    <string name="file_name">需要附在日志文件名后的文本</string>
+    <string name="notes">需要包含在压缩包中的信息</string>
+    <string name="grep_prompt">仅从日志中grep以下信息:</string>
+    <string name="grep_hint">Grep表达式</string>
+    <string name="live_logcat">实时</string>
+    <string name="required_permission_detail">SysLog需要这个权限才能正常运行. 授予此权限前将不能保存任何日志</string>
+    <string name="scrub_permission_detail">这个权限用于决定哪些信息需要从捕获的日志中删除</string>
+    <string name="warning">警告</string>
+    <string name="clear_buffer_warning">这会将当前logcat的内容清除. 确认清除？</string>
+    <string name="yes">确认</string>
+    <string name="no">取消</string>
+    <string name="dont_show_again">不再提示</string>
+    <string name="buffer_cleared">logcat缓冲区已清空</string>
+    <string name="working">运行中&#8230;</string>
+    <string name="done">完成！</string>
+    <string name="checking_root">检查Root权限&#8230;</string>
+    <string name="close">关闭</string>
+    <string name="collected_logs">日志已抓好</string>
+    <string name="space_freed">释放了%.1f MB</string>
+    <string name="noroot">警告: 无Root权限. 此时捕获的日志会不全或缺失\n       若无Root权限，则请参阅 <a href="https://github.com/Tortel/SysLog/blob/master/Readme.md#enabling-log-access-via-adb-no-root-required">手动授予读取部分日志权限</a></string>
+    <string name="error">保存出错. 请检查你的SD卡</string>
+    <string name="storage_err">外部存储只读, 因此无法保存</string>
+    <string name="warn_modem">注意: 基带日志可能会包含敏感信息（手机号、IMEI）</string>
+    <string name="about">关于</string>
+    <string name="about_live">关于实时Logcat</string>
+    <string name="faq">常见问题</string>
+    <string name="clean_all">清除所有已保存的日志</string>
+    <string name="clear_buffer">清空logcat缓冲区</string>
+    <string name="menu_settings">设置</string>
+    <string name="show_live_logcat">显示实时Logcat</string>
+    <string name="stopped_logcat">停止Logcat</string>
+    <string name="getting_logs">正在抓取日志&#8230;</string>
+    <string name="scrubbing_logs">正在清除隐私信息&#8230;</string>
+    <string name="compressing_logs">正在打包压缩&#8230;</string>
+    <string name="show_stacktrace">显示栈追踪信息</string>
+    <string name="error_dialog_title">呃啊！</string>
+    <string name="send_bugreport">发送BUG反馈</string>
+    <string name="dismiss">取消</string>
+    <string name="bugreport_notice">注意：发送BUG报告会打开手机的电子邮件app</string>
+    <string name="bugreport_disabled">注意：BUG反馈功能因你使用安卓4.3以上而且未授予Root权限而关闭\n请授予此软件Root权限后重试</string>
+    <string name="syslog_faq">SysLog常见问题</string>
+    <string name="oh_shit_title">啧，这不好</string>
+    <string name="oh_shit_message">你似乎没有安装电子邮件类软件. SysLog即将关闭\n\t    如果你确实有，请在FC窗口弹出后选择发送报告</string>
+    <string name="licenses">第三方库开源协议</string>
+    <string name="lib_androidx">AndroidX Support Libraries</string>
+    <string name="lib_material">Material Components Library</string>
+    <string name="lib_libsuperuser">libsuperuser</string>
+    <string name="lib_eventbus">EventBus</string>
+    <string name="lib_termview">Android-Terminal-Emulator</string>
+    <string name="lib_licenseview">LicenseView</string>
+</resources>
