@@ -1,3 +1,6 @@
+Version 2.6.0  - May 30, 2026
+
+
 Version 2.5.0  - January 23, 2024
 - Set up fastlane for publishing a new version
 - Add a fastlane Android version plugin

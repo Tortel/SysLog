@@ -1,0 +1,2 @@
+Version 2.6.0  - May 30, 2026
+See https://github.com/Tortel/SysLog/blob/master/Changelog.md for full changelog
