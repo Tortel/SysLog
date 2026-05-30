@@ -1,6 +1,26 @@
 Version 2.6.0  - May 30, 2026
 - Bump version to v2.6.0
 - Bump version to v2.6.0
+- Bump version to v2.6.0
+- Bump version to 2.6.0
+- Update copyright headers
+- Remove unused drawable resources
+- Update app icon, again
+- Update monochrome icon
+- Working on a color themed icon
+- Check for the READ_LOGS permission alongside the root check
+- Clean up things a little bit
+- Update fastlane dependencies
+- Update dependencies, use the default kotlin stuff
+- Bump SDK version
+- Update to latest build tools
+- FIX some missing translation
+- Mod to make some strings point to strings.xml
+- Add Chinese Simplified Translation
+
+Version 2.6.0  - May 30, 2026
+- Bump version to v2.6.0
+- Bump version to v2.6.0
 - Bump version to 2.6.0
 - Update copyright headers
 - Remove unused drawable resources

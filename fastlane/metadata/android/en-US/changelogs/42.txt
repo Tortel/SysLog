@@ -1,0 +1,14 @@
+Version 2.6.0  - May 30, 2026
+- Bump version to v2.6.0
+- Bump version to v2.6.0
+- Bump version to v2.6.0
+- Bump version to 2.6.0
+- Update copyright headers
+- Remove unused drawable resources
+- Update app icon, again
+- Update monochrome icon
+- Working on a color themed icon
+- Check for the READ_LOGS permission alongside the root check
+- Clean up things a little bit
+- Update fastlane dependencies
+See https://github.com/Tortel/SysLog/blob/master/Changelog.md for full changelog
